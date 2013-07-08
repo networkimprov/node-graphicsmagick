@@ -1,7 +1,7 @@
 node-graphicsmagick
 ===================
 
-Node.js bindings for the [GraphicsMagick](http://www.graphicsmagick.org/) library.  
+Node.js binding for the [GraphicsMagick](http://www.graphicsmagick.org/) library.  
 In development.
 
 #API
@@ -65,5 +65,92 @@ Representation of a color in YUV colorspace (used to encode color for television
 * Y - 0.0 through 1.0, Number value.
 * U - -0.5 through 0.5, Number value.
 * V - -0.5 through 0.5, Number value.
+
+##Image
+Image is the representation of an image.  
+
+###Constructors
+
+**Image( )**  
+Default constructor  
+
+**Image( Geometry size, Color color )**  
+Construct a blank image canvas of specified size and color  
+
+**TODO** Image( const std::string &imageSpec_ );  
+Construct from image file or image specification  
+    
+**TODO** Image ( const Blob &blob_ );  
+Construct Image from in-memory BLOB  
+
+**TODO** Image ( const Blob &blob_, const Geometry &size_ );  
+Construct Image of specified size from in-memory BLOB  
+
+**TODO** Image ( const Blob &blob_, const Geometry &size, const unsigned int depth );  
+Construct Image of specified size and depth from in-memory BLOB  
+
+**TODO** Image ( const Blob &blob_, const Geometry &size, const unsigned int depth_, const std::string &magick_ );  
+Construct Image of specified size, depth, and format from in-memory BLOB  
+
+**TODO** Image ( const Blob &blob_, const Geometry &size, const std::string &magick_ );  
+Construct Image of specified size, and format from in-memory BLOB  
+
+**TODO** Image ( const unsigned int width_, const unsigned int height_, const std::string &map_, const StorageType type_, const void *pixels_ );  
+Construct an image based on an array of raw pixels, of specified type and mapping, in memory  
+
+###Image operations
+
+**adaptiveThreshold ( Uint32 width, Uint32 height[, Uint32 offset = 0] )**  
+Local adaptive threshold image http://www.dai.ed.ac.uk/HIPR2/adpthrsh.htm  
+width x height define the size of the pixel neighborhood  
+offset - constant to subtract from pixel neighborhood mean  
+
+**addNoiseChannel ( ChannelType channel, NoiseType noiseType)**  
+**addNoise ( NoiseType  )**  
+Add noise to image with specified noise type  
+
+**TODO** affineTransform ( const DrawableAffine &affine )  
+Transform image by specified affine (or free transform) matrix.  
+
+**annotate ( String text, Geometry location )**  
+Annotate using specified text, and placement location    
+
+**annotate ( String text, GravityType gravity[, Geometry boundingArea][, Number degrees] )**  
+Annotate with text using specified text, bounding area, placement gravity, and rotation.
+
+**blur ( [Number radius = 0.0][, Number sigma = 1.0] )**  
+**blurChannel ( ChannelType channel[, Number radius = 0.0][, Number sigma = 1.0] )**  
+Blur image with specified blur factor.  
+The radius parameter specifies the radius of the Gaussian, in pixels, not counting the center pixel.  
+The sigma parameter specifies the standard deviation of the Laplacian, in pixels.  
+
+**border ( [Geometry geometry = borderGeometryDefault] )**  
+Border image (add border to image).  
+
+**cdl ( String cdl )**  
+Bake in the ASC-CDL, which is a convention for the for the exchange of basic primary color grading information between for the exchange of basic primary color grading information between equipment and software from different manufacturers.  It is a useful transform for other purposes as well.  
+
+##Constants
+
+####ChannelType
+UndefinedChannel  
+RedChannel  
+CyanChannel  
+GreenChannel  
+MagentaChannel  
+BlueChannel  
+YellowChannel  
+OpacityChannel  
+BlackChannel  
+MatteChannel  
+AllChannels  
+GrayChannel  
+
+####Geometry
+borderGeometryDefault
+
+
+
+
 
 

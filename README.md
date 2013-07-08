@@ -130,6 +130,107 @@ Border image (add border to image).
 **cdl ( String cdl )**  
 Bake in the ASC-CDL, which is a convention for the for the exchange of basic primary color grading information between for the exchange of basic primary color grading information between equipment and software from different manufacturers.  It is a useful transform for other purposes as well.  
 
+**channel ( ChannelType channel )**  
+Extract channel from image  
+
+**channelDepth ( ChannelType channel, Uint32 depth )**  
+Set modulus channel depth.  
+
+**channelDepth ( ChannelType channel )**  
+Returns modulus channel depth.  
+
+**charcoal ( [Number radius = 0.0][, Number sigma = 1.0] )**  
+Charcoal effect image (looks like charcoal sketch). The radius parameter specifies the radius of the Gaussian, in pixels, not counting the center pixel.  The sigma parameter specifies the standard deviation of the Laplacian, in pixels.  
+
+**chop ( Geometry geometry )**  
+Chop image (remove vertical or horizontal subregion of image).  
+
+**colorize ( Uint32 opacityRed, Uint32 opacityGreen, Uint32 opacityBlue, Color penColor )**  
+Colorize image with pen color, using specified percent opacity for red, green, and blue quantums.  
+
+**colorize ( Uint32 opacity, Color penColor )**  
+Colorize image with pen color, using specified percent opacity.  
+
+**colorMatrix (NumberArrayOfArray color_matrix_)**  
+Apply a color matrix to the image channels.  The user supplied matrix may be of order 1 to 5 (1x1 through 5x5).  
+For example: colorMatrix( [ [ 1, 1], [ 1, 1] ])  
+
+**comment ( String comment )**  
+Comment image (add comment string to image).  
+
+**compare ( Image img )**  
+Compare current image with another image. Sets meanErrorPerPixel, normalizedMaxError, and normalizedMeanError in the current image.  
+Returns wether the images are identical.  
+
+**composite ( Image compositeImage, Uint32 xOffset, Uint32 yOffset[, CompositeOperator compose = InCompositeOp] )**  
+**composite ( Image compositeImage, Geometry offset[, CompositeOperator compose = InCompositeOp] )**  
+**composite ( Image compositeImage, GravityType gravity[, CompositeOperator compose = InCompositeOp] )**  
+Compose an image onto another at specified offset and using specified algorithm.  
+
+**contrast ( Uint32 sharpen )**  
+Contrast image (enhance intensity differences in image).  
+
+**convolve ( NumberArrayOfArray kernel )**  
+Convolve image.  Applies a user-specified convolution to the image.  
+For example: convolve( [ [ 1, 1], [ 1, 1] ])  
+
+**crop ( Geometry geometry )**  
+Crop image (subregion of original image).  
+
+**cycleColormap ( Uint32 amount )**  
+Cycle image colormap.  
+
+**despeckle ( )**  
+Despeckle image (reduce speckle noise).  
+    
+**TODO** void display ( void );  
+Display image on screen.  
+
+**TODO** void draw ( const Drawable &drawable_ );  
+Draw on image using a single drawable.  
+    
+**TODO** void draw ( const std::list<Magick::Drawable> &drawable_ );  
+Draw on image using a drawable list.  
+
+**edge ( [Number radius = 0.0] )**  
+Edge image (hilight edges in image).  
+
+**emboss ( [Number radius = 0.0][, Number sigma = 1.0])**  
+Emboss image (hilight edges with 3D effect). The radius parameter specifies the radius of the Gaussian, in pixels, not counting the center pixel.  The sigma parameter specifies the standard deviation of the Laplacian, in pixels.  
+
+**enhance ( )**  
+Enhance image (minimize noise).  
+
+**equalize ( )**  
+Equalize image (histogram equalization).  
+
+**erase ( )**  
+Erase image to current "background color".  
+
+**flip ( )**  
+Flip image (reflect each scanline in the vertical direction).  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##Constants
 
 ####ChannelType
@@ -148,6 +249,8 @@ GrayChannel
 
 ####Geometry
 borderGeometryDefault
+
+
 
 
 

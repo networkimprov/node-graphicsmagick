@@ -10,8 +10,8 @@ Default constructor
 **Image( Geometry size, Color color )**  
 Construct a blank image canvas of specified size and color  
 
-**TODO** Image( String imageSpec )  
-Construct from image file or image specification  
+**Image( String imageSpec[, Function callback] )**  
+Construct from image file or image specification. If the functions is supplied the creation of the object is done asynchronously.  
  
 **TODO** Image ( const Blob &blob )  
 Construct Image from in-memory BLOB  
@@ -231,7 +231,7 @@ Set or attenuate the opacity channel in the image. If the image pixels are opaqu
 **opaque ( Color opaqueColor, Color penColor, Function callback)**  
 Change color of opaque pixel to specified pen color.  
 
-**TODO** ping ( String imageSpec )  
+**ping ( String imageSpec, Function callback )**  
 **TODO** ping ( const Blob &blob )  
 Ping is similar to read except only enough of the image is read to determine the image columns, rows, and filesize.  Access the columns(), rows(), and fileSize() attributes after invoking ping.  The image data is not valid after calling ping.  
 
@@ -252,7 +252,7 @@ Raise image (lighten or darken the edges of an image to give a 3-D raised or low
 **randomThresholdChannel( Geometry thresholds, ChannelType channel, Function callback)**  
 Changes the value of individual pixels based on the intensity of each pixel compared to a random threshold.  The result is a low-contrast, two color image.  The thresholds argument is a geometry containing LOWxHIGH thresholds.  If the string contains 2x2, 3x3, or 4x4, then an ordered dither of order 2, 3, or 4 will be performed instead.  If a channel argument is specified then only the specified channel is altered.  This is a very fast alternative to 'quantize' based dithering.  
 
-**TODO** read ( String imageSpec )  
+**read ( String imageSpec, Function callback )**  
 Read single image frame into current object.  
 
 **read ( Geometry size, String imageSpec, Function callback)**  
@@ -356,7 +356,7 @@ Replace image with a sharpened version of the original image using the unsharp m
 **wave ( [Number amplitude = 25.0][, Number wavelength = 150.0], Function callback)**  
 Map image pixels to a sine wave.  
  
-**TODO** write ( String imageSpec )  
+**write ( String imageSpec, Function callback )**  
 Write single image frame to a file.  
 
 **TODO** write ( Blob *blob )  

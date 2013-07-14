@@ -13,20 +13,20 @@ Construct a blank image canvas of specified size and color
 **Image( String imageSpec[, Function callback] )**  
 Construct from image file or image specification. If the functions is supplied the creation of the object is done asynchronously.  
  
-**TODO** Image ( const Blob &blob )  
-Construct Image from in-memory BLOB  
+**Image ( Buffer blob )**  
+Construct Image from in-memory Buffer.  
 
-**TODO** Image ( const Blob &blob, Geometry size )  
-Construct Image of specified size from in-memory BLOB  
+**Image ( Buffer blob, Geometry size )**  
+Construct Image of specified size from in-memory Buffer.  
 
-**TODO** Image ( const Blob &blob, Geometry size, Uint32 depth )  
-Construct Image of specified size and depth from in-memory BLOB  
+**Image ( Buffer blob, Geometry size, Uint32 depth )**  
+Construct Image of specified size and depth from in-memory Buffer.  
 
-**TODO** Image ( const Blob &blob, Geometry size, Uint32 depth, String magick )  
-Construct Image of specified size, depth, and format from in-memory BLOB  
+**Image ( Buffer blob, Geometry size, Uint32 depth, String magick )**  
+Construct Image of specified size, depth, and format from in-memory Buffer.  
 
-**TODO** Image ( const Blob &blob, Geometry size, String magick )  
-Construct Image of specified size, and format from in-memory BLOB  
+**Image ( Buffer blob, Geometry size, String magick )**  
+Construct Image of specified size, and format from in-memory Buffer.  
 
 **TODO** Image ( Uint32 width, Uint32 height, String map, const StorageType type, const void *pixels )  
 Construct an image based on an array of raw pixels, of specified type and mapping, in memory  
@@ -232,7 +232,7 @@ Set or attenuate the opacity channel in the image. If the image pixels are opaqu
 Change color of opaque pixel to specified pen color.  
 
 **ping ( String imageSpec, Function callback )**  
-**TODO** ping ( const Blob &blob )  
+**ping ( Buffer blob, Function callback )**  
 Ping is similar to read except only enough of the image is read to determine the image columns, rows, and filesize.  Access the columns(), rows(), and fileSize() attributes after invoking ping.  The image data is not valid after calling ping.  
 
 **quantize ( [Boolean measureError = false], Function callback)**  
@@ -258,20 +258,20 @@ Read single image frame into current object.
 **read ( Geometry size, String imageSpec, Function callback)**  
 Read single image frame of specified size into current object.  
 
-**TODO** read ( const Blob &blob )  
-Read single image frame from in-memory BLOB.  
+**read ( Buffer blob, Function callback )**  
+Read single image frame from in-memory Buffer.  
 
-**TODO** read ( const Blob &blob, Geometry &size )  
-Read single image frame of specified size from in-memory BLOB.  
+**read ( Buffer blob, Geometry &size, Function callback )**  
+Read single image frame of specified size from in-memory Buffer.  
 
-**TODO** read ( const Blob &blob, Geometry  &size, Uint32 depth )  
-Read single image frame of specified size and depth from in-memory BLOB.  
+**read ( Buffer blob, Geometry  &size, Uint32 depth, Function callback )**  
+Read single image frame of specified size and depth from in-memory Buffer.  
 
-**TODO** read ( const Blob &blob, Geometry  &size, Uint32 depth, String  &magick )  
-Read single image frame of specified size, depth, and format from in-memory BLOB.  
+**read ( Buffer blob, Geometry  &size, Uint32 depth, String magick, Function callback )**  
+Read single image frame of specified size, depth, and format from in-memory Buffer.  
 
-**TODO** read ( const Blob &blob, Geometry  &size, String  &magick )  
-Read single image frame of specified size, and format from in-memory BLOB.  
+**read ( Buffer blob, Geometry  &size, String magick, Function callback )**  
+Read single image frame of specified size, and format from in-memory Buffer.  
 
 **TODO** read ( Uint32 width, Uint32 height, String map, const StorageType  type, const void *pixels )  
 Read single image frame from an array of raw pixels, with specified storage type (ConstituteImage), e.g. image.read( 640, 480, "RGB", 0, pixels ).
@@ -359,10 +359,12 @@ Map image pixels to a sine wave.
 **write ( String imageSpec, Function callback )**  
 Write single image frame to a file.  
 
-**TODO** write ( Blob *blob )  
-**TODO** write ( Blob *blob, String magick )  
-**TODO** write ( Blob *blob, String magick, Uint32 depth )  
-Write single image frame to in-memory BLOB, with optional format and adjoin parameters.  
+**write ( Function callback )**  
+**write ( String magick, Function callback )**  
+**write ( String magick, Uint32 depth, Function callback )**  
+Write single image frame to in-memory Buffer, with optional format and adjoin parameters.  
+The callback function is called with error and the Buffer as parameters.  
+The sync method returns the Buffer.  
 
 **TODO**  write ( Int32 x, Int32 y, Uint32 columns, Uint32 rows, String& map, const StorageType type, void *pixels )  
 Write single image frame to an array of pixels with storage type specified by user (DispatchImage), e.g. image.write( 0, 0, 640, 1, "RGB", 0, pixels )  
@@ -552,17 +554,17 @@ Preferred size of the image when encoding.
 **Uint32 gifDisposeMethod ( )**  
 GIF disposal method.  
 
-**TODO** iccColorProfile( const Blob &colorProfile )  
-**TODO** Blob iccColorProfile( )  
-ICC color profile (BLOB).  
+**iccColorProfile( Buffer colorProfile )**  
+**Buffer iccColorProfile( )**  
+ICC color profile (Buffer).  
 
 **interlaceType ( InterlaceType interlace )**  
 **InterlaceType interlaceType ( )**  
 Type of interlacing to use.  
 
-**TODO** iptcProfile( const Blob& iptcProfile )  
-**TODO** Blob iptcProfile( )  
-IPTC profile (BLOB)  
+**iptcProfile( Buffer iptcProfile )**  
+**Buffer iptcProfile( )**  
+IPTC profile (Buffer).  
 
 **isValid ( Boolean isValid )**  
 **Boolean isValid ( )**  
@@ -623,10 +625,10 @@ Pen texture image (deprecated, don't use any more).
 **Color pixelColor ( Uint32 x, Uint32 y )**  
 Get/set pixel color at location x & y.  
 
-**TODO** profile( String  name_,  const Blob &colorProfile )  
-Add or remove a named profile to/from the image. Remove the profile by passing an empty Blob (e.g. Blob()). Valid names are "*", "8BIM", "ICM", "IPTC", or a user/format-defined profile name.  
+**profile( String  name,  Buffer colorProfile )**  
+Add or remove a named profile to/from the image. Remove the profile by passing an empty Blob (e.g. Blob()) **TODO**. Valid names are "*", "8BIM", "ICM", "IPTC", or a user/format-defined profile name.  
 
-**TODO** Blob profile( String  name )  
+**Buffer profile( String  name )**  
 Retrieve a named profile from the image. Valid names are: "8BIM", "8BIMTEXT", "APP1", "APP1JPEG", "ICC", "ICM", & "IPTC" or an existing user/format-defined profile name.  
 
 **quality ( Uint32 quality )**  

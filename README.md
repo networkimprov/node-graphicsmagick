@@ -588,7 +588,7 @@ Color to use when filling drawn objects.
 Rule to use when filling drawn objects.  
 
 **fillPattern ( Image fillPattern )**  
-**Image fillPattern ( void  )**  
+**Image fillPattern ( )**  
 Pattern to use while filling drawn objects.  
 
 **filterType ( FilterTypes filterType )**  
@@ -627,9 +627,217 @@ ICC color profile (BLOB).
 **InterlaceType interlaceType ( )**  
 Type of interlacing to use.  
 
+**TODO** iptcProfile( const Blob& iptcProfile )  
+**TODO** Blob iptcProfile( )  
+IPTC profile (BLOB)  
 
+**isValid ( Boolean isValid )**  
+**Boolean isValid ( )**  
+Does object contain valid image?  
 
+**String label ( )**  
+Image label.  
 
+**magick ( String magick )**  
+**String magick ( )**  
+File type magick identifier (.e.g "GIF").  
+
+**matte ( Boolean matteFlag )**  
+**Boolean matte ( )**  
+Image supports transparency (matte channel).  
+
+**matteColor ( Color matteColor )**  
+**Color matteColor ( )**  
+Transparent color.  
+
+**Number meanErrorPerPixel ( )**  
+The mean error per pixel computed when an image is color reduced.  
+
+**modulusDepth ( Uint32 modulusDepth )**  
+**Uint32 modulusDepth ( )**  
+Image modulus depth (minimum number of bits required to support red/green/blue components without loss of accuracy).  
+
+**Geometry montageGeometry ( )**  
+Tile size and offset within an image montage.  
+
+**monochrome ( Boolean monochromeFlag )**  
+**Boolean monochrome ( )**  
+Transform image to black and white.  
+
+**Number normalizedMaxError ( )**  
+The normalized max error per pixel computed when an image is color reduced.  
+
+**Number normalizedMeanError ( )**  
+The normalized mean error per pixel computed when an image is color reduced.  
+
+**orientation ( OrientationType orientation )**  
+**OrientationType orientation ( )**  
+Image orientation.  
+
+**page ( Geometry pageSize )**  
+**Geometry page ( )**  
+Preferred size and location of an image canvas.  
+
+**penColor ( Color penColor )**  
+**Color penColor ( )**  
+Pen color (deprecated, don't use any more).  
+
+**penTexture ( Image penTexture )**  
+**Image penTexture ( )**  
+Pen texture image (deprecated, don't use any more).  
+
+**pixelColor ( Uint32 x, Uint32 y, Color color )**  
+**Color pixelColor ( Uint32 x, Uint32 y )**  
+Get/set pixel color at location x & y.  
+
+**TODO** profile( String  name_,  const Blob &colorProfile )  
+Add or remove a named profile to/from the image. Remove the profile by passing an empty Blob (e.g. Blob()). Valid names are "*", "8BIM", "ICM", "IPTC", or a user/format-defined profile name.  
+
+**TODO** Blob profile( String  name )  
+Retrieve a named profile from the image. Valid names are: "8BIM", "8BIMTEXT", "APP1", "APP1JPEG", "ICC", "ICM", & "IPTC" or an existing user/format-defined profile name.  
+
+**quality ( Uint32 quality )**  
+**Uint32 quality ( )**  
+JPEG/MIFF/PNG compression level (default 75).  
+
+**quantizeColors ( Uint32 colors )**  
+**Uint32 quantizeColors ( )**  
+Maximum number of colors to quantize to.
+
+**quantizeColorSpace ( ColorspaceType colorSpace )**  
+**ColorspaceType  quantizeColorSpace ( )**  
+Colorspace to quantize in.  
+
+**quantizeDither ( Boolean ditherFlag )**  
+**Boolean quantizeDither ( )**  
+Dither image during quantization (default true).  
+
+**quantizeTreeDepth ( Uint32 treeDepth )**  
+**Uint32 quantizeTreeDepth ( )**  
+Quantization tree-depth.  
+
+**renderingIntent ( RenderingIntent renderingIntent )**  
+**RenderingIntent renderingIntent ( )**  
+The type of rendering intent.  
+
+**resolutionUnits ( ResolutionType resolutionUnits )**  
+**ResolutionType  resolutionUnits ( )**  
+Units of image resolution.  
+
+**Uint32 rows ( )**  
+The number of pixel rows in the image.  
+
+**scene ( Uint32 scene )**  
+**Uint32 scene ( )**  
+Image scene number.  
+
+**String signature ( [Boolean force = false] )**  
+Image signature.  Set force to true in order to re-calculate the signature regardless of whether the image data has been modified.  
+
+**size ( Geometry geometry )**  
+**Geometry size ( )**  
+Width and height of a raw image.  
+
+**TODO**  statistics ( ImageStatistics *statistics )  
+Obtain image statistics. Statistics are normalized to the range of 0.0 to 1.0 and are output to the specified ImageStatistics structure.  
+
+**strokeAntiAlias( Boolean flag )**  
+**Boolean strokeAntiAlias( )**  
+enabled/disable stroke anti-aliasing.  
+
+**strokeColor ( Color strokeColor )**  
+**Color strokeColor ( )**  
+Color to use when drawing object outlines.  
+
+**strokeDashArray ( NumberArray strokeDashArray )**  
+**NumberArray strokeDashArray ( )**  
+Specify the pattern of dashes and gaps used to stroke paths. The strokeDashArray represents an array of numbers that specify the lengths of alternating dashes and gaps in pixels. If an odd number of values is provided, then the list of values is repeated to yield an even number of values.  
+
+**strokeDashOffset ( Number strokeDashOffset )**  
+**Number strokeDashOffset ( )**  
+While drawing using a dash pattern, specify distance into the dash pattern to start the dash (default 0).  
+
+**strokeLineCap ( LineCap lineCap )**  
+**LineCap strokeLineCap ( )**  
+Specify the shape to be used at the end of open subpaths when they are stroked. Values of LineCap are UndefinedCap, ButtCap, RoundCap, and SquareCap.  
+
+**strokeLineJoin ( LineJoin lineJoin )**  
+**LineJoin strokeLineJoin ( )**  
+Specify the shape to be used at the corners of paths (or other vector shapes) when they are stroked. Values of LineJoin are UndefinedJoin, MiterJoin, RoundJoin, and BevelJoin.  
+
+**strokeMiterLimit ( Uint32 miterLimit )**  
+**Uint32 strokeMiterLimit ( )**  
+Specify miter limit. When two line segments meet at a sharp angle and miter joins have been specified for 'lineJoin', it is possible for the miter to extend far beyond the thickness of the line stroking the path. The miterLimit' imposes a limit on the ratio of the miter length to the 'lineWidth'. The default value of this parameter is 4.  
+
+**strokePattern ( Image strokePattern )**  
+**Image strokePattern ( )**  
+Pattern image to use while stroking object outlines.  
+
+**strokeWidth ( Number strokeWidth )**  
+**Number strokeWidth ( )**  
+Stroke width for drawing vector objects (default one).  
+
+**subImage ( Uint32 subImage )**  
+**Uint32 subImage ( )**  
+Subimage of an image sequence.  
+
+**subRange ( Uint32 subRange )**  
+**Uint32 subRange ( )**  
+Number of images relative to the base image.  
+
+**textEncoding ( String encoding )**  
+**String textEncoding ( )**  
+**TODO** may alwais be utf8? Annotation text encoding (e.g. "UTF-16")  
+
+**tileName ( String tileName )**  
+**String tileName ( )**  
+Tile name.  
+
+**Number totalColors ( )**  
+Number of colors in the image.  
+
+**transformOrigin ( Number x, Number y )**  
+Origin of coordinate system to use when annotating with text or drawing.  
+
+**transformRotation ( Number angle )**  
+Rotation to use when annotating with text or drawing.  
+
+**transformReset ( )**  
+Reset transformation parameters to default.  
+
+**transformScale ( Number sx_, Number sy )**  
+Scale to use when annotating with text or drawing.  
+
+**transformSkewX ( Number skewx )**  
+Skew to use in X axis when annotating with text or drawing.  
+
+**transformSkewY ( Number skewy )**  
+Skew to use in Y axis when annotating with text or drawing.  
+
+**ImageType type ( )**  
+Image representation type.  
+
+**verbose ( Boolean verboseFlag )**  
+**Boolean verbose ( )**  
+**TODO**  Print detailed information about the image.  
+
+**view ( String view )**  
+**String view ( )**  
+FlashPix viewing parameters.  
+
+**x11Display ( String display )**  
+**String x11Display ( )**  
+X11 display to display to, obtain fonts from, or to capture image from.  
+
+**Number xResolution ( )**  
+x resolution of the image.  
+
+**Number yResolution ( )**  
+y resolution of the image.  
+
+###Low-level Pixel Access Routines
+
+**TODO**
 
 ##Constants
 

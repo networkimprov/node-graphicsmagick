@@ -68,6 +68,7 @@ Representation of a color in YUV colorspace (used to encode color for television
 
 ##Image
 Image is the representation of an image.  
+Unless otherwise specified, all the methods return the Image object for chaining.  
 
 ###Constructors
 
@@ -100,90 +101,90 @@ Construct an image based on an array of raw pixels, of specified type and mappin
 
 ###Image operations
 
-**TODO: Unless otherwise specified, all the methods return the Image object for chaining.**
-**TODO: Unless otherwise specified, all the methods in image operations have an async variant, [method]Async.**
+Unless otherwise specified, all the methods in image operations have an sync variant, [method]Async, which throw the error and return the second function parameter, if available, or the Image object, for chaining.  
+**TODO** add examples.  
 
-**adaptiveThreshold ( Uint32 width, Uint32 height[, Uint32 offset = 0] )**  
+**adaptiveThreshold ( Uint32 width, Uint32 height[, Uint32 offset = 0], Function callback)**  
 Local adaptive threshold image http://www.dai.ed.ac.uk/HIPR2/adpthrsh.htm  
 width x height define the size of the pixel neighborhood  
 offset - constant to subtract from pixel neighborhood mean  
 
-**addNoiseChannel ( ChannelType channel, NoiseType noiseType)**  
-**addNoise ( NoiseType  )**  
+**addNoiseChannel ( ChannelType channel, NoiseType noiseType, Function callback)**  
+**addNoise ( NoiseType, Function callback)**  
 Add noise to image with specified noise type  
 
 **TODO** affineTransform ( const DrawableAffine &affine )  
 Transform image by specified affine (or free transform) matrix.  
 
-**annotate ( String text, Geometry location )**  
+**annotate ( String text, Geometry location, Function callback)**  
 Annotate using specified text, and placement location 
 
-**annotate ( String text, GravityType gravity[, Geometry boundingArea][, Number degrees] )**  
+**annotate ( String text, GravityType gravity[, Geometry boundingArea][, Number degrees], Function callback)**  
 Annotate with text using specified text, bounding area, placement gravity, and rotation.
 
-**blur ( [Number radius = 0.0][, Number sigma = 1.0] )**  
-**blurChannel ( ChannelType channel[, Number radius = 0.0][, Number sigma = 1.0] )**  
+**blur ( [Number radius = 0.0][, Number sigma = 1.0], Function callback)**  
+**blurChannel ( ChannelType channel[, Number radius = 0.0][, Number sigma = 1.0], Function callback)**  
 Blur image with specified blur factor.  
 The radius parameter specifies the radius of the Gaussian, in pixels, not counting the center pixel.  
 The sigma parameter specifies the standard deviation of the Laplacian, in pixels.  
 
-**border ( [Geometry geometry = borderGeometryDefault] )**  
+**border ( [Geometry geometry = borderGeometryDefault], Function callback)**  
 Border image (add border to image).  
 
-**cdl ( String cdl )**  
+**cdl ( String cdl, Function callback)**  
 Bake in the ASC-CDL, which is a convention for the for the exchange of basic primary color grading information between for the exchange of basic primary color grading information between equipment and software from different manufacturers.  It is a useful transform for other purposes as well.  
 
-**channel ( ChannelType channel )**  
+**channel ( ChannelType channel, Function callback)**  
 Extract channel from image  
 
-**channelDepth ( ChannelType channel, Uint32 depth )**  
+**channelDepth ( ChannelType channel, Uint32 depth, Function callback)**  
 Set modulus channel depth.  
 
-**channelDepth ( ChannelType channel )**  
+**channelDepth ( ChannelType channel, Function callback)**  
 Returns modulus channel depth.  
 
-**charcoal ( [Number radius = 0.0][, Number sigma = 1.0] )**  
+**charcoal ( [Number radius = 0.0][, Number sigma = 1.0], Function callback)**  
 Charcoal effect image (looks like charcoal sketch). The radius parameter specifies the radius of the Gaussian, in pixels, not counting the center pixel.  The sigma parameter specifies the standard deviation of the Laplacian, in pixels.  
 
-**chop ( Geometry geometry )**  
+**chop ( Geometry geometry, Function callback)**  
 Chop image (remove vertical or horizontal subregion of image).  
 
-**colorize ( Uint32 opacityRed, Uint32 opacityGreen, Uint32 opacityBlue, Color penColor )**  
+**colorize ( Uint32 opacityRed, Uint32 opacityGreen, Uint32 opacityBlue, Color penColor, Function callback)**  
 Colorize image with pen color, using specified percent opacity for red, green, and blue quantums.  
 
-**colorize ( Uint32 opacity, Color penColor )**  
+**colorize ( Uint32 opacity, Color penColor, Function callback)**  
 Colorize image with pen color, using specified percent opacity.  
 
-**colorMatrix (NumberArrayOfArray color_matrix )**  
+**colorMatrix (NumberArrayOfArray color_matrix, Function callback)**  
 Apply a color matrix to the image channels.  The user supplied matrix may be of order 1 to 5 (1x1 through 5x5).  
 For example: colorMatrix( [ [ 1, 1], [ 1, 1] ])  
 
-**comment ( String comment )**  
+**comment ( String comment, Function callback)**  
 Comment image (add comment string to image).  
 
-**compare ( Image img )**  
+**compare ( Image img, Function callback)**  
 Compare current image with another image. Sets meanErrorPerPixel, normalizedMaxError, and normalizedMeanError in the current image.  
 Returns wether the images are identical.  
 
-**composite ( Image compositeImage, Uint32 xOffset, Uint32 yOffset[, CompositeOperator compose = InCompositeOp] )**  
-**composite ( Image compositeImage, Geometry offset[, CompositeOperator compose = InCompositeOp] )**  
-**composite ( Image compositeImage, GravityType gravity[, CompositeOperator compose = InCompositeOp] )**  
+**composite ( Image compositeImage, Uint32 xOffset, Uint32 yOffset[, CompositeOperator compose = InCompositeOp], Function callback)**  
+**composite ( Image compositeImage, Geometry offset[, CompositeOperator compose = InCompositeOp], Function callback)**  
+**composite ( Image compositeImage, GravityType gravity[, CompositeOperator compose = InCompositeOp], Function callback)**  
 Compose an image onto another at specified offset and using specified algorithm.  
 
-**contrast ( Uint32 sharpen )**  
+**contrast ( Uint32 sharpen, Function callback)**  
 Contrast image (enhance intensity differences in image).  
 
-**convolve ( NumberArrayOfArray kernel )**  
+**convolve ( NumberArrayOfArray kernel, Function callback)**  
 Convolve image.  Applies a user-specified convolution to the image.  
 For example: convolve( [ [ 1, 1], [ 1, 1] ])  
 
-**crop ( Geometry geometry )**  
+**crop ( Geometry geometry, Function callback)**  
 Crop image (subregion of original image).  
 
-**cycleColormap ( Uint32 amount )**  
+**cycleColormap ( Uint32 amount, Function callback)**  
 Cycle image colormap.  
 
-**despeckle ( )**  
+**despeckle ( Function callback)**  
 Despeckle image (reduce speckle noise).  
  
 **TODO** void display ( )  
@@ -195,134 +196,134 @@ Draw on image using a single drawable.
 **TODO** void draw ( const std::list<Magick::Drawable> &drawable )  
 Draw on image using a drawable list.  
 
-**edge ( [Number radius = 0.0] )**  
+**edge ( [Number radius = 0.0], Function callback)**  
 Edge image (hilight edges in image).  
 
 **emboss ( [Number radius = 0.0][, Number sigma = 1.0])**  
 Emboss image (hilight edges with 3D effect). The radius parameter specifies the radius of the Gaussian, in pixels, not counting the center pixel.  The sigma parameter specifies the standard deviation of the Laplacian, in pixels.  
 
-**enhance ( )**  
+**enhance ( Function callback)**  
 Enhance image (minimize noise).  
 
-**equalize ( )**  
+**equalize ( Function callback)**  
 Equalize image (histogram equalization).  
 
-**erase ( )**  
+**erase ( Function callback)**  
 Erase image to current "background color".  
 
-**flip ( )**  
+**flip ( Function callback)**  
 Flip image (reflect each scanline in the vertical direction).  
 
-**floodFillColor( Uint32 x, Uint32 y, Color fillColor )**  
-**floodFillColor( Geometry point, Color fillColor )**  
+**floodFillColor( Uint32 x, Uint32 y, Color fillColor, Function callback)**  
+**floodFillColor( Geometry point, Color fillColor, Function callback)**  
 Flood-fill color across pixels that match the color of the target pixel and are neighbors of the target pixel. Uses current fuzz setting when determining color match.  
 
-**floodFillColor( Uint32 x, Uint32 y, Color fillColor, Color borderColor )**  
-**floodFillColor( Geometry point, Color fillColor, Color borderColor )**  
+**floodFillColor( Uint32 x, Uint32 y, Color fillColor, Color borderColor, Function callback)**  
+**floodFillColor( Geometry point, Color fillColor, Color borderColor, Function callback)**  
 Flood-fill color across pixels starting at target-pixel and stopping at pixels matching specified border color. Uses current fuzz setting when determining color match.  
 
-**floodFillOpacity ( Uint32 x, Uint32 y, Uint32 opacity, PaintMethod method )**  
+**floodFillOpacity ( Uint32 x, Uint32 y, Uint32 opacity, PaintMethod method, Function callback)**  
 Floodfill pixels matching color (within fuzz factor) of target pixel(x,y) with replacement opacity value using method.  
 
-**floodFillTexture( Uint32 x, Uint32 y, Image texture )**  
-**floodFillTexture( Geometry point, Image texture )**  
+**floodFillTexture( Uint32 x, Uint32 y, Image texture, Function callback)**  
+**floodFillTexture( Geometry point, Image texture, Function callback)**  
 Flood-fill texture across pixels that match the color of the target pixel and are neighbors of the target pixel. Uses current fuzz setting when determining color match.  
 
-**floodFillTexture( Uint32 x, Uint32 y, Image texture, Color borderColor )**  
-**floodFillTexture( Geometry point, Image texture, Color borderColor )**  
+**floodFillTexture( Uint32 x, Uint32 y, Image texture, Color borderColor, Function callback)**  
+**floodFillTexture( Geometry point, Image texture, Color borderColor, Function callback)**  
 Flood-fill texture across pixels starting at target-pixel and stopping at pixels matching specified border color. Uses current fuzz setting when determining color match.  
 
-**flop ( )**  
+**flop ( Function callback)**  
 Flop image (reflect each scanline in the horizontal direction).  
 
-**frame ( [Geometry geometry = frameGeometryDefault] )**  
-**frame ( Uint32 width, Uint32 height[, Int32 innerBevel = 6][, Int32 outerBevel = 6] )**  
+**frame ( [Geometry geometry = frameGeometryDefault], Function callback)**  
+**frame ( Uint32 width, Uint32 height[, Int32 innerBevel = 6][, Int32 outerBevel = 6], Function callback)**  
 Frame image  
 
-**gamma ( Number gamma )**  
-**gamma ( Number gammaRed, Number gammaGreen, Number gammaBlue )**  
+**gamma ( Number gamma, Function callback)**  
+**gamma ( Number gammaRed, Number gammaGreen, Number gammaBlue, Function callback)**  
 Gamma correct image.  
 
-**gaussianBlur ( Number width, Number sigma )**  
-**gaussianBlurChannel ( ChannelType channel, Number width,Number sigma )**  
+**gaussianBlur ( Number width, Number sigma, Function callback)**  
+**gaussianBlurChannel ( ChannelType channel, Number width,Number sigma, Function callback)**  
 Gaussian blur image. The number of neighbor pixels to be included in the convolution mask is specified by 'width'. The standard deviation of the gaussian bell curve is specified by 'sigma'.  
 
-**implode ( Number factor )**  
+**implode ( Number factor, Function callback)**  
 Implode image (special effect).  
 
-**haldClut ( Image clutImage )**  
+**haldClut ( Image clutImage, Function callback)**  
 Apply a color lookup table (Hald CLUT) to the image.  
 
-**label ( String label )**  
+**label ( String label, Function callback)**  
 Label image.  
 
-**level ( Number black_point, Number white_point[, Number mid_point=1.0] )**  
+**level ( Number black_point, Number white_point[, Number mid_point=1.0], Function callback)**  
 Level image. Adjust the levels of the image by scaling the colors falling between specified white and black points to the full available quantum range. The parameters provided represent the black, mid (gamma), and white points.  The black point specifies the darkest color in the image. Colors darker than the black point are set to zero. Mid point (gamma) specifies a gamma correction to apply to the image. White point specifies the lightest color in the image.  Colors brighter than the white point are set to the maximum quantum value. The black and white point have the valid range 0 to MaxRGB while mid (gamma) has a useful range of 0 to ten.  
 
-**levelChannel ( ChannelType channel, Number black_point, Number white_point[, Number mid_point=1.0] )**  
+**levelChannel ( ChannelType channel, Number black_point, Number white_point[, Number mid_point=1.0], Function callback)**  
 Level image channel. Adjust the levels of the image channel by scaling the values falling between specified white and black points to the full available quantum range. The parameters provided represent the black, mid (gamma), and white points. The black point specifies the darkest color in the image. Colors darker than the black point are set to zero. Mid point (gamma) specifies a gamma correction to apply to the image. White point specifies the lightest color in the image. Colors brighter than the white point are set to the maximum quantum value. The black and white point have the valid range 0 to MaxRGB while mid (gamma) has a useful range of 0 to ten.  
 
-**magnify ( )**  
+**magnify ( Function callback)**  
 Magnify image by integral size.  
 
-**map ( Image mapImage[, Boolean dither = false] )**  
+**map ( Image mapImage[, Boolean dither = false], Function callback)**  
 Remap image colors with closest color from reference image.  
 
-**matteFloodfill ( Color target , Uint32 opacity, Int32 x, Int32 y, PaintMethod method )**  
+**matteFloodfill ( Color target , Uint32 opacity, Int32 x, Int32 y, PaintMethod method, Function callback)**  
 Floodfill designated area with replacement opacity value.  
 
-**medianFilter ( [Number radius = 0.0] )**  
+**medianFilter ( [Number radius = 0.0], Function callback)**  
 Filter image by replacing each pixel component with the median color in a circular neighborhood.  
 
-**minify ( )**  
+**minify ( Function callback)**  
 Reduce image by integral size.  
 
-**modulate ( Number brightness, Number saturation, Number hue )**  
+**modulate ( Number brightness, Number saturation, Number hue, Function callback)**  
 Modulate percent hue, saturation, and brightness of an image. Modulation of saturation and brightness is as a ratio of the current value (1.0 for no change). Modulation of hue is an absolute rotation of -180 degrees to +180 degrees from the current position corresponding to an argument range of 0 to 2.0 (1.0 for no change).  
 
-**motionBlur ( Number radius, Number sigma, Number angle )**  
+**motionBlur ( Number radius, Number sigma, Number angle, Function callback)**  
 Motion blur image with specified blur factor The radius_ parameter specifies the radius of the Gaussian, in pixels, not counting the center pixel.  The sigma_ parameter specifies the standard deviation of the Laplacian, in pixels. The angle_ parameter specifies the angle the object appears to be comming from (zero degrees is from the right).  
 
-**negate ( [Boolean grayscale = false] )**  
+**negate ( [Boolean grayscale = false], Function callback)**  
 Negate colors in image.  Set grayscale to only negate grayscale values in image.  
 
-**normalize ( )**  
+**normalize ( Function callback)**  
 Normalize image (increase contrast by normalizing the pixel values to span the full range of color values).  
 
-**oilPaint ( [Number radius = 3.0] )**  
+**oilPaint ( [Number radius = 3.0], Function callback)**  
 Oilpaint image (image looks like oil painting).  
 
-**opacity ( Uint32 opacity )**  
+**opacity ( Uint32 opacity, Function callback)**  
 Set or attenuate the opacity channel in the image. If the image pixels are opaque then they are set to the specified opacity value, otherwise they are blended with the supplied opacity value.  The value of opacity_ ranges from 0 (completely opaque) to MaxRGB. The defines OpaqueOpacity and TransparentOpacity are available to specify completely opaque or completely transparent, respectively.  
 
-**opaque ( Color opaqueColor, Color penColor )**  
+**opaque ( Color opaqueColor, Color penColor, Function callback)**  
 Change color of opaque pixel to specified pen color.  
 
 **TODO** ping ( String imageSpec )  
 **TODO** ping ( const Blob &blob )  
 Ping is similar to read except only enough of the image is read to determine the image columns, rows, and filesize.  Access the columns(), rows(), and fileSize() attributes after invoking ping.  The image data is not valid after calling ping.  
 
-**quantize ( [Boolean measureError = false] )**  
+**quantize ( [Boolean measureError = false], Function callback)**  
 Quantize image (reduce number of colors).  
 
-**quantumOperator ( ChannelType channel, QuantumOperator operator, double rvalue )**  
-**quantumOperator ( Int32 x, Int32 y, Uint32 columns, Uint32 rows, ChannelType channel, QuantumOperator operator, Number rvalue )**  
+**quantumOperator ( ChannelType channel, QuantumOperator operator, double rvalue, Function callback)**  
+**quantumOperator ( Int32 x, Int32 y, Uint32 columns, Uint32 rows, ChannelType channel, QuantumOperator operator, Number rvalue, Function callback)**  
 Apply an arithmetic or bitwise operator to the image pixel quantums.  
 
 **TODO** process ( std::string name, Int32 argc, char **argv )  
 Execute a named process module using an argc/argv syntax similar to that accepted by a C 'main' routine. An exception is thrown if the requested process module doesn't exist, fails to load, or fails during execution.  
 
-**raise ( [Geometry geometry = raiseGeometryDefault][, Boolean raisedFlag = false] )**  
+**raise ( [Geometry geometry = raiseGeometryDefault][, Boolean raisedFlag = false], Function callback)**  
 Raise image (lighten or darken the edges of an image to give a 3-D raised or lowered effect).  
 
-**randomThreshold( Geometry thresholds )**  
-**randomThresholdChannel( Geometry thresholds, ChannelType channel )**  
+**randomThreshold( Geometry thresholds, Function callback)**  
+**randomThresholdChannel( Geometry thresholds, ChannelType channel, Function callback)**  
 Changes the value of individual pixels based on the intensity of each pixel compared to a random threshold.  The result is a low-contrast, two color image.  The thresholds argument is a geometry containing LOWxHIGH thresholds.  If the string contains 2x2, 3x3, or 4x4, then an ordered dither of order 2, 3, or 4 will be performed instead.  If a channel argument is specified then only the specified channel is altered.  This is a very fast alternative to 'quantize' based dithering.  
 
 **TODO** read ( String imageSpec )  
 Read single image frame into current object.  
 
-**read ( Geometry size, String imageSpec )**  
+**read ( Geometry size, String imageSpec, Function callback)**  
 Read single image frame of specified size into current object.  
 
 **TODO** read ( const Blob &blob )  
@@ -343,84 +344,84 @@ Read single image frame of specified size, and format from in-memory BLOB.
 **TODO** read ( Uint32 width, Uint32 height, String map, const StorageType  type, const void *pixels )  
 Read single image frame from an array of raw pixels, with specified storage type (ConstituteImage), e.g. image.read( 640, 480, "RGB", 0, pixels ).
 
-**reduceNoise ( )**  
-**reduceNoise ( Number order )**  
+**reduceNoise ( Function callback)**  
+**reduceNoise ( Number order, Function callback)**  
 Reduce noise in image using a noise peak elimination filter.  
 
-**roll ( Geometry roll )**  
-**roll ( Uint32 columns, Uint32 rows )**  
+**roll ( Geometry roll, Function callback)**  
+**roll ( Uint32 columns, Uint32 rows, Function callback)**  
 Roll image (rolls image vertically and horizontally) by specified number of columnms and rows).  
 
-**rotate ( Number degrees )**  
+**rotate ( Number degrees, Function callback)**  
 Rotate image counter-clockwise by specified number of degrees.  
 
-**sample ( Geometry geometry )**
+**sample ( Geometry geometry, Function callback)**
 Resize image by using pixel sampling algorithm.  
 
-**scale ( Geometry geometry )**  
+**scale ( Geometry geometry, Function callback)**  
 Resize image by using simple ratio algorithm.  
 
-**segment ( [Number clusterThreshold = 1.0][, Number smoothingThreshold = 1.5] )**  
+**segment ( [Number clusterThreshold = 1.0][, Number smoothingThreshold = 1.5], Function callback)**  
 Segment (coalesce similar image components) by analyzing the histograms of the color components and identifying units that are homogeneous with the fuzzy c-means technique.  Also uses QuantizeColorSpace and Verbose image attributes.  
 
-**shade ( [Number azimuth = 30][, Number elevation = 30][, Boolean colorShading = false] )**  
+**shade ( [Number azimuth = 30][, Number elevation = 30][, Boolean colorShading = false], Function callback)**  
 Shade image using distant light source.  
 
-**sharpen ( [Number radius = 0.0][, Number sigma = 1.0] )**  
-**sharpenChannel ( ChannelType channel[, Number radius = 0.0][, Number sigma = 1.0] )**  
+**sharpen ( [Number radius = 0.0][, Number sigma = 1.0], Function callback)**  
+**sharpenChannel ( ChannelType channel[, Number radius = 0.0][, Number sigma = 1.0], Function callback)**  
 Sharpen pixels in image. The radius parameter specifies the radius of the Gaussian, in pixels, not counting the center pixel.  The sigma parameter specifies the standard deviation of the Laplacian, in pixels.  
 
-**shave ( Geometry geometry )**  
+**shave ( Geometry geometry, Function callback)**  
 Shave pixels from image edges.  
 
-**shear ( Number xShearAngle, Number yShearAngle )**  
+**shear ( Number xShearAngle, Number yShearAngle, Function callback)**  
 Shear image (create parallelogram by sliding image by X or Y axis).  
 
-**solarize ( [Number factor = 50.0] )**  
+**solarize ( [Number factor = 50.0], Function callback)**  
 Solarize image (similar to effect seen when exposing a photographic film to light during the development process).
 
-**spread ( [Uint32 amount = 3] )**  
+**spread ( [Uint32 amount = 3], Function callback)**  
 Spread pixels randomly within image by specified ammount.  
 
-**stegano ( Image watermark )**  
+**stegano ( Image watermark, Function callback)**  
 Add a digital watermark to the image (based on second image).  
 
-**stereo ( Image rightImage )**  
+**stereo ( Image rightImage, Function callback)**  
 Create an image which appears in stereo when viewed with red-blue glasses (Red image on left, blue on right).  
 
-**strip ( )**  
+**strip ( Function callback)**  
 Remove all profiles and text attributes from the image.  
 
-**swirl ( Number degrees )**  
+**swirl ( Number degrees, Function callback)**  
 Swirl image (image pixels are rotated by degrees).  
 
-**texture ( Image texture )**  
+**texture ( Image texture, Function callback)**  
 Channel a texture on image background.  
 
-**threshold ( Number threshold )**  
+**threshold ( Number threshold, Function callback)**  
 Threshold image channels (below threshold becomes black, above threshold becomes white). The range of the threshold parameter is 0 to MaxRGB.  
 
-**transform ( Geometry imageGeometry[, Geometry cropGeometry] )**  
+**transform ( Geometry imageGeometry[, Geometry cropGeometry], Function callback)**  
 Transform image based on image and crop geometries.  
 
-**transparent ( Color color )**  
+**transparent ( Color color, Function callback)**  
 Add matte image to image, setting pixels matching color to transparent.  
 
-**trim ( )**  
+**trim ( Function callback)**  
 Trim edges that are the background color from the image.  
 
-**type ( ImageType type )**  
+**type ( ImageType type, Function callback)**  
 Image representation type (also see type attribute).  
 
-**unsharpmask ( Number radius, Number sigma, Number amount, Number threshold )**  
-**unsharpmaskChannel ( ChannelType channel, Number radius, Number sigma, Number amount, Number threshold )**  
+**unsharpmask ( Number radius, Number sigma, Number amount, Number threshold, Function callback)**  
+**unsharpmaskChannel ( ChannelType channel, Number radius, Number sigma, Number amount, Number threshold, Function callback)**  
 Replace image with a sharpened version of the original image using the unsharp mask algorithm.
 * radius - the radius of the Gaussian, in pixels, not counting the center pixel.
 * sigma -  the standard deviation of the Gaussian, in pixels.
 * amount - the percentage of the difference between the original and the blur image that is added back into the original.
 * threshold - the threshold in pixels needed to apply the diffence amount.
 
-**wave ( [Number amplitude = 25.0][, Number wavelength = 150.0] )**  
+**wave ( [Number amplitude = 25.0][, Number wavelength = 150.0], Function callback)**  
 Map image pixels to a sine wave.  
  
 **TODO** write ( String imageSpec )  
@@ -434,7 +435,7 @@ Write single image frame to in-memory BLOB, with optional format and adjoin para
 **TODO**  write ( Int32 x, Int32 y, Uint32 columns, Uint32 rows, String& map, const StorageType type, void *pixels )  
 Write single image frame to an array of pixels with storage type specified by user (DispatchImage), e.g. image.write( 0, 0, 640, 1, "RGB", 0, pixels )  
 
-**zoom ( Geometry geometry )**  
+**zoom ( Geometry geometry, Function callback)**  
 Zoom image to specified size.  
 
 ###Image Attributes and Options
@@ -857,11 +858,3 @@ GrayChannel
 
 ####Geometry
 borderGeometryDefault
-
-
-
-
-
-
-
-

@@ -5,12 +5,14 @@ Unless otherwise specified, all the methods return the Image object for chaining
 ###Constructors
 
 **Image( )**  
+available  
 Default constructor  
 
 **Image( Geometry size, Color color )**  
 Construct a blank image canvas of specified size and color  
 
 **Image( String imageSpec[, Function callback] )**  
+available  
 Construct from image file or image specification. If the functions is supplied the creation of the object is done asynchronously.  
  
 **Image ( Buffer blob )**  

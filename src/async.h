@@ -89,7 +89,7 @@ void async_done(uv_work_t* req, int) {
   AsyncOp<T>* aAsOp = (AsyncOp<T>*)req->data;
   Handle<Value> aArgv[2];
   if (aAsOp->error) {
-    aArgv[0] = Exception::Error(String::New(aAsOp->error->get_msg().c_str()));
+    aArgv[0] = Exception::Error(String::New(aAsOp->error->c_str()));
   } else {
     aArgv[0] = Null();
     aArgv[1] = (*aAsOp->convert)(aAsOp->data);

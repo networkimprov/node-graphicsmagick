@@ -5,6 +5,82 @@ using namespace node;
 
 using namespace std;
 
+bool isObjectGeometry(Handle<Value> obj) {
+  if (!obj->IsObject() || obj->IsFunction())
+   return false;
+  Local<Object> aObj = obj->ToObject();
+  Local<String> aKey;
+  return !((!aObj->Has(aKey = String::New("width")) || !aObj->Get(aKey)->IsUint32()) ||
+      (!aObj->Has(aKey = String::New("height")) || !aObj->Get(aKey)->IsUint32()) ||
+     (aObj->Has(aKey = String::New("xOff")) && !aObj->Get(aKey)->IsUint32()) ||
+     (aObj->Has(aKey = String::New("yOff")) && !aObj->Get(aKey)->IsUint32()) ||
+     (aObj->Has(aKey = String::New("xNegative")) && !aObj->Get(aKey)->IsBoolean()) ||
+     (aObj->Has(aKey = String::New("yNegative")) && !aObj->Get(aKey)->IsBoolean()) ||
+     (aObj->Has(aKey = String::New("percent")) && !aObj->Get(aKey)->IsBoolean()) ||
+     (aObj->Has(aKey = String::New("aspect")) && !aObj->Get(aKey)->IsBoolean()) ||
+     (aObj->Has(aKey = String::New("greater")) && !aObj->Get(aKey)->IsBoolean()) ||
+     (aObj->Has(aKey = String::New("less")) && !aObj->Get(aKey)->IsBoolean()));
+}
+
+Magick::Geometry* createObjectGeometry(Handle<Value> obj) {
+  Local<Object> aObj = obj->ToObject();
+  Local<String> aKey;
+  Magick::Geometry* aGeometry = new Magick::Geometry(
+    aObj->Get(String::New("width"))->ToUint32()->Value(),
+    aObj->Get(String::New("height"))->ToUint32()->Value(),
+    aObj->Has(aKey = String::New("xOff")) ? aObj->Get(aKey)->ToUint32()->Value() : 0,
+    aObj->Has(aKey = String::New("yOff")) ? aObj->Get(aKey)->ToUint32()->Value() : 0,
+    aObj->Has(aKey = String::New("xNegative")) ? aObj->Get(aKey)->ToBoolean()->Value() : false,
+    aObj->Has(aKey = String::New("yNegative")) ? aObj->Get(aKey)->ToBoolean()->Value() : false
+  );
+  if (aObj->Has(aKey = String::New("percent")))
+    aGeometry->percent(aObj->Get(aKey)->ToBoolean()->Value());
+  if (aObj->Has(aKey = String::New("aspect")))
+    aGeometry->aspect(aObj->Get(aKey)->ToBoolean()->Value());
+  if (aObj->Has(aKey = String::New("greater")))
+    aGeometry->greater(aObj->Get(aKey)->ToBoolean()->Value());
+  if (aObj->Has(aKey = String::New("less")))
+    aGeometry->less(aObj->Get(aKey)->ToBoolean()->Value());
+  return aGeometry;
+}
+
+bool isObjectColor(Handle<Value> obj) {
+  if (!obj->IsObject() || obj->IsFunction())
+    return false;
+  Local<Object> aObj = obj->ToObject();
+  Local<String> aKey1, aKey2, aKey3, aKey4;
+  if (aObj->Has(aKey1 = String::New("red")) && aObj->Has(aKey2 = String::New("green")) && aObj->Has(aKey3 = String::New("blue")))
+    return !((!aObj->Get(aKey1)->IsNumber() || !aObj->Get(aKey2)->IsNumber() || !aObj->Get(aKey3)->IsNumber()) || (aObj->Has(aKey4 = String::New("alpha")) && !aObj->Get(aKey4)->IsNumber()));
+  if (aObj->Has(aKey1 = String::New("redQuantum")) && aObj->Has(aKey2 = String::New("greenQuantum")) && aObj->Has(aKey3 = String::New("blueQuantum")))
+    return !((!aObj->Get(aKey1)->IsUint32() || !aObj->Get(aKey2)->IsUint32() || !aObj->Get(aKey3)->IsUint32()) || (aObj->Has(aKey4 = String::New("alphaQuantum")) && !aObj->Get(aKey4)->IsUint32()));
+  if (aObj->Has(aKey1 = String::New("shade")))
+    return !((!aObj->Get(aKey1)->IsNumber()) || (aObj->Has(aKey4 = String::New("alpha")) && !aObj->Get(aKey4)->IsNumber()));
+  if (aObj->Has(aKey1 = String::New("mono")))
+    return !((!aObj->Get(aKey1)->IsBoolean()) || (aObj->Has(aKey4 = String::New("alpha")) && !aObj->Get(aKey4)->IsNumber()));
+  if (aObj->Has(aKey1 = String::New("hue")) && aObj->Has(aKey2 = String::New("saturation")) && aObj->Has(aKey3 = String::New("luminosity")))
+    return !((!aObj->Get(aKey1)->IsNumber() || !aObj->Get(aKey2)->IsNumber() || !aObj->Get(aKey3)->IsNumber()) || (aObj->Has(aKey4 = String::New("alpha")) && !aObj->Get(aKey4)->IsNumber()));
+  if (aObj->Has(aKey1 = String::New("Y")) && aObj->Has(aKey2 = String::New("U")) && aObj->Has(aKey3 = String::New("V")))
+    return !(!aObj->Get(aKey1)->IsNumber() || !aObj->Get(aKey2)->IsNumber() || !aObj->Get(aKey3)->IsNumber());
+  return false;
+}
+
+Magick::Color* createObjectColor(Handle<Value> obj) {
+  Local<Object> aObj = obj->ToObject();
+  Local<String> aKey1, aKey2, aKey3, aKey4;
+  Magick::Color* aColor;
+  if (aObj->Has(aKey1 = String::New("red")) && aObj->Has(aKey2 = String::New("green")) && aObj->Has(aKey3 = String::New("blue"))) {
+    aColor = new Magick::ColorRGB(aObj->Get(aKey1)->ToNumber()->Value(), aObj->Get(aKey2)->ToNumber()->Value(), aObj->Get(aKey3)->ToNumber()->Value());
+    if (aObj->Has(aKey4 = String::New("alpha")))
+      aColor->alphaQuantum(aObj->Get(aKey4)->ToNumber()->Value());
+  } else if (aObj->Has(aKey1 = String::New("redQuantum")) && aObj->Has(aKey2 = String::New("greenQuantum")) && aObj->Has(aKey3 = String::New("blueQuantum"))) {
+    aColor = new Magick::Color(aObj->Get(aKey1)->ToUint32()->Value(), aObj->Get(aKey2)->ToUint32()->Value(), aObj->Get(aKey3)->ToUint32()->Value());
+    if (aObj->Has(aKey4 = String::New("alphaQuantum")))
+      aColor->alphaQuantum(aObj->Get(aKey4)->ToUint32()->Value());
+  } else
+    assert(0);
+  return aColor;
+}
+
 bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
   int aArgN = 0, aOptN = 0;
 
@@ -17,10 +93,10 @@ bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
     case eString:         aIsType = args[aArgN]->IsString();                                 break;
     case eArray:          aIsType = args[aArgN]->IsArray();                                  break;
     case eBuffer:
-    case eObjectColor:
-    case eObjectGeometry:
     case eObjectImage:
     case eObject:         aIsType = args[aArgN]->IsObject() && !args[aArgN]->IsFunction();   break;
+    case eObjectColor:    aIsType = isObjectColor(args[aArgN]);                              break;
+    case eObjectGeometry: aIsType = isObjectGeometry(args[aArgN]);                           break;
     case eNull:           aIsType = args[aArgN]->IsNull();                                   break;
     case eFunction:       aIsType = args[aArgN]->IsFunction();                               break;
     default: { std::string aEx("incorrect signature member: "); aEx += (char)(signature[aSigN] + '0'); throw aEx; }

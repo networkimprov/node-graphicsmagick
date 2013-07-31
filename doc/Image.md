@@ -358,7 +358,7 @@ Replace image with a sharpened version of the original image using the unsharp m
 **wave ( [Number amplitude = 25.0][, Number wavelength = 150.0], Function callback)**  
 Map image pixels to a sine wave.  
  
-**write ( String imageSpec, Function callback )**  
+**writeFile ( String imageSpec, Function callback )**  
 Write single image frame to a file.  
 
 **write ( Function callback )**  

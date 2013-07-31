@@ -5,7 +5,7 @@ JSON object which provides convenient means to specify a geometry information. S
 * xOff - X offset from origin, Uint32 value, default 0.
 * yOff - Y offset from origin, Uint32 value, default 0.
 * xNegative  - Sign of X offset negative? (X origin at right), Boolean value, default false.
-* xNegative  - Sign of Y offset negative? (Y origin at bottom), Boolean value, default false.
+* yNegative  - Sign of Y offset negative? (Y origin at bottom), Boolean value, default false.
 * percent - Width and height are expressed as percentages, Boolean value, optional.
 * aspect - Resize without preserving aspect ratio, Boolean value, optional.
 * greater - Resize if image is greater than size (>), Boolean value, optional.

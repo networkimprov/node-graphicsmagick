@@ -6,6 +6,11 @@
 #include "async.h"
 #include <string.h>
 
+/*
+  TODO: high level description of how the binding is implemented
+*/
+
+
 enum ArgumentType {
   eEnd,
   eInt32,
@@ -22,16 +27,34 @@ enum ArgumentType {
   eFunction
 };
 
+//Checks arguments agains signature and returns if they match.
+//Also sets optionals - for each optional in the signature sets the index in args, or -1 if it is not present.
 bool checkArguments(int signature[], const Arguments& args, int optionals[]);
+
+//Returns a ThrowException for the specified signature.
 Handle<Value> throwSignatureErr(int signature[]);
+
+//Returns a ThrowException for a method with multiple signatures.
 Handle<Value> throwSignatureErr(int *signatures[], int sigN);
 
+//Checks if a JS Object is of Geometry type (as on /doc/Geometry.md).
+bool isObjectGeometry(Handle<Value> obj);
+
+//Converts a JS Geometry Object to Magick::Geometry. Assumes the JS Geometry Object is valid.
 Magick::Geometry* createObjectGeometry(Handle<Value> obj);
+
+//Checks if a JS Object is of Color type (as on /doc/Color.md).
+bool isObjectColor(Handle<Value> obj);
+
+//Converts a JS Color  Object to Magick::Color. Assumes the JS Color  Object is valid.
 Magick::Color* createObjectColor(Handle<Value> obj);
 
+//Generic structure used to store signature arguments values, the action and return value.
 struct GenericData {
+  //Generic data store for a single argument.
   struct Item {
     Item() : type(eEnd) {};
+    Item& operator=(const Item& p) { assert(0); } //some items may need deep copy
     void setString(const std::string &str) { if (type == eString) *string = str; else { string = new std::string(str); type = eString; } };
     ~Item() {
       switch (type) {
@@ -58,6 +81,7 @@ struct GenericData {
   Item* val;
   Item retVal;
   GenericData();
+  //Creates the generic data. Assumes the arguments, optionals and signature match.
   GenericData(int act, const Arguments& args, int signature[], int optionals[], Item* defaults = NULL) : action(act) {
     int aLength;
     for (aLength = 0; signature[aLength] != eEnd; ++aLength);
@@ -87,7 +111,29 @@ struct GenericData {
   ~GenericData() { if (val) delete[] val; }
 };
 
-//if checkArguments = false, optionals must be supplied
+//Function used to wrap sync/async methods easily.
+/*
+1. Checks if the arguments are in accordance with the signature (if required);
+    If checkArguments is false, optionals must be supplied. Used for methods with multiple signatures.
+2. Generates the GenericData from the arguments.
+3. If the last argument is a function:
+  3.1.1 Asynchronously calls Generic_process, which must implement tha data processing.
+    Will have access to a GenericData object which also contains the action.
+    Will have access to the calling object, obtained from unwrapping the arguments.
+  3.1.2 When the processing is complete it calls Generic_convert to generate de JS return objects.
+    Will have access to a GenericData object in which the return data should have been set in Generic_process.
+else
+  3.2 Synchronously calls Generic_process and Generic_convert.
+
+Classes must implement:
+  void Generic_process(void* pData, void* pThat); - the
+  Handle<Value> Image::Generic_convert(void* pData);
+
+Accepts inherited classes
+T is the derived class, for which the Generic_process and Generic_convert will be called
+N is the base class. Used for async operations.
+*/
+//TODO: see if this can be moved to async.h
 template<class T, class N>
 Handle<Value> generic_start(int act, const Arguments& args, int signature[], bool checkArgs = true, int* optionals = NULL, GenericData::Item* defaults = NULL) {
   HandleScope scope;
@@ -117,11 +163,13 @@ Handle<Value> generic_start(int act, const Arguments& args, int signature[], boo
   return scope.Close(aResult);
 }
 
+//generic_start for classes which are not derived
 template<class T>
 Handle<Value> generic_start(int act, const Arguments& args, int signature[], bool checkArgs = true, int* optionals = NULL, GenericData::Item* defaults = NULL) {
   return generic_start<T,T>(act, args, signature, checkArgs, optionals, defaults);
 }
 
+//The Image class - /doc/Image.md
 class Image : public AsyncWrap<Image> {
 public:
   static void Init(Handle<Object> target);

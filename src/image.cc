@@ -31,13 +31,14 @@ Handle<Value> Image::New(const Arguments& args) {
   Image* that = new Image();
   that->Wrap(args.This());
   try {
-    if (checkArguments(kNew1, args, aOpt)) //fix: if there's a lot of these, write this as a loop
+    if (checkArguments(kNew1, args, aOpt)) //fix: see fix comment in generic_start; should write this as a loop
       that->setImage(new Magick::Image());
     else if (checkArguments(kNew2, args, aOpt))
       generic_start<Image>(eNew2, args, kNew2, false, aOpt);
     else if (checkArguments(kNew3, args, aOpt))
       generic_start<Image>(eNew3, args, kNew3, false, aOpt);
-  } catch (std::exception& err) {
+    //fix: else what about signature error? default ctor? if so, no need to checkArguments(kNew1...)
+  } catch (std::exception& err) { //fix: if only for setImage, try/catch just that
     return ThrowException(Exception::Error(String::New(err.what())));
   }
   return args.This();

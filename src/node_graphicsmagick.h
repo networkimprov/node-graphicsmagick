@@ -10,24 +10,16 @@
   TODO: high level description of how the binding is implemented
 */
 
+//fix: maybe we need a FunctionSignature class to encapsulate signature & optionals, rather than defining int arrays?
 
 enum ArgumentType {
   eEnd,
-  eInt32,
-  eUint32,
-  eBoolean,
-  eString,
-  eObject,
-  eArray,
+  eInt32, eUint32, eBoolean, eString, eObject, eArray, eFunction, eNull, //fix: moved up function & null
   eBuffer,
-  eObjectColor,
-  eObjectGeometry,
-  eObjectImage,
-  eNull,
-  eFunction
+  eObjectColor, eObjectGeometry, eObjectImage
 };
 
-//Checks arguments agains signature and returns if they match.
+//Checks arguments against signature and returns if they match.
 //Also sets optionals - for each optional in the signature sets the index in args, or -1 if it is not present.
 bool checkArguments(int signature[], const Arguments& args, int optionals[]);
 
@@ -50,17 +42,26 @@ bool isObjectColor(Handle<Value> obj);
 Magick::Color* createObjectColor(Handle<Value> obj);
 
 //Generic structure used to store signature arguments values, the action and return value.
+//fix: 'data' isn't descriptive; GenericFunctionSig? ...FunctionDef?
 struct GenericData {
   //Generic data store for a single argument.
+  //fix: perhaps 'ArgItem'?
   struct Item {
     Item() : type(eEnd) {};
-    Item& operator=(const Item& p) { assert(0); } //some items may need deep copy
-    void setString(const std::string &str) { if (type == eString) *string = str; else { string = new std::string(str); type = eString; } };
     ~Item() {
       switch (type) {
       case eString:         delete string;                      break;
       case eObjectColor:    delete (Magick::Color*)    pointer; break;
       case eObjectGeometry: delete (Magick::Geometry*) pointer; break;
+      }
+    }
+    Item& operator=(const Item&); //some items may need deep copy //fix: now catches use on compile
+    void setString(const std::string &str) {
+      if (type == eString) {
+        *string = str;
+      } else {
+        string = new std::string(str);
+        type = eString;
       }
     }
     void setObjectType(void* p, int t) {
@@ -77,9 +78,7 @@ struct GenericData {
     };
     int type;
   };
-  int action;
-  Item* val;
-  Item retVal;
+  
   GenericData();
   //Creates the generic data. Assumes the arguments, optionals and signature match.
   GenericData(int act, const Arguments& args, int signature[], int optionals[], Item* defaults = NULL) : action(act) {
@@ -109,6 +108,9 @@ struct GenericData {
     }
   }
   ~GenericData() { if (val) delete[] val; }
+  int action;
+  Item* val;
+  Item retVal;
 };
 
 //Function used to wrap sync/async methods easily.
@@ -139,11 +141,12 @@ Handle<Value> generic_start(int act, const Arguments& args, int signature[], boo
   HandleScope scope;
   int aLength = 0;
   for (int a = 0; signature[a] != eEnd; ++a)
-    if (signature[a]<0) aLength++;
+    if (signature[a] < 0)
+      aLength++;
   int* aOptionals;
   if (checkArgs) {
     assert(aLength > 0);
-    aOptionals = new int[aLength];
+    aOptionals = new int[aLength]; //fix: mem leak if return throwSignatureErr below?
     if (!checkArguments(signature, args, aOptionals))
       return throwSignatureErr(signature);
   } else

@@ -10,8 +10,6 @@
   TODO: high level description of how the binding is implemented
 */
 
-//fix: maybe we need a FunctionSignature class to encapsulate signature & optionals, rather than defining int arrays?
-
 enum ArgumentType {
   eEnd,
   eInt32, eUint32, eBoolean, eString, eObject, eArray, eFunction, eNull, //fix: moved up function & null
@@ -42,12 +40,12 @@ bool isObjectColor(Handle<Value> obj);
 Magick::Color* createObjectColor(Handle<Value> obj);
 
 //Generic structure used to store signature arguments values, the action and return value.
-//fix: 'data' isn't descriptive; GenericFunctionSig? ...FunctionDef?
+//fix: 'data' isn't descriptive; GenericFunctionCall? GenericLibOp?
 struct GenericData {
   //Generic data store for a single argument.
-  //fix: perhaps 'ArgItem'?
+  //fix: 'item' not descriptive; perhaps 'Value'?
   struct Item {
-    Item() : type(eEnd) {};
+    Item() : type(eEnd) {}
     ~Item() {
       switch (type) {
       case eString:         delete string;                      break;
@@ -57,7 +55,7 @@ struct GenericData {
     }
     Item& operator=(const Item&); //some items may need deep copy //fix: now catches use on compile
     void setString(const std::string &str) {
-      if (type == eString) {
+      if (type == eString) {//fix: are Items reused such that this is possible?
         *string = str;
       } else {
         string = new std::string(str);
@@ -102,9 +100,10 @@ struct GenericData {
       case eString:         val[aSigN].setString(*String::Utf8Value(args[aArgInd]));                        break;
       case eObjectColor:    val[aSigN].setObjectType(createObjectColor(args[aArgInd]), eObjectColor);       break;
       case eObjectGeometry: val[aSigN].setObjectType(createObjectGeometry(args[aArgInd]), eObjectGeometry); break;
-      case eFunction: break;
+      case eFunction:                                                                                       break;
       default: assert(0);
       }
+      //fix: need val[aSigN].type = abs(signature[aSigN]) ? if so, don't need Item::setString or setObjectType; set .pointer/string directly above
     }
   }
   ~GenericData() { if (val) delete[] val; }
@@ -144,7 +143,7 @@ Handle<Value> generic_start(int act, const Arguments& args, int signature[], boo
     if (signature[a] < 0)
       aLength++;
   int* aOptionals;
-  if (checkArgs) {
+  if (checkArgs) { //fix: require caller to call checkArguments always, or never by taking list of signatures?
     assert(aLength > 0);
     aOptionals = new int[aLength]; //fix: mem leak if return throwSignatureErr below?
     if (!checkArguments(signature, args, aOptionals))

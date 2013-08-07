@@ -5,6 +5,8 @@ using namespace node;
 
 using namespace std;
 
+//fix: merge isObjectX with createObjectX ? createObjectX can return NULL (avoid defining functions until you need to call them)
+
 bool isObjectGeometry(Handle<Value> obj) {
   if (!obj->IsObject() || obj->IsFunction())
    return false;
@@ -77,7 +79,7 @@ Magick::Color* createObjectColor(Handle<Value> obj) {
     if (aObj->Has(aKey4 = String::New("alphaQuantum")))
       aColor->alphaQuantum(aObj->Get(aKey4)->ToUint32()->Value());
   } else
-    assert(0);
+    assert(0); //fix: really blow up if color spec incomplete?
   return aColor;
 }
 
@@ -99,14 +101,19 @@ bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
     case eObjectGeometry: aIsType = isObjectGeometry(args[aArgN]);                           break;
     case eNull:           aIsType = args[aArgN]->IsNull();                                   break;
     case eFunction:       aIsType = args[aArgN]->IsFunction();                               break;
-    default: { std::string aEx("incorrect signature member: "); aEx += (char)(signature[aSigN] + '0'); throw aEx; }
+    default: {
+      std::string aEx("incorrect signature member: ");
+      aEx += (char)(signature[aSigN] + '0');
+      throw aEx;
+      }
     }
 
     if (signature[aSigN] < 0) {
       optionals[aOptN] = aIsType ? aArgN++ : -1;
       ++aOptN;
     } else {
-      if (!aIsType) return false;
+      if (!aIsType)
+        return false;
       ++aArgN;
     }
   }
@@ -132,7 +139,7 @@ static std::string generateSignatureString(int signature[]) {
     case eObjectImage:    aStr += "Image";    break;
     case eNull:           aStr += "null";     break;
     case eFunction:       aStr += "function"; break;
-    default:         throw "incorrect sig member"; 
+    default:              throw "incorrect sig member"; 
     }
     if (signature[aSigN] < 0) aStr += "]";
   }
@@ -156,7 +163,7 @@ Handle<Value> throwSignatureErr(int *signatures[], int sigN) {
   return ThrowException(v8::Exception::TypeError(String::New(aStr.c_str())));
 }
 
-void init(Handle<Object> exports) {
+void init(Handle<Object> exports) { //fix: move these above other functions
   initAsync(exports);
   Magick::InitializeMagick(NULL);
   Image::Init(exports);

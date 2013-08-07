@@ -10,3 +10,5 @@ The API tries to mimick the API of [Magick++](http://www.graphicsmagick.org/Magi
 * [Constants](/doc/Constants.md)
 * [Geometry](/doc/Geometry.md)
 * [Image](/doc/Image.md)
+
+//fix: unless there's more docs to create, include all docs here, make the above links point to anchor tags, eliminate docs dir

@@ -54,18 +54,6 @@ struct GenericData {
       }
     }
     Item& operator=(const Item&) { assert(0); } //some items may need deep copy
-    void setString(const std::string &str) {
-      if (type == eString) {//fix: are Items reused such that this is possible?
-        *string = str;
-      } else {
-        string = new std::string(str);
-        type = eString;
-      }
-    }
-    void setObjectType(void* p, int t) {
-      type = t;
-      pointer = p;
-    }
     union {
       double dbl;
       uint32_t uint32;
@@ -94,16 +82,16 @@ struct GenericData {
         }
       }
       switch (abs(signature[aSigN])) {
-      case eInt32:          val[aSigN].int32 = args[aArgInd]->Int32Value();                                 break;
-      case eUint32:         val[aSigN].uint32 = args[aArgInd]->Uint32Value();                               break;
-      case eBoolean:        val[aSigN].boolean = args[aArgInd]->BooleanValue();                             break;
-      case eString:         val[aSigN].setString(*String::Utf8Value(args[aArgInd]));                        break;
-      case eObjectColor:    val[aSigN].setObjectType(createObjectColor(args[aArgInd]), eObjectColor);       break;
-      case eObjectGeometry: val[aSigN].setObjectType(createObjectGeometry(args[aArgInd]), eObjectGeometry); break;
-      case eFunction:                                                                                       break;
+      case eInt32:          val[aSigN].int32 = args[aArgInd]->Int32Value();                         break;
+      case eUint32:         val[aSigN].uint32 = args[aArgInd]->Uint32Value();                       break;
+      case eBoolean:        val[aSigN].boolean = args[aArgInd]->BooleanValue();                     break;
+      case eString:         val[aSigN].string = new std::string(*String::Utf8Value(args[aArgInd])); break;
+      case eObjectColor:    val[aSigN].pointer = createObjectColor(args[aArgInd]);                  break;
+      case eObjectGeometry: val[aSigN].pointer = createObjectGeometry(args[aArgInd]);               break;
+      case eFunction:                                                                               break;
       default: assert(0);
       }
-      //fix: need val[aSigN].type = abs(signature[aSigN]) ? if so, don't need Item::setString or setObjectType; set .pointer/string directly above
+      val[aSigN].type = abs(signature[aSigN]);
     }
   }
   ~GenericData() { if (val) delete[] val; }

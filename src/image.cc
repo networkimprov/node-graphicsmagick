@@ -67,7 +67,7 @@ Handle<Value> Image::Write(const Arguments& args) {
 }
 
 void Image::Generic_process(void* pData, void* pThat) {
-  GenericData* data = (GenericData*) pData;
+  GenericFunctionCall* data = (GenericFunctionCall*) pData;
   Image* that = (Image *) pThat;
   switch (data->action) {
   case eNew2:
@@ -100,7 +100,7 @@ void Image::Generic_process(void* pData, void* pThat) {
 }
 
 Handle<Value> Image::Generic_convert(void* pData) {
-  GenericData* data = (GenericData*) pData;
+  GenericFunctionCall* data = (GenericFunctionCall*) pData;
   Handle<Value> aResult = Undefined();
   switch (data->action) {
   case eNew3: 

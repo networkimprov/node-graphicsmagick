@@ -159,6 +159,24 @@ Handle<Value> generic_check_start(int act, const Arguments& args, int signature[
   return aResult;
 }
 
+//generic_check_start with multiple signatures
+//skip allows some signatures to be treated differently
+template<class T, class N>
+Handle<Value> generic_check_start(int size, int acts[], const Arguments& args, int* signatures[], GenericFunctionCall::GenericValue* defaults[] = NULL, int skip = 0) {
+  Handle<Value> aResult;
+  int* aOptionals = new int[size], aN;
+  for (aN = skip; aN < size; aN++)
+    if (checkArguments(signatures[aN], args, aOptionals)) {
+      aResult = generic_start<T, N>(acts[aN], args, signatures[aN], aOptionals, defaults == NULL? NULL : defaults[aN]);
+      break;
+    }
+  if (aN == size)
+    aResult = throwSignatureErr(signatures, size);
+  delete[] aOptionals;
+  return aResult;
+}
+
+
 //generic_start for classes which are not derived
 template<class T>
 Handle<Value> generic_start(int act, const Arguments& args, int signature[], int* optionals = NULL, GenericFunctionCall::GenericValue* defaults = NULL) {
@@ -169,6 +187,10 @@ Handle<Value> generic_start(int act, const Arguments& args, int signature[], int
 template<class T>
 Handle<Value> generic_check_start(int act, const Arguments& args, int signature[], GenericFunctionCall::GenericValue* defaults = NULL) {
   return generic_check_start<T, T>(act, args, signature, defaults);
+}
+template<class T>
+Handle<Value> generic_check_start(int size, int acts[], const Arguments& args, int* signatures[], GenericFunctionCall::GenericValue* defaults[] = NULL, int skip = 0) {
+  return generic_check_start<T, T>(size, acts, args, signatures, defaults, skip);
 }
 
 //The Image class - /doc/Image.md

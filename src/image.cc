@@ -15,34 +15,32 @@ void Image::Init(Handle<Object> target) {
 
 //fix: comment describing these symbols
 enum {
-  eNew2, eNew3,//fix: new1 ?
+  eNew1, eNew2, eNew3,
   eWrite1, eWrite2, eWrite3,
-  eWriteFile
+  eWriteFile,
 };
 
 
 static int kNew1[] = { eEnd };
-static int kNew2[] = { eObjectGeometry, eObjectColor, eEnd };
+static int kNew2[] = { eObjectGeometry, eObjectColor, -eFunction, eEnd };
 static int kNew3[] = { eString, -eFunction, eEnd };
-static int* kNewSet[] = { kNew1, kNew3 }; //fix: not used?; omits new2
+static int eNewSet[] = { eNew1, eNew2, eNew3 };
+static int* kNewSet[] = { kNew1, kNew2, kNew3 };
+static int kNewLength = 3;
 Handle<Value> Image::New(const Arguments& args) {
   HandleScope scope;
-  int aOpt[1];
   Image* that = new Image();
   that->Wrap(args.This());
-  try {
-    if (checkArguments(kNew1, args, aOpt)) //fix: see fix comment in generic_start; should write this as a loop
+  int aOpt[1];
+  if (checkArguments(kNew1, args, aOpt)) {
+    try {
       that->setImage(new Magick::Image());
-    else if (checkArguments(kNew2, args, aOpt))
-      generic_start<Image>(eNew2, args, kNew2, aOpt);
-    else if (checkArguments(kNew3, args, aOpt))
-      generic_start<Image>(eNew3, args, kNew3, aOpt);
-    else
-      return throwSignatureErr(kNewSet, 3);
-  } catch (std::exception& err) { //fix: if only for setImage, try/catch just that
-    return ThrowException(Exception::Error(String::New(err.what())));
+    } catch (std::exception& err) {
+      return ThrowException(Exception::Error(String::New(err.what())));
+    }
+    return args.This();
   }
-  return args.This();
+  return generic_check_start<Image>(kNewLength, eNewSet, args, kNewSet, NULL, 1);
 }
 
 static int kWriteFile[] = { eString, -eFunction, eEnd };
@@ -53,19 +51,10 @@ Handle<Value> Image::WriteFile(const Arguments& args) {
 static int kWrite1[] = { eString, -eFunction, eEnd };
 static int kWrite2[] = { -eFunction, eEnd };
 static int kWrite3[] = { eString, eUint32, -eFunction, eEnd };
+static int eWriteSet[] = { eWrite1, eWrite2, eWrite3 };
 static int* kWriteSet[] = { kWrite1, kWrite2, kWrite3 };
-Handle<Value> Image::Write(const Arguments& args) {
-  HandleScope scope;
-  int aOpt[1];
-  if (checkArguments(kWrite1, args, aOpt)) //fix: loop?
-    return generic_start<Image>(eWrite1, args, kWrite1, aOpt);
-  else if (checkArguments(kWrite2, args, aOpt))
-    return generic_start<Image>(eWrite2, args, kWrite2, aOpt);
-  else if (checkArguments(kWrite3, args, aOpt))
-    return generic_start<Image>(eWrite3, args, kWrite3, aOpt);
-  else
-    return throwSignatureErr(kWriteSet, 3);
-}
+static int kWriteLength = 3;
+Handle<Value> Image::Write(const Arguments& args) { return generic_check_start<Image>(kWriteLength, eWriteSet, args, kWriteSet); }
 
 void Image::Generic_process(void* pData, void* pThat) {
   GenericFunctionCall* data = (GenericFunctionCall*) pData;

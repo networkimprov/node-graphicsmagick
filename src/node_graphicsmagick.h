@@ -100,20 +100,20 @@ struct GenericFunctionCall {
 
 //Function used to wrap sync/async methods easily.
 /*
-1. Checks if the arguments are in accordance with the signature (if required);
-    If checkArguments is false, optionals must be supplied. Used for methods with multiple signatures.
-2. Generates the GenericFunctionCall from the arguments.
-3. If the last argument is a function:
-  3.1.1 Asynchronously calls Generic_process, which must implement tha data processing.
+1. Generates the GenericFunctionCall from the arguments.
+2. If the last argument is a function:
+  2.1.1 Asynchronously calls Generic_process, which must implement tha data processing.
     Will have access to a GenericFunctionCall object which also contains the action.
     Will have access to the calling object, obtained from unwrapping the arguments.
-  3.1.2 When the processing is complete it calls Generic_convert to generate de JS return objects.
+  2.1.2 When the processing is complete it calls Generic_convert to generate de JS return objects.
     Will have access to a GenericFunctionCall object in which the return data should have been set in Generic_process.
 else
-  3.2 Synchronously calls Generic_process and Generic_convert.
+  2.2 Synchronously calls Generic_process and Generic_convert.
+
+Assumes the arguments and signature match and that the optionals are set.
 
 Classes must implement:
-  void Generic_process(void* pData, void* pThat); - the
+  void Generic_process(void* pData, void* pThat);
   Handle<Value> Image::Generic_convert(void* pData);
 
 Accepts inherited classes
@@ -122,39 +122,53 @@ N is the base class. Used for async operations.
 */
 //TODO: see if this can be moved to async.h
 template<class T, class N>
-Handle<Value> generic_start(int act, const Arguments& args, int signature[], bool checkArgs = true, int* optionals = NULL, GenericFunctionCall::GenericValue* defaults = NULL) {
+Handle<Value> generic_start(int act, const Arguments& args, int signature[], int* optionals, GenericFunctionCall::GenericValue* defaults = NULL) {
   HandleScope scope;
   int aLength = 0;
   for (int a = 0; signature[a] != eEnd; ++a)
     if (signature[a] < 0)
       aLength++;
-  int* aOptionals;
-  if (checkArgs) { //fix: require caller to call checkArguments always, or never by taking list of signatures?
-    assert(aLength > 0);
-    aOptionals = new int[aLength]; //fix: mem leak if return throwSignatureErr below?
-    if (!checkArguments(signature, args, aOptionals))
-      return throwSignatureErr(signature);
-  } else
-    aOptionals = optionals;
-  GenericFunctionCall* aData = new GenericFunctionCall(act, args, signature, aOptionals, defaults); //deleted by Generic_convert on non error
+  GenericFunctionCall* aData = new GenericFunctionCall(act, args, signature, optionals, defaults); //deleted by Generic_convert on non error
   Handle<Value> aResult = Undefined();
   try {
-    aResult = invoke<N>(aOptionals[aLength-1] >= 0, args, (void*)aData, T::Generic_process, T::Generic_convert);
+    aResult = invoke<N>(optionals[aLength-1] >= 0, args, (void*)aData, T::Generic_process, T::Generic_convert);
   } catch (Handle<Value> ex) {
-    if (checkArgs)
-      delete[] aOptionals;
     delete aData;
     return ThrowException(ex);
   }
-  if (checkArgs)
-    delete[] aOptionals;
   return scope.Close(aResult);
+}
+
+//Calls generic_start but also checks if the arguments match the signature and generates the optionals.
+//TODO: see if this can be moved to async.h
+template<class T, class N>
+Handle<Value> generic_check_start(int act, const Arguments& args, int signature[], GenericFunctionCall::GenericValue* defaults = NULL) {
+  int aLength = 0;
+  for (int a = 0; signature[a] != eEnd; ++a)
+    if (signature[a] < 0)
+      aLength++;
+  int* aOptionals;
+  assert(aLength > 0);
+  aOptionals = new int[aLength];
+  if (!checkArguments(signature, args, aOptionals)) {
+    delete[] aOptionals;
+    return throwSignatureErr(signature);
+  }
+  Handle<Value> aResult = generic_start<T, N>(act, args, signature, aOptionals, defaults);
+  delete[] aOptionals;
+  return aResult;
 }
 
 //generic_start for classes which are not derived
 template<class T>
-Handle<Value> generic_start(int act, const Arguments& args, int signature[], bool checkArgs = true, int* optionals = NULL, GenericFunctionCall::GenericValue* defaults = NULL) {
-  return generic_start<T,T>(act, args, signature, checkArgs, optionals, defaults);
+Handle<Value> generic_start(int act, const Arguments& args, int signature[], int* optionals = NULL, GenericFunctionCall::GenericValue* defaults = NULL) {
+  return generic_start<T,T>(act, args, signature, optionals, defaults);
+}
+
+//generic_check_start for classes which are not derived
+template<class T>
+Handle<Value> generic_check_start(int act, const Arguments& args, int signature[], GenericFunctionCall::GenericValue* defaults = NULL) {
+  return generic_check_start<T, T>(act, args, signature, defaults);
 }
 
 //The Image class - /doc/Image.md

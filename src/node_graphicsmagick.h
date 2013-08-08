@@ -53,7 +53,7 @@ struct GenericData {
       case eObjectGeometry: delete (Magick::Geometry*) pointer; break;
       }
     }
-    Item& operator=(const Item&); //some items may need deep copy //fix: now catches use on compile
+    Item& operator=(const Item&) { assert(0); } //some items may need deep copy
     void setString(const std::string &str) {
       if (type == eString) {//fix: are Items reused such that this is possible?
         *string = str;

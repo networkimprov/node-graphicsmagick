@@ -13,7 +13,7 @@ void Image::Init(Handle<Object> target) {
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
 }
 
-//fix: comment describing these symbols
+//Actions for Image::Generic_process. Each method will set the action and it will be processed accordingly.
 enum {
   eNew1, eNew2, eNew3,
   eWrite1, eWrite2, eWrite3,

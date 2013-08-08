@@ -5,6 +5,14 @@ using namespace node;
 
 using namespace std;
 
+void init(Handle<Object> exports) {
+  initAsync(exports);
+  Magick::InitializeMagick(NULL);
+  Image::Init(exports);
+}
+
+NODE_MODULE(node_graphicsmagick, init);
+
 //fix: merge isObjectX with createObjectX ? createObjectX can return NULL (avoid defining functions until you need to call them)
 
 bool isObjectGeometry(Handle<Value> obj) {
@@ -162,11 +170,3 @@ Handle<Value> throwSignatureErr(int *signatures[], int sigN) {
   }
   return ThrowException(v8::Exception::TypeError(String::New(aStr.c_str())));
 }
-
-void init(Handle<Object> exports) { //fix: move these above other functions
-  initAsync(exports);
-  Magick::InitializeMagick(NULL);
-  Image::Init(exports);
-}
-
-NODE_MODULE(node_graphicsmagick, init);

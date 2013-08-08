@@ -12,7 +12,7 @@
 
 enum ArgumentType {
   eEnd,
-  eInt32, eUint32, eBoolean, eString, eObject, eArray, eFunction, eNull, //fix: moved up function & null
+  eInt32, eUint32, eBoolean, eString, eObject, eArray, eFunction, eNull,
   eBuffer,
   eObjectColor, eObjectGeometry, eObjectImage
 };

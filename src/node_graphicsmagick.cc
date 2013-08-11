@@ -13,7 +13,9 @@ void init(Handle<Object> exports) {
 
 NODE_MODULE(node_graphicsmagick, init);
 
-//fix: merge isObjectX with createObjectX ? createObjectX can return NULL (avoid defining functions until you need to call them)
+//fix: make JS accessible createGeometry/Color functions, which create GM objects wrapped in an External
+// user calls it and passes result to Image methods
+// this is simpler than defining complete JS classes
 
 bool isObjectGeometry(Handle<Value> obj) {
   if (!obj->IsObject() || obj->IsFunction())
@@ -105,7 +107,7 @@ bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
     case eBuffer:
     case eObjectImage:
     case eObject:         aIsType = args[aArgN]->IsObject() && !args[aArgN]->IsFunction();   break;
-    case eObjectColor:    aIsType = isObjectColor(args[aArgN]);                              break;
+    case eObjectColor:    aIsType = isObjectColor(args[aArgN]);                              break; //fix: isExternal
     case eObjectGeometry: aIsType = isObjectGeometry(args[aArgN]);                           break;
     case eNull:           aIsType = args[aArgN]->IsNull();                                   break;
     case eFunction:       aIsType = args[aArgN]->IsFunction();                               break;

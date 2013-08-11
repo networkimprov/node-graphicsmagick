@@ -24,9 +24,10 @@ enum {
 static int kNew1[] = { eEnd };
 static int kNew2[] = { eObjectGeometry, eObjectColor, -eFunction, eEnd };
 static int kNew3[] = { eString, -eFunction, eEnd };
-static int eNewSet[] = { eNew1, eNew2, eNew3 };
+//fix: maybe define a struct with a pair of int* and int members; make an array of them?
+static int eNewSet[] = { eNew1, eNew2, eNew3 }; //fix: 'kNewSetType'
 static int* kNewSet[] = { kNew1, kNew2, kNew3 };
-static int kNewLength = 3;
+static int kNewLength = 3; //fix: terminate array with NULL
 Handle<Value> Image::New(const Arguments& args) {
   HandleScope scope;
   Image* that = new Image();
@@ -51,10 +52,12 @@ Handle<Value> Image::WriteFile(const Arguments& args) {
 static int kWrite1[] = { eString, -eFunction, eEnd };
 static int kWrite2[] = { -eFunction, eEnd };
 static int kWrite3[] = { eString, eUint32, -eFunction, eEnd };
-static int eWriteSet[] = { eWrite1, eWrite2, eWrite3 };
+static int eWriteSet[] = { eWrite1, eWrite2, eWrite3 }; //fix
 static int* kWriteSet[] = { kWrite1, kWrite2, kWrite3 };
-static int kWriteLength = 3;
-Handle<Value> Image::Write(const Arguments& args) { return generic_check_start<Image>(kWriteLength, eWriteSet, args, kWriteSet); }
+static int kWriteLength = 3; //fix
+Handle<Value> Image::Write(const Arguments& args) {
+  return generic_check_start<Image>(kWriteLength, eWriteSet, args, kWriteSet);
+}
 
 void Image::Generic_process(void* pData, void* pThat) {
   GenericFunctionCall* data = (GenericFunctionCall*) pData;

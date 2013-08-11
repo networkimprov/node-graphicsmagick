@@ -14,7 +14,7 @@ enum ArgumentType {
   eEnd,
   eInt32, eUint32, eBoolean, eString, eObject, eArray, eFunction, eNull,
   eBuffer,
-  eObjectColor, eObjectGeometry, eObjectImage
+  eObjectColor, eObjectGeometry, eObjectImage //fix: eExternal; eObjectImage wasn't used?
 };
 
 //Checks arguments against signature and returns if they match.
@@ -51,7 +51,7 @@ struct GenericFunctionCall {
       case eObjectGeometry: delete (Magick::Geometry*) pointer; break;
       }
     }
-    GenericValue& operator=(const GenericValue&) { assert(0); } //some items may need deep copy
+    GenericValue& operator=(const GenericValue&) { assert(0); } //fix: this will blow up on attempt to val[] = defaults[] below? //some items may need deep copy
     union {
       double dbl;
       uint32_t uint32;
@@ -121,6 +121,9 @@ T is the derived class, for which the Generic_process and Generic_convert will b
 N is the base class. Used for async operations.
 */
 //TODO: see if this can be moved to async.h
+
+//fix: possible to use same args across _start functions so they can be merged?
+
 template<class T, class N>
 Handle<Value> generic_start(int act, const Arguments& args, int signature[], int* optionals, GenericFunctionCall::GenericValue* defaults = NULL) {
   HandleScope scope;

@@ -17,6 +17,12 @@ enum ArgumentType {
   eObjectColor, eObjectGeometry, eObjectImage //fix: eExternal; eObjectImage wasn't used?
 };
 
+//Used for methods with multiple signatures and actions.
+struct SetType {
+  int* signature;
+  int action;
+};
+
 //Checks arguments against signature and returns if they match.
 //Also sets optionals - for each optional in the signature sets the index in args, or -1 if it is not present.
 bool checkArguments(int signature[], const Arguments& args, int optionals[]);
@@ -25,7 +31,7 @@ bool checkArguments(int signature[], const Arguments& args, int optionals[]);
 Handle<Value> throwSignatureErr(int signature[]);
 
 //Returns a ThrowException for a method with multiple signatures.
-Handle<Value> throwSignatureErr(int *signatures[], int sigN);
+Handle<Value> throwSignatureErr(SetType sets[]);
 
 //Checks if a JS Object is of Geometry type (as on /doc/Geometry.md).
 bool isObjectGeometry(Handle<Value> obj);
@@ -165,16 +171,18 @@ Handle<Value> generic_check_start(int act, const Arguments& args, int signature[
 //generic_check_start with multiple signatures
 //skip allows some signatures to be treated differently
 template<class T, class N>
-Handle<Value> generic_check_start(int size, int acts[], const Arguments& args, int* signatures[], GenericFunctionCall::GenericValue* defaults[] = NULL, int skip = 0) {
+Handle<Value> generic_check_start(const Arguments& args, SetType sets[], GenericFunctionCall::GenericValue* defaults[] = NULL, int skip = 0) {
   Handle<Value> aResult;
-  int* aOptionals = new int[size], aN;
-  for (aN = skip; aN < size; aN++)
-    if (checkArguments(signatures[aN], args, aOptionals)) {
-      aResult = generic_start<T, N>(acts[aN], args, signatures[aN], aOptionals, defaults == NULL? NULL : defaults[aN]);
+  int aSize = 0;
+  while (sets[aSize].signature != NULL) aSize++;
+  int* aOptionals = new int[aSize], aN;
+  for (aN = skip; aN < aSize; aN++)
+    if (checkArguments(sets[aN].signature, args, aOptionals)) {
+      aResult = generic_start<T, N>(sets[aN].action, args, sets[aN].signature, aOptionals, defaults == NULL? NULL : defaults[aN]);
       break;
     }
-  if (aN == size)
-    aResult = throwSignatureErr(signatures, size);
+  if (aN == aSize)
+    aResult = throwSignatureErr(sets);
   delete[] aOptionals;
   return aResult;
 }
@@ -192,8 +200,8 @@ Handle<Value> generic_check_start(int act, const Arguments& args, int signature[
   return generic_check_start<T, T>(act, args, signature, defaults);
 }
 template<class T>
-Handle<Value> generic_check_start(int size, int acts[], const Arguments& args, int* signatures[], GenericFunctionCall::GenericValue* defaults[] = NULL, int skip = 0) {
-  return generic_check_start<T, T>(size, acts, args, signatures, defaults, skip);
+Handle<Value> generic_check_start(const Arguments& args, SetType sets[], GenericFunctionCall::GenericValue* defaults[] = NULL, int skip = 0) {
+  return generic_check_start<T, T>(args, sets, defaults, skip);
 }
 
 //The Image class - /doc/Image.md

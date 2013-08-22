@@ -163,12 +163,14 @@ Handle<Value> throwSignatureErr(int signature[]) {
   return ThrowException(v8::Exception::TypeError(String::New(aStr.c_str())));
 }
 
-Handle<Value> throwSignatureErr(int *signatures[], int sigN) {
+Handle<Value> throwSignatureErr(SetType sets[]) {
   std::string aStr("arguments are ");
-  for (int a = 0; a < sigN; a++) {
-    if (a > 0)
+  int aSigN = 0;
+  while (sets[aSigN].signature != NULL) {
+    if (aSigN > 0)
       aStr += " or ";
-    aStr += generateSignatureString(signatures[a]);
+    aStr += generateSignatureString(sets[aSigN].signature);
+    aSigN++;
   }
   return ThrowException(v8::Exception::TypeError(String::New(aStr.c_str())));
 }

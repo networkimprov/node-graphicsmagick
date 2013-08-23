@@ -1,5 +1,8 @@
 #Geometry
-JSON object which provides convenient means to specify a geometry information. Similar to [this](http://www.graphicsmagick.org/Magick++/Geometry.html). Contains:
+Object which provides convenient means to specify a geometry information. Similar to [this](http://www.graphicsmagick.org/Magick++/Geometry.html).  
+  
+**Geometry( geometryInfo )**  
+geometryInfo is a JSON which contains:
 * width - Width, Uint32 value.
 * height - Height, Uint32 value.
 * xOff - X offset from origin, Uint32 value, default 0.

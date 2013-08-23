@@ -9,14 +9,12 @@ void init(Handle<Object> exports) {
   initAsync(exports);
   Magick::InitializeMagick(NULL);
   Image::Init(exports);
+  Geometry::Init(exports);
 }
 
 NODE_MODULE(node_graphicsmagick, init);
 
-//fix: make JS accessible createGeometry/Color functions, which create GM objects wrapped in an External
-// user calls it and passes result to Image methods
-// this is simpler than defining complete JS classes
-
+//todo: use these in Geometry::New as they are only called once
 bool isObjectGeometry(Handle<Value> obj) {
   if (!obj->IsObject() || obj->IsFunction())
    return false;
@@ -88,9 +86,20 @@ Magick::Color* createObjectColor(Handle<Value> obj) {
     aColor = new Magick::Color(aObj->Get(aKey1)->ToUint32()->Value(), aObj->Get(aKey2)->ToUint32()->Value(), aObj->Get(aKey3)->ToUint32()->Value());
     if (aObj->Has(aKey4 = String::New("alphaQuantum")))
       aColor->alphaQuantum(aObj->Get(aKey4)->ToUint32()->Value());
-  } else
+  } else //todo: add other ways to create color
     assert(0); //fix: really blow up if color spec incomplete?
   return aColor;
+}
+
+Persistent<FunctionTemplate> Geometry::constructor_template;
+Handle<Value> Geometry::New(const Arguments& args) {
+  HandleScope scope;
+  Geometry* that = new Geometry();
+  that->Wrap(args.This());
+  if (args.Length() != 1 || !isObjectGeometry(args[0]))
+    return ThrowException(v8::Exception::TypeError(String::New("Invalid Geometry Object"))); //fix: better string
+  that->set(createObjectGeometry(args[0]));
+  return args.This();
 }
 
 bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
@@ -108,7 +117,7 @@ bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
     case eObjectImage:
     case eObject:         aIsType = args[aArgN]->IsObject() && !args[aArgN]->IsFunction();   break;
     case eObjectColor:    aIsType = isObjectColor(args[aArgN]);                              break; //fix: isExternal
-    case eObjectGeometry: aIsType = isObjectGeometry(args[aArgN]);                           break;
+    case eObjectGeometry: aIsType = args[aArgN]->IsObject() && Geometry::constructor_template->HasInstance(args[aArgN]->ToObject()); break;
     case eNull:           aIsType = args[aArgN]->IsNull();                                   break;
     case eFunction:       aIsType = args[aArgN]->IsFunction();                               break;
     default: {

@@ -58,7 +58,7 @@ void Image::Generic_process(void* pData, void* pThat) {
   Image* that = (Image *) pThat;
   switch (data->action) {
   case eNew2:
-    that->setImage(new Magick::Image(*((Magick::Geometry*) data->val[0].pointer), *((Magick::Color*) data->val[1].pointer)));
+    that->setImage(new Magick::Image(((Geometry*) data->val[0].pointer)->get(), *((Magick::Color*) data->val[1].pointer)));
     data->retVal.pointer = that;
     break;
   case eNew3:

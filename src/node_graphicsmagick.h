@@ -33,11 +33,30 @@ Handle<Value> throwSignatureErr(int signature[]);
 //Returns a ThrowException for a method with multiple signatures.
 Handle<Value> throwSignatureErr(SetType sets[]);
 
-//Checks if a JS Object is of Geometry type (as on /doc/Geometry.md).
-bool isObjectGeometry(Handle<Value> obj);
+//Used to create a class that only has a constructor (Color, Geometry).
+//only the constructor_template and New method must still be defined.
+#define DECLARE_GENERIC_CLASS(cname)                                                      \
+class cname : public node::ObjectWrap {                                                   \
+public:                                                                                   \
+  static Persistent<FunctionTemplate> constructor_template;                               \
+  static void Init(v8::Handle<v8::Object> target) {                                       \
+    constructor_template = Persistent<FunctionTemplate>::New(FunctionTemplate::New(New)); \
+    constructor_template->InstanceTemplate()->SetInternalFieldCount(1);                   \
+    constructor_template->SetClassName(String::NewSymbol(#cname));                        \
+    target->Set(String::NewSymbol(#cname), constructor_template->GetFunction());          \
+  }                                                                                       \
+  Magick::cname& get() { return *mElem; };                                                \
+  void set(Magick::cname* pElem) { mElem = pElem; }                                       \
+  void Reference() { this->Ref(); }                                                       \
+  void Unreference() { this->Unref(); }                                                   \
+private:                                                                                  \
+  cname() : mElem(NULL) {}                                                                \
+  ~cname() { if (mElem) delete mElem; }                                                   \
+  Magick::cname* mElem;                                                                   \
+  static v8::Handle<v8::Value> New(const v8::Arguments& args);                            \
+};
 
-//Converts a JS Geometry Object to Magick::Geometry. Assumes the JS Geometry Object is valid.
-Magick::Geometry* createObjectGeometry(Handle<Value> obj);
+DECLARE_GENERIC_CLASS(Geometry)
 
 //Checks if a JS Object is of Color type (as on /doc/Color.md).
 bool isObjectColor(Handle<Value> obj);
@@ -52,12 +71,12 @@ struct GenericFunctionCall {
     GenericValue() : type(eEnd) {}
     ~GenericValue() {
       switch (type) {
-      case eString:         delete string;                      break;
-      case eObjectColor:    delete (Magick::Color*)    pointer; break;
-      case eObjectGeometry: delete (Magick::Geometry*) pointer; break;
+      case eString:         delete string;                        break;
+      case eObjectColor:    delete (Magick::Color*)    pointer;   break;
+      case eObjectGeometry: ((Geometry*) pointer)->Unreference(); break;
       }
     }
-    GenericValue& operator=(const GenericValue&) { assert(0); } //fix: this will blow up on attempt to val[] = defaults[] below? //some items may need deep copy
+    GenericValue& operator=(const GenericValue&) { assert(0); } //todo: this will blow up on attempt to val[] = defaults[] below? //some items may need deep copy
     union {
       double dbl;
       uint32_t uint32;
@@ -86,13 +105,13 @@ struct GenericFunctionCall {
         }
       }
       switch (abs(signature[aSigN])) {
-      case eInt32:          val[aSigN].int32 = args[aArgInd]->Int32Value();                         break;
-      case eUint32:         val[aSigN].uint32 = args[aArgInd]->Uint32Value();                       break;
-      case eBoolean:        val[aSigN].boolean = args[aArgInd]->BooleanValue();                     break;
-      case eString:         val[aSigN].string = new std::string(*String::Utf8Value(args[aArgInd])); break;
-      case eObjectColor:    val[aSigN].pointer = createObjectColor(args[aArgInd]);                  break;
-      case eObjectGeometry: val[aSigN].pointer = createObjectGeometry(args[aArgInd]);               break;
-      case eFunction:                                                                               break;
+      case eInt32:          val[aSigN].int32 = args[aArgInd]->Int32Value();                                                                   break;
+      case eUint32:         val[aSigN].uint32 = args[aArgInd]->Uint32Value();                                                                 break;
+      case eBoolean:        val[aSigN].boolean = args[aArgInd]->BooleanValue();                                                               break;
+      case eString:         val[aSigN].string = new std::string(*String::Utf8Value(args[aArgInd]));                                           break;
+      case eObjectColor:    val[aSigN].pointer = createObjectColor(args[aArgInd]);                                                            break;
+      case eObjectGeometry: val[aSigN].pointer = (void*) GetInstance<Geometry>(args[aArgInd]); ((Geometry*) val[aSigN].pointer)->Reference(); break;
+      case eFunction:                                                                                                                         break;
       default: assert(0);
       }
       val[aSigN].type = abs(signature[aSigN]);

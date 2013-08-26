@@ -14,7 +14,7 @@ enum ArgumentType {
   eEnd,
   eInt32, eUint32, eBoolean, eString, eObject, eArray, eFunction, eNull,
   eBuffer,
-  eObjectColor, eObjectGeometry, eObjectImage //fix: eExternal; eObjectImage wasn't used?
+  eObjectColor, eObjectGeometry, eObjectImage
 };
 
 //Used for methods with multiple signatures and actions.
@@ -56,13 +56,8 @@ private:                                                                        
   static v8::Handle<v8::Value> New(const v8::Arguments& args);                            \
 };
 
+DECLARE_GENERIC_CLASS(Color)
 DECLARE_GENERIC_CLASS(Geometry)
-
-//Checks if a JS Object is of Color type (as on /doc/Color.md).
-bool isObjectColor(Handle<Value> obj);
-
-//Converts a JS Color  Object to Magick::Color. Assumes the JS Color  Object is valid.
-Magick::Color* createObjectColor(Handle<Value> obj);
 
 //Generic structure used to store signature arguments values, the action and return value.
 struct GenericFunctionCall {
@@ -72,7 +67,7 @@ struct GenericFunctionCall {
     ~GenericValue() {
       switch (type) {
       case eString:         delete string;                        break;
-      case eObjectColor:    delete (Magick::Color*)    pointer;   break;
+      case eObjectColor:    ((Color*) pointer)->Unreference();    break;
       case eObjectGeometry: ((Geometry*) pointer)->Unreference(); break;
       }
     }
@@ -109,7 +104,7 @@ struct GenericFunctionCall {
       case eUint32:         val[aSigN].uint32 = args[aArgInd]->Uint32Value();                                                                 break;
       case eBoolean:        val[aSigN].boolean = args[aArgInd]->BooleanValue();                                                               break;
       case eString:         val[aSigN].string = new std::string(*String::Utf8Value(args[aArgInd]));                                           break;
-      case eObjectColor:    val[aSigN].pointer = createObjectColor(args[aArgInd]);                                                            break;
+      case eObjectColor:    val[aSigN].pointer = (void*) GetInstance<Color>(args[aArgInd]); ((Color*) val[aSigN].pointer)->Reference();       break;
       case eObjectGeometry: val[aSigN].pointer = (void*) GetInstance<Geometry>(args[aArgInd]); ((Geometry*) val[aSigN].pointer)->Reference(); break;
       case eFunction:                                                                                                                         break;
       default: assert(0);

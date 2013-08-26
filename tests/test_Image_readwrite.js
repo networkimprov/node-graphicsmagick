@@ -7,9 +7,9 @@ var aTestsDir = path.dirname(module.filename);
 exports.name = 'Image Read / Write';
 exports.tests = [
   {
-    name: 'img1 = new Image(new Geometry({width: 3, height: 4}), {red: 0.5, green: 0, blue: 0});',
+    name: 'img1 = new Image(new Geometry({width: 3, height: 4}), new Color({red: 0.5, green: 0, blue: 0}));',
     fatal: true,
-    action: function(objects, sync, fn) { objects.img1 = new gm.Image(new gm.Geometry({width: 3, height: 4}), {red: 0.5, green: 0, blue: 0}); fn(null) }
+    action: function(objects, sync, fn) { objects.img1 = new gm.Image(new gm.Geometry({width: 3, height: 4}), new gm.Color({red: 0.5, green: 0, blue: 0})); fn(null) }
   },
   {
     name: 'img1.write(BMP)',

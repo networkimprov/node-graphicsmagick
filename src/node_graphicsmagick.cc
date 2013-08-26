@@ -9,6 +9,7 @@ void init(Handle<Object> exports) {
   initAsync(exports);
   Magick::InitializeMagick(NULL);
   Image::Init(exports);
+  Color::Init(exports);
   Geometry::Init(exports);
 }
 
@@ -91,6 +92,17 @@ Magick::Color* createObjectColor(Handle<Value> obj) {
   return aColor;
 }
 
+Persistent<FunctionTemplate> Color::constructor_template;
+Handle<Value> Color::New(const Arguments& args) {
+  HandleScope scope;
+  Color* that = new Color();
+  that->Wrap(args.This());
+  if (args.Length() != 1 || !isObjectColor(args[0]))
+    return ThrowException(v8::Exception::TypeError(String::New("Invalid Color Object"))); //fix: better string
+  that->set(createObjectColor(args[0]));
+  return args.This();
+}
+
 Persistent<FunctionTemplate> Geometry::constructor_template;
 Handle<Value> Geometry::New(const Arguments& args) {
   HandleScope scope;
@@ -108,18 +120,18 @@ bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
   for (int aSigN=0; signature[aSigN] != eEnd; ++aSigN) {
     int aIsType;
     switch (abs(signature[aSigN])) {
-    case eInt32:          aIsType = args[aArgN]->IsInt32();                                  break;
-    case eUint32:         aIsType = args[aArgN]->IsUint32();                                 break;
-    case eBoolean:        aIsType = args[aArgN]->IsBoolean();                                break;
-    case eString:         aIsType = args[aArgN]->IsString();                                 break;
-    case eArray:          aIsType = args[aArgN]->IsArray();                                  break;
+    case eInt32:          aIsType = args[aArgN]->IsInt32();                                                                          break;
+    case eUint32:         aIsType = args[aArgN]->IsUint32();                                                                         break;
+    case eBoolean:        aIsType = args[aArgN]->IsBoolean();                                                                        break;
+    case eString:         aIsType = args[aArgN]->IsString();                                                                         break;
+    case eArray:          aIsType = args[aArgN]->IsArray();                                                                          break;
     case eBuffer:
     case eObjectImage:
-    case eObject:         aIsType = args[aArgN]->IsObject() && !args[aArgN]->IsFunction();   break;
-    case eObjectColor:    aIsType = isObjectColor(args[aArgN]);                              break; //fix: isExternal
+    case eObject:         aIsType = args[aArgN]->IsObject() && !args[aArgN]->IsFunction();                                           break;
+    case eObjectColor:    aIsType = args[aArgN]->IsObject() && Color::constructor_template->HasInstance(args[aArgN]->ToObject());    break;
     case eObjectGeometry: aIsType = args[aArgN]->IsObject() && Geometry::constructor_template->HasInstance(args[aArgN]->ToObject()); break;
-    case eNull:           aIsType = args[aArgN]->IsNull();                                   break;
-    case eFunction:       aIsType = args[aArgN]->IsFunction();                               break;
+    case eNull:           aIsType = args[aArgN]->IsNull();                                                                           break;
+    case eFunction:       aIsType = args[aArgN]->IsFunction();                                                                       break;
     default: {
       std::string aEx("incorrect signature member: ");
       aEx += (char)(signature[aSigN] + '0');

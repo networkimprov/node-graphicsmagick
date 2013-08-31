@@ -15,43 +15,6 @@ void init(Handle<Object> exports) {
 
 NODE_MODULE(node_graphicsmagick, init);
 
-bool isObjectColor(Handle<Value> obj) {
-  if (!obj->IsObject() || obj->IsFunction())
-    return false;
-  Local<Object> aObj = obj->ToObject();
-  Local<String> aKey1, aKey2, aKey3, aKey4;
-  if (aObj->Has(aKey1 = String::New("red")) && aObj->Has(aKey2 = String::New("green")) && aObj->Has(aKey3 = String::New("blue")))
-    return !((!aObj->Get(aKey1)->IsNumber() || !aObj->Get(aKey2)->IsNumber() || !aObj->Get(aKey3)->IsNumber()) || (aObj->Has(aKey4 = String::New("alpha")) && !aObj->Get(aKey4)->IsNumber()));
-  if (aObj->Has(aKey1 = String::New("redQuantum")) && aObj->Has(aKey2 = String::New("greenQuantum")) && aObj->Has(aKey3 = String::New("blueQuantum")))
-    return !((!aObj->Get(aKey1)->IsUint32() || !aObj->Get(aKey2)->IsUint32() || !aObj->Get(aKey3)->IsUint32()) || (aObj->Has(aKey4 = String::New("alphaQuantum")) && !aObj->Get(aKey4)->IsUint32()));
-  if (aObj->Has(aKey1 = String::New("shade")))
-    return !((!aObj->Get(aKey1)->IsNumber()) || (aObj->Has(aKey4 = String::New("alpha")) && !aObj->Get(aKey4)->IsNumber()));
-  if (aObj->Has(aKey1 = String::New("mono")))
-    return !((!aObj->Get(aKey1)->IsBoolean()) || (aObj->Has(aKey4 = String::New("alpha")) && !aObj->Get(aKey4)->IsNumber()));
-  if (aObj->Has(aKey1 = String::New("hue")) && aObj->Has(aKey2 = String::New("saturation")) && aObj->Has(aKey3 = String::New("luminosity")))
-    return !((!aObj->Get(aKey1)->IsNumber() || !aObj->Get(aKey2)->IsNumber() || !aObj->Get(aKey3)->IsNumber()) || (aObj->Has(aKey4 = String::New("alpha")) && !aObj->Get(aKey4)->IsNumber()));
-  if (aObj->Has(aKey1 = String::New("Y")) && aObj->Has(aKey2 = String::New("U")) && aObj->Has(aKey3 = String::New("V")))
-    return !(!aObj->Get(aKey1)->IsNumber() || !aObj->Get(aKey2)->IsNumber() || !aObj->Get(aKey3)->IsNumber());
-  return false;
-}
-
-Magick::Color* createObjectColor(Handle<Value> obj) {
-  Local<Object> aObj = obj->ToObject();
-  Local<String> aKey1, aKey2, aKey3, aKey4;
-  Magick::Color* aColor;
-  if (aObj->Has(aKey1 = String::New("red")) && aObj->Has(aKey2 = String::New("green")) && aObj->Has(aKey3 = String::New("blue"))) {
-    aColor = new Magick::ColorRGB(aObj->Get(aKey1)->ToNumber()->Value(), aObj->Get(aKey2)->ToNumber()->Value(), aObj->Get(aKey3)->ToNumber()->Value());
-    if (aObj->Has(aKey4 = String::New("alpha")))
-      aColor->alphaQuantum(aObj->Get(aKey4)->ToNumber()->Value());
-  } else if (aObj->Has(aKey1 = String::New("redQuantum")) && aObj->Has(aKey2 = String::New("greenQuantum")) && aObj->Has(aKey3 = String::New("blueQuantum"))) {
-    aColor = new Magick::Color(aObj->Get(aKey1)->ToUint32()->Value(), aObj->Get(aKey2)->ToUint32()->Value(), aObj->Get(aKey3)->ToUint32()->Value());
-    if (aObj->Has(aKey4 = String::New("alphaQuantum")))
-      aColor->alphaQuantum(aObj->Get(aKey4)->ToUint32()->Value());
-  } else //todo: add other ways to create color
-    assert(0); //fix: really blow up if color spec incomplete?
-  return aColor;
-}
-
 Persistent<FunctionTemplate> Color::constructor_template;
 Handle<Value> Color::New(const Arguments& args) {
   HandleScope scope;

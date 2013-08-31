@@ -57,9 +57,49 @@ Handle<Value> Color::New(const Arguments& args) {
   HandleScope scope;
   Color* that = new Color();
   that->Wrap(args.This());
-  if (args.Length() != 1 || !isObjectColor(args[0]))
-    return ThrowException(v8::Exception::TypeError(String::New("Invalid Color Object"))); //fix: better string
-  that->set(createObjectColor(args[0]));
+  if (args.Length() != 1 || !args[0]->IsObject() || args[0]->IsFunction())
+    return ThrowException(v8::Exception::TypeError(String::New("Invalid ColorObject")));
+  Local<Object> aObj = args[0]->ToObject();
+  Local<String> aKey1, aKey2, aKey3, aKey4;
+  Magick::Color* aColor = NULL;
+
+  if (aObj->Has(aKey1 = String::New("red")) && aObj->Has(aKey2 = String::New("green")) && aObj->Has(aKey3 = String::New("blue"))) {
+    if (!aObj->Get(aKey1)->IsNumber() || !aObj->Get(aKey2)->IsNumber() || !aObj->Get(aKey3)->IsNumber())
+      return ThrowException(v8::Exception::TypeError(String::New("ColorObject red, green and blue are number")));
+    aColor = new Magick::ColorRGB(aObj->Get(aKey1)->ToNumber()->Value(), aObj->Get(aKey2)->ToNumber()->Value(), aObj->Get(aKey3)->ToNumber()->Value());
+  } else if (aObj->Has(aKey1 = String::New("redQuantum")) && aObj->Has(aKey2 = String::New("greenQuantum")) && aObj->Has(aKey3 = String::New("blueQuantum"))) {
+    if  ((!aObj->Get(aKey1)->IsUint32() || !aObj->Get(aKey2)->IsUint32() || !aObj->Get(aKey3)->IsUint32()) || (aObj->Has(aKey4 = String::New("alphaQuantum")) && !aObj->Get(aKey4)->IsUint32()))
+      return ThrowException(v8::Exception::TypeError(String::New("ColorObject redQuantum, greenQuantum, blueQuantum and alphaQuantum are uint32")));
+    aColor = new Magick::Color(aObj->Get(aKey1)->ToUint32()->Value(), aObj->Get(aKey2)->ToUint32()->Value(), aObj->Get(aKey3)->ToUint32()->Value());
+    if (aObj->Has(aKey4 = String::New("alphaQuantum")))
+      aColor->alphaQuantum(aObj->Get(aKey4)->ToUint32()->Value());
+  } else if (aObj->Has(aKey1 = String::New("shade"))) {
+    if (!aObj->Get(aKey1)->IsNumber())
+      return ThrowException(v8::Exception::TypeError(String::New("ColorObject.shade is number")));
+    aColor = new Magick::ColorGray(aObj->Get(aKey1)->ToNumber()->Value());
+  } else if (aObj->Has(aKey1 = String::New("mono"))) {
+    if (!aObj->Get(aKey1)->IsBoolean())
+      return ThrowException(v8::Exception::TypeError(String::New("ColorObject.mono is boolean")));
+    aColor = new Magick::ColorMono(aObj->Get(aKey1)->ToBoolean()->Value());
+  } else if (aObj->Has(aKey1 = String::New("hue")) && aObj->Has(aKey2 = String::New("saturation")) && aObj->Has(aKey3 = String::New("luminosity"))) {
+    if (!aObj->Get(aKey1)->IsNumber() || !aObj->Get(aKey2)->IsNumber() || !aObj->Get(aKey3)->IsNumber())
+      return ThrowException(v8::Exception::TypeError(String::New("ColorObject hue, saturation and luminosity are number")));
+    aColor = new Magick::ColorHSL(aObj->Get(aKey1)->ToNumber()->Value(), aObj->Get(aKey2)->ToNumber()->Value(), aObj->Get(aKey3)->ToNumber()->Value());
+  } else if (aObj->Has(aKey1 = String::New("Y")) && aObj->Has(aKey2 = String::New("U")) && aObj->Has(aKey3 = String::New("V"))) {
+    if (!aObj->Get(aKey1)->IsNumber() || !aObj->Get(aKey2)->IsNumber() || !aObj->Get(aKey3)->IsNumber())
+      return ThrowException(v8::Exception::TypeError(String::New("ColorObject Y, U and V are number")));
+    aColor = new Magick::ColorYUV(aObj->Get(aKey1)->ToNumber()->Value(), aObj->Get(aKey2)->ToNumber()->Value(), aObj->Get(aKey3)->ToNumber()->Value());
+  }
+
+  if (aObj->Has(aKey1 = String::New("alpha"))) {
+    if (!aObj->Get(aKey1)->IsNumber()) {
+      delete aColor;
+      return ThrowException(v8::Exception::TypeError(String::New("ColorObject.alpha is number")));
+    } else
+      aColor->alpha(aObj->Get(aKey1)->ToNumber()->Value());
+  }
+
+  that->set(aColor);
   return args.This();
 }
 

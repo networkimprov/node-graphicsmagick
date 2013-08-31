@@ -15,46 +15,6 @@ void init(Handle<Object> exports) {
 
 NODE_MODULE(node_graphicsmagick, init);
 
-//todo: use these in Geometry::New as they are only called once
-bool isObjectGeometry(Handle<Value> obj) {
-  if (!obj->IsObject() || obj->IsFunction())
-   return false;
-  Local<Object> aObj = obj->ToObject();
-  Local<String> aKey;
-  return !((!aObj->Has(aKey = String::New("width")) || !aObj->Get(aKey)->IsUint32()) ||
-      (!aObj->Has(aKey = String::New("height")) || !aObj->Get(aKey)->IsUint32()) ||
-     (aObj->Has(aKey = String::New("xOff")) && !aObj->Get(aKey)->IsUint32()) ||
-     (aObj->Has(aKey = String::New("yOff")) && !aObj->Get(aKey)->IsUint32()) ||
-     (aObj->Has(aKey = String::New("xNegative")) && !aObj->Get(aKey)->IsBoolean()) ||
-     (aObj->Has(aKey = String::New("yNegative")) && !aObj->Get(aKey)->IsBoolean()) ||
-     (aObj->Has(aKey = String::New("percent")) && !aObj->Get(aKey)->IsBoolean()) ||
-     (aObj->Has(aKey = String::New("aspect")) && !aObj->Get(aKey)->IsBoolean()) ||
-     (aObj->Has(aKey = String::New("greater")) && !aObj->Get(aKey)->IsBoolean()) ||
-     (aObj->Has(aKey = String::New("less")) && !aObj->Get(aKey)->IsBoolean()));
-}
-
-Magick::Geometry* createObjectGeometry(Handle<Value> obj) {
-  Local<Object> aObj = obj->ToObject();
-  Local<String> aKey;
-  Magick::Geometry* aGeometry = new Magick::Geometry(
-    aObj->Get(String::New("width"))->ToUint32()->Value(),
-    aObj->Get(String::New("height"))->ToUint32()->Value(),
-    aObj->Has(aKey = String::New("xOff")) ? aObj->Get(aKey)->ToUint32()->Value() : 0,
-    aObj->Has(aKey = String::New("yOff")) ? aObj->Get(aKey)->ToUint32()->Value() : 0,
-    aObj->Has(aKey = String::New("xNegative")) ? aObj->Get(aKey)->ToBoolean()->Value() : false,
-    aObj->Has(aKey = String::New("yNegative")) ? aObj->Get(aKey)->ToBoolean()->Value() : false
-  );
-  if (aObj->Has(aKey = String::New("percent")))
-    aGeometry->percent(aObj->Get(aKey)->ToBoolean()->Value());
-  if (aObj->Has(aKey = String::New("aspect")))
-    aGeometry->aspect(aObj->Get(aKey)->ToBoolean()->Value());
-  if (aObj->Has(aKey = String::New("greater")))
-    aGeometry->greater(aObj->Get(aKey)->ToBoolean()->Value());
-  if (aObj->Has(aKey = String::New("less")))
-    aGeometry->less(aObj->Get(aKey)->ToBoolean()->Value());
-  return aGeometry;
-}
-
 bool isObjectColor(Handle<Value> obj) {
   if (!obj->IsObject() || obj->IsFunction())
     return false;
@@ -108,9 +68,49 @@ Handle<Value> Geometry::New(const Arguments& args) {
   HandleScope scope;
   Geometry* that = new Geometry();
   that->Wrap(args.This());
-  if (args.Length() != 1 || !isObjectGeometry(args[0]))
-    return ThrowException(v8::Exception::TypeError(String::New("Invalid Geometry Object"))); //fix: better string
-  that->set(createObjectGeometry(args[0]));
+  if (args.Length() != 1 || !args[0]->IsObject() || args[0]->IsFunction())
+    return ThrowException(v8::Exception::TypeError(String::New("Invalid GeometryObject")));
+  Local<Object> aObj = args[0]->ToObject();
+  Local<String> aKey;
+  if (!aObj->Has(aKey = String::New("width")) || !aObj->Get(aKey)->IsUint32())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.witdh is uint32")));
+  if (!aObj->Has(aKey = String::New("height")) || !aObj->Get(aKey)->IsUint32())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.height is uint32")));
+  if (aObj->Has(aKey = String::New("xOff")) && !aObj->Get(aKey)->IsUint32())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.xOff is uint32")));
+  if (aObj->Has(aKey = String::New("yOff")) && !aObj->Get(aKey)->IsUint32())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.yOff is uint32")));
+  if (aObj->Has(aKey = String::New("xNegative")) && !aObj->Get(aKey)->IsBoolean())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.xNegative is boolean")));
+  if (aObj->Has(aKey = String::New("yNegative")) && !aObj->Get(aKey)->IsBoolean())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.yNegative is boolean")));
+  if (aObj->Has(aKey = String::New("percent")) && !aObj->Get(aKey)->IsBoolean())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.percent is boolean")));
+  if (aObj->Has(aKey = String::New("aspect")) && !aObj->Get(aKey)->IsBoolean())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.aspect is boolean")));
+  if (aObj->Has(aKey = String::New("greater")) && !aObj->Get(aKey)->IsBoolean())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.greater is boolean")));
+  if (aObj->Has(aKey = String::New("less")) && !aObj->Get(aKey)->IsBoolean())
+    return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.less is boolean")));
+
+  Magick::Geometry* aGeometry = new Magick::Geometry(
+    aObj->Get(String::New("width"))->ToUint32()->Value(),
+    aObj->Get(String::New("height"))->ToUint32()->Value(),
+    aObj->Has(aKey = String::New("xOff")) ? aObj->Get(aKey)->ToUint32()->Value() : 0,
+    aObj->Has(aKey = String::New("yOff")) ? aObj->Get(aKey)->ToUint32()->Value() : 0,
+    aObj->Has(aKey = String::New("xNegative")) ? aObj->Get(aKey)->ToBoolean()->Value() : false,
+    aObj->Has(aKey = String::New("yNegative")) ? aObj->Get(aKey)->ToBoolean()->Value() : false
+  );
+  if (aObj->Has(aKey = String::New("percent")))
+    aGeometry->percent(aObj->Get(aKey)->ToBoolean()->Value());
+  if (aObj->Has(aKey = String::New("aspect")))
+    aGeometry->aspect(aObj->Get(aKey)->ToBoolean()->Value());
+  if (aObj->Has(aKey = String::New("greater")))
+    aGeometry->greater(aObj->Get(aKey)->ToBoolean()->Value());
+  if (aObj->Has(aKey = String::New("less")))
+    aGeometry->less(aObj->Get(aKey)->ToBoolean()->Value());
+
+  that->set(aGeometry);
   return args.This();
 }
 

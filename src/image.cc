@@ -105,7 +105,8 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eWrite2:
   case eWrite3: {
     Magick::Blob* aBlob = (Magick::Blob*) data->retVal.pointer;
-    aResult = Buffer::New((const char*) aBlob->data(), aBlob->length())->handle_;
+    aResult = Blob::constructor_template->GetFunction()->NewInstance();
+    GetInstance<Blob>(aResult)->set(aBlob);
   } break;
   }
   delete data;

@@ -11,6 +11,7 @@ void init(Handle<Object> exports) {
   Magick::InitializeMagick(NULL);
   Image::Init(exports);
   Blob::Init(exports);
+  exports->Set(String::NewSymbol("BlobToBuffer"), FunctionTemplate::New(BlobToBuffer)->GetFunction());
   Color::Init(exports);
   Geometry::Init(exports);
 }
@@ -33,6 +34,15 @@ Handle<Value> Blob::New(const Arguments& args) {
     that->set(new Magick::Blob());
 
   return args.This();
+}
+
+//todo: add doc for BlobToBuffer
+Handle<Value> BlobToBuffer(const Arguments& args) {
+  HandleScope scope;
+  if (args.Length() != 1 || !args[0]->IsObject() || !Blob::constructor_template->HasInstance(args[0]->ToObject()))
+    return ThrowException(v8::Exception::TypeError(String::New("Arguments are (Blob)")));
+  Blob* aBlob = GetInstance<Blob>(args[0]);
+  return scope.Close(Buffer::New((const char*) aBlob->get().data(), aBlob->get().length())->handle_);
 }
 
 Persistent<FunctionTemplate> Color::constructor_template;

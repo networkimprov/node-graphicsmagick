@@ -57,6 +57,8 @@ private:                                                                        
 };
 
 DECLARE_GENERIC_CLASS(Blob)
+Handle<Value> BlobToBuffer(const Arguments& args);
+
 DECLARE_GENERIC_CLASS(Color)
 DECLARE_GENERIC_CLASS(Geometry)
 

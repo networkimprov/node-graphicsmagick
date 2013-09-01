@@ -34,5 +34,21 @@ exports.tests = [
     method: 'writeFile',
     parameters: [ aTestsDir + '/files/img1.1.bmp' ],
     result: function(err, result, fn) { fn(err == null && fs.readFileSync(aTestsDir + '/files/img1.1.bmp').toString('base64') == fs.readFileSync(aTestsDir + '/files/img1.bmp').toString('base64')); }
-  }
+  }, {
+    name: 'img3 = new Image(buffer);',
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img3 = new gm.Image(new gm.Blob(new Buffer('Qk1OAAAAAAAAAD4AAAAoAAAAAwAAAAQAAAABAAEAAAAAABAAAABtCwAAbQsAAAIAAAACAAAAAAB/AAAAAAAAAAAAAAAAAAAAAAAAAAAA', 'base64'))); fn(null);
+      } else
+        new gm.Image(new gm.Blob(new Buffer('Qk1OAAAAAAAAAD4AAAAoAAAAAwAAAAQAAAABAAEAAAAAABAAAABtCwAAbQsAAAIAAAACAAAAAAB/AAAAAAAAAAAAAAAAAAAAAAAAAAAA', 'base64')), function(err, img) { objects.img3 = img; fn(err); });
+    }
+  },
+  {
+    name: 'img13.write(BMP)',
+    obj: 'img3',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && result.toString('base64') == 'Qk1OAAAAAAAAAD4AAAAoAAAAAwAAAAQAAAABAAEAAAAAABAAAABtCwAAbQsAAAIAAAACAAAAAAB/AAAAAAAAAAAAAAAAAAAAAAAAAAAA'); }
+  },
 ]

@@ -1,4 +1,5 @@
 #include "node_graphicsmagick.h"
+#include <node_buffer.h>
 
 using namespace v8;
 using namespace node;
@@ -9,11 +10,30 @@ void init(Handle<Object> exports) {
   initAsync(exports);
   Magick::InitializeMagick(NULL);
   Image::Init(exports);
+  Blob::Init(exports);
   Color::Init(exports);
   Geometry::Init(exports);
 }
 
 NODE_MODULE(node_graphicsmagick, init);
+
+//todo: add doc for Blob
+Persistent<FunctionTemplate> Blob::constructor_template;
+Handle<Value> Blob::New(const Arguments& args) {
+  HandleScope scope;
+  Blob* that = new Blob();
+  that->Wrap(args.This());
+
+  if (args.Length() != 0 && !( args.Length() == 1 && args[0]->IsObject() && Buffer::HasInstance(args[0]->ToObject())))
+    return ThrowException(v8::Exception::TypeError(String::New("Arguments are () or (Buffer)")));
+
+  if (args.Length() == 1)
+    that->set(new Magick::Blob(Buffer::Data(args[0]), Buffer::Length(args[0])));
+  else
+    that->set(new Magick::Blob());
+
+  return args.This();
+}
 
 Persistent<FunctionTemplate> Color::constructor_template;
 Handle<Value> Color::New(const Arguments& args) {
@@ -131,6 +151,7 @@ bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
     case eBuffer:
     case eObjectImage:
     case eObject:         aIsType = args[aArgN]->IsObject() && !args[aArgN]->IsFunction();                                           break;
+    case eObjectBlob:     aIsType = args[aArgN]->IsObject() && Blob::constructor_template->HasInstance(args[aArgN]->ToObject());     break;
     case eObjectColor:    aIsType = args[aArgN]->IsObject() && Color::constructor_template->HasInstance(args[aArgN]->ToObject());    break;
     case eObjectGeometry: aIsType = args[aArgN]->IsObject() && Geometry::constructor_template->HasInstance(args[aArgN]->ToObject()); break;
     case eNull:           aIsType = args[aArgN]->IsNull();                                                                           break;
@@ -168,12 +189,13 @@ static std::string generateSignatureString(int signature[]) {
     case eObject:         aStr += "object";   break;
     case eArray:          aStr += "array";    break;
     case eBuffer:         aStr += "Buffer";   break;
+    case eObjectBlob:     aStr += "Blob";     break;
     case eObjectColor:    aStr += "Color";    break;
     case eObjectGeometry: aStr += "Geometry"; break;
     case eObjectImage:    aStr += "Image";    break;
     case eNull:           aStr += "null";     break;
     case eFunction:       aStr += "function"; break;
-    default:              throw "incorrect sig member"; 
+    default:              assert(0); 
     }
     if (signature[aSigN] < 0) aStr += "]";
   }

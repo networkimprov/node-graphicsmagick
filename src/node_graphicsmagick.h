@@ -14,7 +14,7 @@ enum ArgumentType {
   eEnd,
   eInt32, eUint32, eBoolean, eString, eObject, eArray, eFunction, eNull,
   eBuffer,
-  eObjectColor, eObjectGeometry, eObjectImage
+  eObjectBlob, eObjectColor, eObjectGeometry, eObjectImage
 };
 
 //Used for methods with multiple signatures and actions.
@@ -46,7 +46,7 @@ public:                                                                         
     target->Set(String::NewSymbol(#cname), constructor_template->GetFunction());          \
   }                                                                                       \
   Magick::cname& get() { return *mElem; };                                                \
-  void set(Magick::cname* pElem) { mElem = pElem; }                                       \
+  void set(Magick::cname* pElem) { if (mElem) delete mElem; mElem = pElem; }              \
   void Reference() { this->Ref(); }                                                       \
   void Unreference() { this->Unref(); }                                                   \
 private:                                                                                  \
@@ -56,8 +56,10 @@ private:                                                                        
   static v8::Handle<v8::Value> New(const v8::Arguments& args);                            \
 };
 
+DECLARE_GENERIC_CLASS(Blob)
 DECLARE_GENERIC_CLASS(Color)
 DECLARE_GENERIC_CLASS(Geometry)
+
 
 //Generic structure used to store signature arguments values, the action and return value.
 struct GenericFunctionCall {
@@ -66,9 +68,10 @@ struct GenericFunctionCall {
     GenericValue() : type(eEnd) {}
     ~GenericValue() {
       switch (type) {
-      case eString:         delete string;                        break;
-      case eObjectColor:    ((Color*) pointer)->Unreference();    break;
-      case eObjectGeometry: ((Geometry*) pointer)->Unreference(); break;
+      case eString:         delete string;                              break;
+      case eObjectBlob:     ((Blob*) pointer)->Unreference();           break;
+      case eObjectColor:    ((Color*) pointer)->Unreference();          break;
+      case eObjectGeometry: ((Geometry*) pointer)->Unreference();       break;
       }
     }
     GenericValue& operator=(const GenericValue&) { assert(0); } //todo: this will blow up on attempt to val[] = defaults[] below? //some items may need deep copy
@@ -104,6 +107,7 @@ struct GenericFunctionCall {
       case eUint32:         val[aSigN].uint32 = args[aArgInd]->Uint32Value();                                                                 break;
       case eBoolean:        val[aSigN].boolean = args[aArgInd]->BooleanValue();                                                               break;
       case eString:         val[aSigN].string = new std::string(*String::Utf8Value(args[aArgInd]));                                           break;
+      case eObjectBlob:     val[aSigN].pointer = (void*) GetInstance<Blob>(args[aArgInd]); ((Blob*) val[aSigN].pointer)->Reference();         break;
       case eObjectColor:    val[aSigN].pointer = (void*) GetInstance<Color>(args[aArgInd]); ((Color*) val[aSigN].pointer)->Reference();       break;
       case eObjectGeometry: val[aSigN].pointer = (void*) GetInstance<Geometry>(args[aArgInd]); ((Geometry*) val[aSigN].pointer)->Reference(); break;
       case eFunction:                                                                                                                         break;

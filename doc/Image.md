@@ -5,29 +5,27 @@ Unless otherwise specified, all the methods return the Image object for chaining
 ###Constructors
 
 **Image( )**  
-available  
 Default constructor  
 
 **Image( Geometry size, Color color )**  
 Construct a blank image canvas of specified size and color  
 
-**Image( String imageSpec[, Function callback] )**  
-available  
+**Image( String imageSpec[, Function callback] )**   
 Construct from image file or image specification. If the functions is supplied the creation of the object is done asynchronously.  
  
-**Image ( Buffer blob )**  
+**Image ( Blob blob[, Function callback] )**  
 Construct Image from in-memory Buffer.  
 
-**Image ( Buffer blob, Geometry size )**  
+**Image ( Blob blob, Geometry size[, Function callback] )**  
 Construct Image of specified size from in-memory Buffer.  
 
-**Image ( Buffer blob, Geometry size, Uint32 depth )**  
+**Image ( Blob blob, Geometry size, Uint32 depth[, Function callback] )**  
 Construct Image of specified size and depth from in-memory Buffer.  
 
-**Image ( Buffer blob, Geometry size, Uint32 depth, String magick )**  
+**Image ( Blob blob, Geometry size, Uint32 depth, String magick[, Function callback] )**  
 Construct Image of specified size, depth, and format from in-memory Buffer.  
 
-**Image ( Buffer blob, Geometry size, String magick )**  
+**Image ( Blob blob, Geometry size, String magick[, Function callback] )**  
 Construct Image of specified size, and format from in-memory Buffer.  
 
 **TODO** Image ( Uint32 width, Uint32 height, String map, const StorageType type, const void *pixels )  
@@ -234,7 +232,7 @@ Set or attenuate the opacity channel in the image. If the image pixels are opaqu
 Change color of opaque pixel to specified pen color.  
 
 **ping ( String imageSpec, Function callback )**  
-**ping ( Buffer blob, Function callback )**  
+**ping ( Blob blob, Function callback )**  
 Ping is similar to read except only enough of the image is read to determine the image columns, rows, and filesize.  Access the columns(), rows(), and fileSize() attributes after invoking ping.  The image data is not valid after calling ping.  
 
 **quantize ( [Boolean measureError = false], Function callback)**  
@@ -260,19 +258,19 @@ Read single image frame into current object.
 **read ( Geometry size, String imageSpec, Function callback)**  
 Read single image frame of specified size into current object.  
 
-**read ( Buffer blob, Function callback )**  
+**read ( Blob blob, Function callback )**  
 Read single image frame from in-memory Buffer.  
 
-**read ( Buffer blob, Geometry &size, Function callback )**  
+**read ( Blob blob, Geometry &size, Function callback )**  
 Read single image frame of specified size from in-memory Buffer.  
 
-**read ( Buffer blob, Geometry  &size, Uint32 depth, Function callback )**  
+**read ( Blob blob, Geometry  &size, Uint32 depth, Function callback )**  
 Read single image frame of specified size and depth from in-memory Buffer.  
 
-**read ( Buffer blob, Geometry  &size, Uint32 depth, String magick, Function callback )**  
+**read ( Blob blob, Geometry  &size, Uint32 depth, String magick, Function callback )**  
 Read single image frame of specified size, depth, and format from in-memory Buffer.  
 
-**read ( Buffer blob, Geometry  &size, String magick, Function callback )**  
+**read ( Blob blob, Geometry  &size, String magick, Function callback )**  
 Read single image frame of specified size, and format from in-memory Buffer.  
 
 **TODO** read ( Uint32 width, Uint32 height, String map, const StorageType  type, const void *pixels )  

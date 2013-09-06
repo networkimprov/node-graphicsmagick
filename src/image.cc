@@ -15,7 +15,7 @@ void Image::Init(Handle<Object> target) {
 
 //Actions for Image::Generic_process. Each method will set the action and it will be processed accordingly.
 enum {
-  eNew1, eNew2, eNew3, eNew4,
+  eNew1, eNew2, eNew3, eNew4, eNew5, eNew6, eNew7, eNew8,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -24,7 +24,11 @@ static int kNew1[] = { eEnd };
 static int kNew2[] = { eObjectGeometry, eObjectColor, -eFunction, eEnd };
 static int kNew3[] = { eString, -eFunction, eEnd };
 static int kNew4[] = { eObjectBlob, -eFunction, eEnd };
-static SetType kNewSetType[] = { { kNew1, eNew1}, { kNew2, eNew2}, { kNew3, eNew3}, { kNew4, eNew4}, { NULL, 0 } };
+static int kNew5[] = { eObjectBlob, eObjectGeometry, -eFunction, eEnd };
+static int kNew6[] = { eObjectBlob, eObjectGeometry, eUint32, -eFunction, eEnd };
+static int kNew7[] = { eObjectBlob, eObjectGeometry, eUint32, eString, -eFunction, eEnd };
+static int kNew8[] = { eObjectBlob, eObjectGeometry, eString, -eFunction, eEnd };
+static SetType kNewSetType[] = { { kNew1, eNew1}, { kNew2, eNew2}, { kNew3, eNew3}, { kNew4, eNew4}, { kNew5, eNew5}, { kNew6, eNew6}, { kNew7, eNew7}, { kNew8, eNew8}, { NULL, 0 } };
 Handle<Value> Image::New(const Arguments& args) {
   HandleScope scope;
   Image* that = new Image();
@@ -71,6 +75,26 @@ void Image::Generic_process(void* pData, void* pThat) {
     data->retVal.pointer = that;
     break;
   }
+  case eNew5: {
+    that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get()));
+    data->retVal.pointer = that;
+    break;
+  }
+  case eNew6: {
+    that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), data->val[2].uint32));
+    data->retVal.pointer = that;
+    break;
+  }
+  case eNew7: {
+    that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), data->val[2].uint32, *data->val[3].string));
+    data->retVal.pointer = that;
+    break;
+  }
+  case eNew8: {
+    that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), *data->val[2].string));
+    data->retVal.pointer = that;
+    break;
+  }
   case eWriteFile:
     that->getImage().write(*data->val[0].string);
     data->retVal.pointer = that;
@@ -96,8 +120,12 @@ Handle<Value> Image::Generic_convert(void* pData) {
   GenericFunctionCall* data = (GenericFunctionCall*) pData;
   Handle<Value> aResult = Undefined();
   switch (data->action) {
-  case eNew3: 
-  case eNew4: 
+  case eNew3:
+  case eNew4:
+  case eNew5:
+  case eNew6:
+  case eNew7:
+  case eNew8:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

@@ -76,7 +76,19 @@ struct GenericFunctionCall {
       case eObjectGeometry: ((Geometry*) pointer)->Unreference();       break;
       }
     }
-    GenericValue& operator=(const GenericValue&) { assert(0); } //todo: this will blow up on attempt to val[] = defaults[] below? //some items may need deep copy
+    GenericValue& operator=(const GenericValue& val) {
+      switch (type) {
+      case eString:  //todo allow string deep copy
+      case eObjectBlob:
+      case eObjectColor:
+      case eObjectGeometry:
+        assert(0);
+        break;
+      default:
+        type = val.type;
+        dbl = val.dbl;
+      }
+    }
     union {
       double dbl;
       uint32_t uint32;
@@ -100,7 +112,8 @@ struct GenericFunctionCall {
         ++aOptN;
         if (optionals[aOptN-1] < 0) {
           if (abs(signature[aSigN]) != eFunction)
-            val[aSigN] = defaults[aOptN-1];
+            if (defaults != NULL)
+              val[aSigN] = defaults[aOptN-1];
           continue;
         }
       }
@@ -244,6 +257,7 @@ protected:
   Magick::Image* mImage;
 
   static Handle<Value> New(const Arguments& args);
+  static Handle<Value> AdaptiveThreshold(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

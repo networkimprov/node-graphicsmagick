@@ -8,6 +8,7 @@ void Image::Init(Handle<Object> target) {
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("Image"));
 
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "adaptiveThreshold", AdaptiveThreshold);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -16,6 +17,7 @@ void Image::Init(Handle<Object> target) {
 //Actions for Image::Generic_process. Each method will set the action and it will be processed accordingly.
 enum {
   eNew1, eNew2, eNew3, eNew4, eNew5, eNew6, eNew7, eNew8,
+  eAdaptiveThreshold,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -45,6 +47,14 @@ Handle<Value> Image::New(const Arguments& args) {
   return generic_check_start<Image>(args, kNewSetType, NULL, 1);
 }
 
+static int kAdaptiveThreshold[] = { eUint32, eUint32, -eUint32, -eFunction, eEnd };
+Handle<Value> Image::AdaptiveThreshold(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].uint32 = 0;
+  aDefaults[0].type = eUint32;
+  return generic_check_start<Image>(eAdaptiveThreshold, args, kAdaptiveThreshold, aDefaults);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -61,44 +71,17 @@ Handle<Value> Image::Write(const Arguments& args) {
 void Image::Generic_process(void* pData, void* pThat) {
   GenericFunctionCall* data = (GenericFunctionCall*) pData;
   Image* that = (Image *) pThat;
+  data->retVal.pointer = that;
   switch (data->action) {
-  case eNew2:
-    that->setImage(new Magick::Image(((Geometry*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get()));
-    data->retVal.pointer = that;
-    break;
-  case eNew3:
-    that->setImage(new Magick::Image(*data->val[0].string));
-    data->retVal.pointer = that;
-    break;
-  case eNew4: {
-    that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get()));
-    data->retVal.pointer = that;
-    break;
-  }
-  case eNew5: {
-    that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get()));
-    data->retVal.pointer = that;
-    break;
-  }
-  case eNew6: {
-    that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), data->val[2].uint32));
-    data->retVal.pointer = that;
-    break;
-  }
-  case eNew7: {
-    that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), data->val[2].uint32, *data->val[3].string));
-    data->retVal.pointer = that;
-    break;
-  }
-  case eNew8: {
-    that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), *data->val[2].string));
-    data->retVal.pointer = that;
-    break;
-  }
-  case eWriteFile:
-    that->getImage().write(*data->val[0].string);
-    data->retVal.pointer = that;
-    break;
+  case eNew2:              that->setImage(new Magick::Image(((Geometry*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get()));                                           break;
+  case eNew3:              that->setImage(new Magick::Image(*data->val[0].string));                                                                                                        break;
+  case eNew4:              that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get()));                                                                                       break;
+  case eNew5:              that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get()));                                            break;
+  case eNew6:              that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), data->val[2].uint32));                       break;
+  case eNew7:              that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), data->val[2].uint32, *data->val[3].string)); break;
+  case eNew8:              that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), *data->val[2].string));                      break;
+  case eAdaptiveThreshold: that->getImage().adaptiveThreshold(data->val[0].uint32, data->val[1].uint32, data->val[2].uint32);                                                              break;
+  case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
   case eWrite3: {
@@ -126,6 +109,7 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eNew6:
   case eNew7:
   case eNew8:
+  case eAdaptiveThreshold:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

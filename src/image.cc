@@ -15,6 +15,9 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "blur", Blur);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "blurChannel", BlurChannel);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "border", Border);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "cdl", Cdl);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "channel", Channel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "channelDepth", ChannelDepth);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -71,6 +74,9 @@ enum {
   eBlur,
   eBlurChannel,
   eBorder,
+  eCdl,
+  eChannel,
+  eChannelDepth1, eChannelDepth2,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -147,6 +153,24 @@ Handle<Value> Image::Border(const Arguments& args) {
   return generic_check_start<Image>(eBorder, args, kBorder);
 }
 
+static int kCdl[] = { eString, -eFunction, eEnd };
+Handle<Value> Image::Cdl(const Arguments& args) {
+  //todo: write test
+  return generic_check_start<Image>(eCdl, args, kCdl);
+}
+
+static int kChannel[] = { eInt32, -eFunction, eEnd };
+Handle<Value> Image::Channel(const Arguments& args) {
+  return generic_check_start<Image>(eChannel, args, kChannel);
+}
+
+static int kChannelDepth1[] = { eInt32, eUint32, -eFunction, eEnd };
+static int kChannelDepth2[] = { eInt32, -eFunction, eEnd };
+static SetType kChannelDepthSetType[] = { { kChannelDepth1, eChannelDepth1}, { kChannelDepth2, eChannelDepth2}, { NULL, 0 } };
+Handle<Value> Image::ChannelDepth(const Arguments& args) {
+  return generic_check_start<Image>(args, kChannelDepthSetType);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -182,6 +206,10 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eBlur:              that->getImage().blur(data->val[0].dbl, data->val[1].dbl);                                                                                                      break;
   case eBlurChannel:       that->getImage().blurChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl);                                                     break;
   case eBorder:            that->getImage().border(((Geometry*) data->val[0].pointer)->get());                                                                                             break;
+  case eCdl:               that->getImage().cdl(*data->val[0].string);                                                                                                                     break;
+  case eChannel:           that->getImage().channel((Magick::ChannelType) data->val[0].int32);                                                                                             break;
+  case eChannelDepth1:     that->getImage().channelDepth((Magick::ChannelType) data->val[0].int32, data->val[1].uint32);                                                                   break;
+  case eChannelDepth2:     data->retVal.uint32 = that->getImage().channelDepth((Magick::ChannelType) data->val[0].int32);                                                                  break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -220,6 +248,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eBlur:
   case eBlurChannel:
   case eBorder:
+  case eCdl:
+  case eChannel:
+  case eChannelDepth1:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;
@@ -230,6 +261,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
     aResult = Blob::constructor_template->GetFunction()->NewInstance();
     GetInstance<Blob>(aResult)->set(aBlob);
   } break;
+  case eChannelDepth2:
+    aResult = Uint32::New(data->retVal.uint32);
+    break;
   }
   delete data;
   return aResult;

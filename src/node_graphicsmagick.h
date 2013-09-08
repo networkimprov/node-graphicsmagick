@@ -274,6 +274,9 @@ protected:
   static Handle<Value> Blur(const Arguments& args);
   static Handle<Value> BlurChannel(const Arguments& args);
   static Handle<Value> Border(const Arguments& args);
+  static Handle<Value> Cdl(const Arguments& args);
+  static Handle<Value> Channel(const Arguments& args);
+  static Handle<Value> ChannelDepth(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

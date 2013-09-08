@@ -274,7 +274,7 @@ exports.tests = [
     parameters: [ 'BMP' ],
     result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == 'ab3b2165fcccb9e9469368f3ce945313'); }
   },
- {
+  {
     name: "img = new Image('files/img1.bmp');",
     fatal: true,
     action: function(objects, sync, fn) {
@@ -285,7 +285,7 @@ exports.tests = [
     }
   },
   {
-    name: 'img.border()',
+    name: 'img.border(BorderGeometryDefault)',
     obj: 'img',
     method: 'border',
     parameters: [ new gm.Geometry(gm.BorderGeometryDefault) ],
@@ -297,6 +297,61 @@ exports.tests = [
     method: 'write',
     parameters: [ 'BMP' ],
     result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == '1f58ee8cfe0dfc6d13a8f2d1ffefa1c9'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.channel(RedChannel)',
+    obj: 'img',
+    method: 'channel',
+    parameters: [ gm.ChannelType.RedChannel ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == 'a0a7d142e37e832811a40774894e3abc'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.channelDepth(RedChannel)',
+    obj: 'img',
+    method: 'channelDepth',
+    parameters: [ gm.ChannelType.RedChannel ],
+    result: function(err, result, fn) { fn(err == null && result == 8); }
+  },
+  {
+    name: 'img.channelDepth(RedChannel, 4)',
+    obj: 'img',
+    method: 'channelDepth',
+    parameters: [ gm.ChannelType.RedChannel, 1 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == 'c4aa4c5647a81e5f9565f6baac6d130b'); }
   },
   {
     name: 'img.writeFile()',

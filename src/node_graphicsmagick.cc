@@ -155,6 +155,7 @@ bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
     switch (abs(signature[aSigN])) {
     case eInt32:          aIsType = args[aArgN]->IsInt32();                                                                          break;
     case eUint32:         aIsType = args[aArgN]->IsUint32();                                                                         break;
+    case eNumber:         aIsType = args[aArgN]->IsNumber();                                                                         break;
     case eBoolean:        aIsType = args[aArgN]->IsBoolean();                                                                        break;
     case eString:         aIsType = args[aArgN]->IsString();                                                                         break;
     case eArray:          aIsType = args[aArgN]->IsArray();                                                                          break;
@@ -194,6 +195,7 @@ static std::string generateSignatureString(int signature[]) {
     switch (abs(signature[aSigN])) {
     case eInt32:          aStr += "int32";    break;
     case eUint32:         aStr += "uint32";   break;
+    case eNumber:         aStr += "number";   break;
     case eBoolean:        aStr += "boolean";  break;
     case eString:         aStr += "string";   break;
     case eObject:         aStr += "object";   break;

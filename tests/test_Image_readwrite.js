@@ -83,6 +83,151 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == 'fb943e102d2983dd7feed643e243c44a'); }
   },
   {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.addNoiseChannel',
+    obj: 'img',
+    method: 'addNoiseChannel',
+    parameters: [ gm.ChannelType.RedChannel, gm.NoiseType.GaussianNoise ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) != 'fb943e102d2983dd7feed643e243c44a'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.addNoise',
+    obj: 'img',
+    method: 'addNoise',
+    parameters: [ gm.NoiseType.GaussianNoise ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) != 'fb943e102d2983dd7feed643e243c44a'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.annotate(text, location)',
+    obj: 'img',
+    method: 'annotate',
+    parameters: [ 'text', new gm.Geometry({ width: 10, height: 10}) ],
+    result: function(err, result, fn) { if (err != null && err.search('library is not available') != -1) console.log(err); fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) != 'cae23729a69e667f5bd6b33e34cdf3a5'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.annotate(text, location, gravity)',
+    obj: 'img',
+    method: 'annotate',
+    parameters: [ 'text', new gm.Geometry({ width: 10, height: 10}), gm.GravityType.WestGravity ],
+    result: function(err, result, fn) { if (err != null && err.search('library is not available') != -1) console.log(err); fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) != 'cae23729a69e667f5bd6b33e34cdf3a5'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.annotate(text, location, gravity, degrees)',
+    obj: 'img',
+    method: 'annotate',
+    parameters: [ 'text', new gm.Geometry({ width: 10, height: 10}), gm.GravityType.WestGravity, 30 ],
+    result: function(err, result, fn) { if (err != null && err.search('library is not available') != -1) console.log(err); fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) != 'cae23729a69e667f5bd6b33e34cdf3a5'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.annotate(text, gravity)',
+    obj: 'img',
+    method: 'annotate',
+    parameters: [ 'text', gm.GravityType.WestGravity ],
+    result: function(err, result, fn) { if (err != null && err.search('library is not available') != -1) console.log(err); fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) != 'cae23729a69e667f5bd6b33e34cdf3a5'); }
+  },
+
+  {
     name: 'img.writeFile()',
     obj: 'img',
     method: 'writeFile',

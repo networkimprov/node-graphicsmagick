@@ -12,7 +12,7 @@
 
 enum ArgumentType {
   eEnd,
-  eInt32, eUint32, eBoolean, eString, eObject, eArray, eFunction, eNull,
+  eInt32, eUint32, eNumber, eBoolean, eString, eObject, eArray, eFunction, eNull,
   eBuffer,
   eObjectBlob, eObjectColor, eObjectGeometry, eObjectImage
 };
@@ -88,6 +88,7 @@ struct GenericFunctionCall {
         type = val.type;
         dbl = val.dbl;
       }
+      return *this;
     }
     union {
       double dbl;
@@ -120,6 +121,7 @@ struct GenericFunctionCall {
       switch (abs(signature[aSigN])) {
       case eInt32:          val[aSigN].int32 = args[aArgInd]->Int32Value();                                                                   break;
       case eUint32:         val[aSigN].uint32 = args[aArgInd]->Uint32Value();                                                                 break;
+      case eNumber:         val[aSigN].dbl = args[aArgInd]->NumberValue();                                                                    break;
       case eBoolean:        val[aSigN].boolean = args[aArgInd]->BooleanValue();                                                               break;
       case eString:         val[aSigN].string = new std::string(*String::Utf8Value(args[aArgInd]));                                           break;
       case eObjectBlob:     val[aSigN].pointer = (void*) GetInstance<Blob>(args[aArgInd]); ((Blob*) val[aSigN].pointer)->Reference();         break;
@@ -258,6 +260,9 @@ protected:
 
   static Handle<Value> New(const Arguments& args);
   static Handle<Value> AdaptiveThreshold(const Arguments& args);
+  static Handle<Value> AddNoiseChannel(const Arguments& args);
+  static Handle<Value> AddNoise(const Arguments& args);
+  static Handle<Value> Annotate(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

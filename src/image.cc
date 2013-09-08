@@ -9,15 +9,62 @@ void Image::Init(Handle<Object> target) {
   constructor_template->SetClassName(String::NewSymbol("Image"));
 
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "adaptiveThreshold", AdaptiveThreshold);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "addNoiseChannel", AddNoiseChannel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "addNoise", AddNoise);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "annotate", Annotate);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
+
+  //todo: move to separate file, create doc
+  Local<Object> aChannelType = Object::New();
+  aChannelType->Set(String::NewSymbol("UndefinedChannel"), Integer::New(Magick::UndefinedChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("RedChannel"), Integer::New(Magick::RedChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("CyanChannel"), Integer::New(Magick::CyanChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("GreenChannel"), Integer::New(Magick::GreenChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("MagentaChannel"), Integer::New(Magick::MagentaChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("BlueChannel"), Integer::New(Magick::BlueChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("YellowChannel"), Integer::New(Magick::YellowChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("OpacityChannel"), Integer::New(Magick::OpacityChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("BlackChannel"), Integer::New(Magick::BlackChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("MatteChannel"), Integer::New(Magick::MatteChannel), ReadOnly);
+  aChannelType->Set(String::NewSymbol("AllChannels"), Integer::New(Magick::AllChannels), ReadOnly);
+  aChannelType->Set(String::NewSymbol("GrayChannel"), Integer::New(Magick::GrayChannel), ReadOnly);
+  target->Set(String::NewSymbol("ChannelType"), aChannelType);
+
+  Local<Object> aGravityType = Object::New();
+  aGravityType->Set(String::NewSymbol("ForgetGravity"), Integer::New(Magick::ForgetGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("NorthWestGravity"), Integer::New(Magick::NorthWestGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("NorthGravity"), Integer::New(Magick::NorthGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("NorthEastGravity"), Integer::New(Magick::NorthEastGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("WestGravity"), Integer::New(Magick::WestGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("CenterGravity"), Integer::New(Magick::CenterGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("EastGravity"), Integer::New(Magick::EastGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("SouthWestGravity"), Integer::New(Magick::SouthWestGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("SouthGravity"), Integer::New(Magick::SouthGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("SouthEastGravity"), Integer::New(Magick::SouthEastGravity), ReadOnly);
+  aGravityType->Set(String::NewSymbol("StaticGravity"), Integer::New(Magick::StaticGravity), ReadOnly);
+  target->Set(String::NewSymbol("GravityType"), aGravityType);
+
+  Local<Object> aNoiseType = Object::New();
+  aNoiseType->Set(String::NewSymbol("UniformNoise"), Integer::New(Magick::UniformNoise), ReadOnly);
+  aNoiseType->Set(String::NewSymbol("GaussianNoise"), Integer::New(Magick::GaussianNoise), ReadOnly);
+  aNoiseType->Set(String::NewSymbol("MultiplicativeGaussianNoise"), Integer::New(Magick::MultiplicativeGaussianNoise), ReadOnly);
+  aNoiseType->Set(String::NewSymbol("ImpulseNoise"), Integer::New(Magick::ImpulseNoise), ReadOnly);
+  aNoiseType->Set(String::NewSymbol("LaplacianNoise"), Integer::New(Magick::LaplacianNoise), ReadOnly);
+  aNoiseType->Set(String::NewSymbol("PoissonNoise"), Integer::New(Magick::PoissonNoise), ReadOnly);
+  aNoiseType->Set(String::NewSymbol("RandomNoise"), Integer::New(Magick::RandomNoise), ReadOnly);
+  target->Set(String::NewSymbol("NoiseType"), aNoiseType);
+
 }
 
 //Actions for Image::Generic_process. Each method will set the action and it will be processed accordingly.
 enum {
   eNew1, eNew2, eNew3, eNew4, eNew5, eNew6, eNew7, eNew8,
   eAdaptiveThreshold,
+  eAddNoiseChannel,
+  eAddNoise,
+  eAnnotate1, eAnnotate2, eAnnotate3, eAnnotate4,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -55,6 +102,25 @@ Handle<Value> Image::AdaptiveThreshold(const Arguments& args) {
   return generic_check_start<Image>(eAdaptiveThreshold, args, kAdaptiveThreshold, aDefaults);
 }
 
+static int kAddNoiseChannel[] = { eInt32, eInt32, -eFunction, eEnd };
+Handle<Value> Image::AddNoiseChannel(const Arguments& args) {
+  return generic_check_start<Image>(eAddNoiseChannel, args, kAddNoiseChannel);
+}
+
+static int kAddNoise[] = { eInt32, -eFunction, eEnd };
+Handle<Value> Image::AddNoise(const Arguments& args) {
+  return generic_check_start<Image>(eAddNoise, args, kAddNoise);
+}
+
+static int kAnnotate1[] = { eString, eObjectGeometry, -eFunction, eEnd };
+static int kAnnotate2[] = { eString, eObjectGeometry, eInt32, -eFunction, eEnd };
+static int kAnnotate3[] = { eString, eObjectGeometry, eInt32, eNumber, -eFunction, eEnd };
+static int kAnnotate4[] = { eString, eInt32, -eFunction, eEnd };
+static SetType kAnnotateSetType[] = { { kAnnotate1, eAnnotate1 }, { kAnnotate2, eAnnotate2 }, { kAnnotate3, eAnnotate3 }, { kAnnotate4, eAnnotate4 }, { NULL, 0 } };
+Handle<Value> Image::Annotate(const Arguments& args) {
+  return generic_check_start<Image>(args, kAnnotateSetType);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -81,6 +147,12 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eNew7:              that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), data->val[2].uint32, *data->val[3].string)); break;
   case eNew8:              that->setImage(new Magick::Image(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), *data->val[2].string));                      break;
   case eAdaptiveThreshold: that->getImage().adaptiveThreshold(data->val[0].uint32, data->val[1].uint32, data->val[2].uint32);                                                              break;
+  case eAddNoiseChannel:   that->getImage().addNoiseChannel((Magick::ChannelType) data->val[0].int32, (Magick::NoiseType) data->val[1].int32);                                             break;
+  case eAddNoise:          that->getImage().addNoise((Magick::NoiseType) data->val[0].int32);                                                                                              break;
+  case eAnnotate1:         that->getImage().annotate(*data->val[0].string, ((Geometry*) data->val[1].pointer)->get());                                                                     break;
+  case eAnnotate2:         that->getImage().annotate(*data->val[0].string, ((Geometry*) data->val[1].pointer)->get(), (Magick::GravityType) data->val[2].int32);                           break;
+  case eAnnotate3:         that->getImage().annotate(*data->val[0].string, ((Geometry*) data->val[1].pointer)->get(), (Magick::GravityType) data->val[2].int32, data->val[3].dbl);         break;
+  case eAnnotate4:         that->getImage().annotate(*data->val[0].string, (Magick::GravityType) data->val[1].int32);                                                                      break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -110,6 +182,12 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eNew7:
   case eNew8:
   case eAdaptiveThreshold:
+  case eAddNoiseChannel:
+  case eAddNoise:
+  case eAnnotate1:
+  case eAnnotate2:
+  case eAnnotate3:
+  case eAnnotate4:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

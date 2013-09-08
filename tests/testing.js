@@ -39,7 +39,7 @@ exports.runTests = function (name, tests, sync, callback) {
     } else {
       if (!sync)
         aTst.parameters.push(function(err, result){
-          aTst.result(err, result, function(result) {
+          aTst.result(err == null ? null : err.toString(), result, function(result) {
             aTst.parameters.pop();
             fNext(result ? 'ok' : 'fail', aTst.name);
           });

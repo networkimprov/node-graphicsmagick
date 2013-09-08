@@ -51,8 +51,14 @@ Transform image by specified affine (or free transform) matrix.
 **annotate ( String text, Geometry location, Function callback)**  
 Annotate using specified text, and placement location 
 
-**annotate ( String text, GravityType gravity[, Geometry boundingArea][, Number degrees], Function callback)**  
-Annotate with text using specified text, bounding area, placement gravity, and rotation.
+**annotate ( String text, Geometry location, GravityType gravity, Function callback)**  
+Annotate using specified text, bounding area, and placement gravity  
+
+**annotate ( String text, Geometry location, GravityType gravity, Number degrees, Function callback)**  
+Annotate with text using specified text, bounding area, placement gravity, and rotation.  
+
+**annotate ( String text, GravityType gravity, Function callback)**  
+Annotate with text (bounding area is entire image) and placement gravity.  
 
 **blur ( [Number radius = 0.0][, Number sigma = 1.0], Function callback)**  
 **blurChannel ( ChannelType channel[, Number radius = 0.0][, Number sigma = 1.0], Function callback)**  

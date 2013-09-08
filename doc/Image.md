@@ -66,7 +66,7 @@ Blur image with specified blur factor.
 The radius parameter specifies the radius of the Gaussian, in pixels, not counting the center pixel.  
 The sigma parameter specifies the standard deviation of the Laplacian, in pixels.  
 
-**border ( [Geometry geometry = borderGeometryDefault], Function callback)**  
+**border ( Geometry geometry, Function callback)**  
 Border image (add border to image).  
 
 **cdl ( String cdl, Function callback)**  

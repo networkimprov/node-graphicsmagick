@@ -226,7 +226,78 @@ exports.tests = [
     parameters: [ 'BMP' ],
     result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) != 'cae23729a69e667f5bd6b33e34cdf3a5'); }
   },
-
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.blur()',
+    obj: 'img',
+    method: 'blur',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == '761d370caf17d72cabba75415277e0a9'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.blurChannel(RedChannel)',
+    obj: 'img',
+    method: 'blurChannel',
+    parameters: [ gm.ChannelType.RedChannel ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == 'ab3b2165fcccb9e9469368f3ce945313'); }
+  },
+ {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.border()',
+    obj: 'img',
+    method: 'border',
+    parameters: [ new gm.Geometry(gm.BorderGeometryDefault) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == '1f58ee8cfe0dfc6d13a8f2d1ffefa1c9'); }
+  },
   {
     name: 'img.writeFile()',
     obj: 'img',

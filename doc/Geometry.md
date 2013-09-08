@@ -1,7 +1,7 @@
 #Geometry
 Object which provides convenient means to specify a geometry information. Similar to [this](http://www.graphicsmagick.org/Magick++/Geometry.html).  
   
-**Geometry( geometryInfo )**  
+**Geometry( object geometryInfo )**  
 geometryInfo is a JSON which contains:
 * width - Width, Uint32 value.
 * height - Height, Uint32 value.
@@ -14,8 +14,9 @@ geometryInfo is a JSON which contains:
 * greater - Resize if image is greater than size (>), Boolean value, optional.
 * less - Resize if image is less than size (<), Boolean value, optional.
 
+**Geometry( string geometryStr )**  
+Creates a Geometry object from a geometry string.  
+
 **GeometryToString(Geometry obj)**  
 Returns a geometry string encoding.
 
-**StringToGeometry(String str)**  
-Returns a Geometry object from a geometry string.

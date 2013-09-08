@@ -90,6 +90,14 @@ struct GenericFunctionCall {
       }
       return *this;
     }
+    void SetUint32(unsigned v) {
+      uint32 = v;
+      type = eUint32;
+    }
+    void SetNumber(double v) {
+      dbl = v;
+      type = eNumber;
+    }
     union {
       double dbl;
       uint32_t uint32;
@@ -263,6 +271,9 @@ protected:
   static Handle<Value> AddNoiseChannel(const Arguments& args);
   static Handle<Value> AddNoise(const Arguments& args);
   static Handle<Value> Annotate(const Arguments& args);
+  static Handle<Value> Blur(const Arguments& args);
+  static Handle<Value> BlurChannel(const Arguments& args);
+  static Handle<Value> Border(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

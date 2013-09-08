@@ -12,6 +12,9 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "addNoiseChannel", AddNoiseChannel);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "addNoise", AddNoise);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "annotate", Annotate);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "blur", Blur);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "blurChannel", BlurChannel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "border", Border);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -65,6 +68,9 @@ enum {
   eAddNoiseChannel,
   eAddNoise,
   eAnnotate1, eAnnotate2, eAnnotate3, eAnnotate4,
+  eBlur,
+  eBlurChannel,
+  eBorder,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -97,8 +103,7 @@ Handle<Value> Image::New(const Arguments& args) {
 static int kAdaptiveThreshold[] = { eUint32, eUint32, -eUint32, -eFunction, eEnd };
 Handle<Value> Image::AdaptiveThreshold(const Arguments& args) {
   GenericFunctionCall::GenericValue aDefaults[1];
-  aDefaults[0].uint32 = 0;
-  aDefaults[0].type = eUint32;
+  aDefaults[0].SetUint32(0);
   return generic_check_start<Image>(eAdaptiveThreshold, args, kAdaptiveThreshold, aDefaults);
 }
 
@@ -119,6 +124,27 @@ static int kAnnotate4[] = { eString, eInt32, -eFunction, eEnd };
 static SetType kAnnotateSetType[] = { { kAnnotate1, eAnnotate1 }, { kAnnotate2, eAnnotate2 }, { kAnnotate3, eAnnotate3 }, { kAnnotate4, eAnnotate4 }, { NULL, 0 } };
 Handle<Value> Image::Annotate(const Arguments& args) {
   return generic_check_start<Image>(args, kAnnotateSetType);
+}
+
+static int kBlur[] = { -eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::Blur(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[2];
+  aDefaults[0].SetNumber(0);
+  aDefaults[1].SetNumber(1);
+  return generic_check_start<Image>(eBlur, args, kBlur, aDefaults);
+}
+
+static int kBlurChannel[] = { eInt32, -eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::BlurChannel(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[2];
+  aDefaults[0].SetNumber(0);
+  aDefaults[1].SetNumber(1);
+  return generic_check_start<Image>(eBlurChannel, args, kBlurChannel, aDefaults);
+}
+
+static int kBorder[] = { eObjectGeometry, -eFunction, eEnd };
+Handle<Value> Image::Border(const Arguments& args) {
+  return generic_check_start<Image>(eBorder, args, kBorder);
 }
 
 static int kWriteFile[] = { eString, -eFunction, eEnd };
@@ -153,6 +179,9 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eAnnotate2:         that->getImage().annotate(*data->val[0].string, ((Geometry*) data->val[1].pointer)->get(), (Magick::GravityType) data->val[2].int32);                           break;
   case eAnnotate3:         that->getImage().annotate(*data->val[0].string, ((Geometry*) data->val[1].pointer)->get(), (Magick::GravityType) data->val[2].int32, data->val[3].dbl);         break;
   case eAnnotate4:         that->getImage().annotate(*data->val[0].string, (Magick::GravityType) data->val[1].int32);                                                                      break;
+  case eBlur:              that->getImage().blur(data->val[0].dbl, data->val[1].dbl);                                                                                                      break;
+  case eBlurChannel:       that->getImage().blurChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl);                                                     break;
+  case eBorder:            that->getImage().border(((Geometry*) data->val[0].pointer)->get());                                                                                             break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -188,6 +217,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eAnnotate2:
   case eAnnotate3:
   case eAnnotate4:
+  case eBlur:
+  case eBlurChannel:
+  case eBorder:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

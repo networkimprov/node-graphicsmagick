@@ -315,6 +315,43 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', '34de497b14a1d21940dd1f5445fee074'),
+  NewImageFromFile('img', 'files/img2.bmp'),
+  {
+    name: 'img.floodFillColor( x, y, fillColor )',
+    obj: 'img',
+    method: 'floodFillColor',
+    parameters: [ 1, 1, new gm.Color({red: 0, green: 1, blue: 0}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '3d80459a9df1117a7abfec5d7f7931a1'),
+  NewImageFromFile('img', 'files/img2.bmp'),
+  {
+    name: 'img.floodFillColor( geometry, fillColor )',
+    obj: 'img',
+    method: 'floodFillColor',
+    parameters: [ new gm.Geometry({width: 1, height: 1}), new gm.Color({red: 0, green: 1, blue: 0}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '3d80459a9df1117a7abfec5d7f7931a1'),
+  NewImageFromFile('img', 'files/img2.bmp'),
+  {
+    name: 'img.floodFillColor( x, y, fillColor, borderColor )',
+    obj: 'img',
+    method: 'floodFillColor',
+    parameters: [ 1, 1, new gm.Color({red: 0, green: 1, blue: 0}), new gm.Color({red: 0, green: 0, blue: 1}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '3d80459a9df1117a7abfec5d7f7931a1'),
+  NewImageFromFile('img', 'files/img2.bmp'),
+  {
+    name: 'img.floodFillColor( point, fillColor, borderColor )',
+    obj: 'img',
+    method: 'floodFillColor',
+    parameters: [ new gm.Geometry({width: 1, height: 1}), new gm.Color({red: 0, green: 1, blue: 0}), new gm.Color({red: 0, green: 0, blue: 1}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '3d80459a9df1117a7abfec5d7f7931a1'),
+
   {
     name: 'img.writeFile()',
     obj: 'img',

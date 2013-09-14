@@ -291,6 +291,7 @@ protected:
   static Handle<Value> Equalize(const Arguments& args);
   static Handle<Value> Erase(const Arguments& args);
   static Handle<Value> Flip(const Arguments& args);
+  static Handle<Value> FloodFillColor(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

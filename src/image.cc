@@ -32,6 +32,7 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "equalize", Equalize);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "erase", Erase);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "flip", Flip);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "floodFillColor", FloodFillColor);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -105,6 +106,7 @@ enum {
   eEqualize,
   eErase,
   eFlip,
+  eFloodFillColor1, eFloodFillColor2, eFloodFillColor3, eFloodFillColor4,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -279,6 +281,15 @@ Handle<Value> Image::Flip(const Arguments& args) {
   return generic_check_start<Image>(eFlip, args, kFlip);
 }
 
+static int kFloodFillColor1[] = { eUint32, eUint32, eObjectColor, -eFunction, eEnd };
+static int kFloodFillColor2[] = { eObjectGeometry, eObjectColor, -eFunction, eEnd };
+static int kFloodFillColor3[] = { eUint32, eUint32, eObjectColor, eObjectColor, -eFunction, eEnd };
+static int kFloodFillColor4[] = { eObjectGeometry, eObjectColor, eObjectColor, -eFunction, eEnd };
+static SetType kFloodFillColorSetType[] = { { kFloodFillColor1, eFloodFillColor1}, { kFloodFillColor2, eFloodFillColor2}, { kFloodFillColor3, eFloodFillColor3}, { kFloodFillColor4, eFloodFillColor4}, { NULL, 0 } };
+Handle<Value> Image::FloodFillColor(const Arguments& args) {
+  return generic_check_start<Image>(args, kFloodFillColorSetType);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -333,6 +344,10 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eEqualize:          that->getImage().equalize();                                                                                                                                    break;
   case eErase:             that->getImage().erase();                                                                                                                                       break;
   case eFlip:              that->getImage().flip();                                                                                                                                        break;
+  case eFloodFillColor1:   that->getImage().floodFillColor(data->val[0].uint32, data->val[1].uint32, ((Color*) data->val[2].pointer)->get());                                              break;
+  case eFloodFillColor2:   that->getImage().floodFillColor(((Geometry*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get());                                             break;
+  case eFloodFillColor3:   that->getImage().floodFillColor(data->val[0].uint32, data->val[1].uint32, ((Color*) data->val[2].pointer)->get(), ((Color*) data->val[3].pointer)->get());      break;
+  case eFloodFillColor4:   that->getImage().floodFillColor(((Geometry*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get(), ((Color*) data->val[2].pointer)->get());     break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -389,6 +404,10 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eEqualize:
   case eErase:
   case eFlip:
+  case eFloodFillColor1:
+  case eFloodFillColor2:
+  case eFloodFillColor3:
+  case eFloodFillColor4:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

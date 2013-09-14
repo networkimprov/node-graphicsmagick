@@ -93,7 +93,7 @@ Colorize image with pen color, using specified percent opacity for red, green, a
 **colorize ( Uint32 opacity, Color penColor, Function callback)**  
 Colorize image with pen color, using specified percent opacity.  
 
-**colorMatrix (NumberArrayOfArray color_matrix, Function callback)**  
+**TODO** colorMatrix (NumberArrayOfArray color_matrix, Function callback)  
 Apply a color matrix to the image channels.  The user supplied matrix may be of order 1 to 5 (1x1 through 5x5).  
 For example: colorMatrix( [ [ 1, 1], [ 1, 1] ])  
 

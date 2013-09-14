@@ -18,6 +18,13 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "cdl", Cdl);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "channel", Channel);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "channelDepth", ChannelDepth);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "charcoal", Charcoal);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "chop", Chop);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "colorize", Colorize);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "comment", Comment);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "contrast", Contrast);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "crop", Crop);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "cycleColormap", CycleColormap);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -77,6 +84,13 @@ enum {
   eCdl,
   eChannel,
   eChannelDepth1, eChannelDepth2,
+  eCharcoal,
+  eChop,
+  eColorize1, eColorize2,
+  eComment,
+  eContrast,
+  eCrop,
+  eCycleColormap,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -171,6 +185,46 @@ Handle<Value> Image::ChannelDepth(const Arguments& args) {
   return generic_check_start<Image>(args, kChannelDepthSetType);
 }
 
+static int kCharcoal[] = { -eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::Charcoal(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[2];
+  aDefaults[0].SetNumber(0);
+  aDefaults[1].SetNumber(1);
+  return generic_check_start<Image>(eCharcoal, args, kCharcoal, aDefaults);
+}
+
+static int kChop[] = { eObjectGeometry, -eFunction, eEnd };
+Handle<Value> Image::Chop(const Arguments& args) {
+  return generic_check_start<Image>(eChop, args, kChop);
+}
+
+static int kColorize1[] = { eUint32, eUint32, eUint32, eObjectColor, -eFunction, eEnd };
+static int kColorize2[] = { eUint32, eObjectColor, -eFunction, eEnd };
+static SetType kColorizeSetType[] = { { kColorize1, eColorize1}, { kColorize2, eColorize2}, { NULL, 0 } };
+Handle<Value> Image::Colorize(const Arguments& args) {
+  return generic_check_start<Image>(args, kColorizeSetType);
+}
+
+static int kComment[] = { eString, -eFunction, eEnd };
+Handle<Value> Image::Comment(const Arguments& args) {
+  return generic_check_start<Image>(eComment, args, kComment);
+}
+
+static int kContrast[] = { eUint32, -eFunction, eEnd };
+Handle<Value> Image::Contrast(const Arguments& args) {
+  return generic_check_start<Image>(eContrast, args, kContrast);
+}
+
+static int kCrop[] = { eObjectGeometry, -eFunction, eEnd };
+Handle<Value> Image::Crop(const Arguments& args) {
+  return generic_check_start<Image>(eCrop, args, kCrop);
+}
+
+static int kCycleColormap[] = { eUint32, -eFunction, eEnd };
+Handle<Value> Image::CycleColormap(const Arguments& args) {
+  return generic_check_start<Image>(eCycleColormap, args, kCycleColormap);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -210,6 +264,14 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eChannel:           that->getImage().channel((Magick::ChannelType) data->val[0].int32);                                                                                             break;
   case eChannelDepth1:     that->getImage().channelDepth((Magick::ChannelType) data->val[0].int32, data->val[1].uint32);                                                                   break;
   case eChannelDepth2:     data->retVal.uint32 = that->getImage().channelDepth((Magick::ChannelType) data->val[0].int32);                                                                  break;
+  case eCharcoal:          that->getImage().charcoal(data->val[0].dbl, data->val[1].dbl);                                                                                                  break;
+  case eChop:              that->getImage().chop(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
+  case eColorize1:         that->getImage().colorize(data->val[0].uint32, data->val[1].uint32, data->val[2].uint32, ((Color*) data->val[3].pointer)->get());                               break;
+  case eColorize2:         that->getImage().colorize(data->val[0].uint32, ((Color*) data->val[1].pointer)->get());                                                                         break;
+  case eComment:           that->getImage().comment(*data->val[0].string);                                                                                                                 break;
+  case eContrast:          that->getImage().contrast(data->val[0].uint32);                                                                                                                 break;
+  case eCrop:              that->getImage().crop(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
+  case eCycleColormap:     that->getImage().cycleColormap(data->val[0].uint32);                                                                                                            break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:

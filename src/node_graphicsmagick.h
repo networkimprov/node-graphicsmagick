@@ -277,6 +277,13 @@ protected:
   static Handle<Value> Cdl(const Arguments& args);
   static Handle<Value> Channel(const Arguments& args);
   static Handle<Value> ChannelDepth(const Arguments& args);
+  static Handle<Value> Charcoal(const Arguments& args);
+  static Handle<Value> Chop(const Arguments& args);
+  static Handle<Value> Colorize(const Arguments& args);
+  static Handle<Value> Comment(const Arguments& args);
+  static Handle<Value> Contrast(const Arguments& args);
+  static Handle<Value> Crop(const Arguments& args);
+  static Handle<Value> CycleColormap(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

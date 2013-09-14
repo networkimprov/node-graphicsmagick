@@ -6,7 +6,9 @@ var crypto = require('crypto');
 function CreateMD5(buff) {
   var aMD5 = crypto.createHash('md5');
   aMD5.update(buff);
-  return aMD5.digest('hex');
+  var aMD5Hex = aMD5.digest('hex');
+  console.log(aMD5Hex);
+  return aMD5Hex;
 }
 
 var aTestsDir = path.dirname(module.filename);
@@ -353,6 +355,175 @@ exports.tests = [
     parameters: [ 'BMP' ],
     result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == 'c4aa4c5647a81e5f9565f6baac6d130b'); }
   },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.charcoal()',
+    obj: 'img',
+    method: 'charcoal',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == '173f650c860a70de422eb21e0fc00d88'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.chop(geometry)',
+    obj: 'img',
+    method: 'chop',
+    parameters: [ new gm.Geometry({ width: 20, height: 20, xOff: 50, yOff: 50}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == 'a8e778773313ba662befa3b4a81ba45f'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.colorize( red, green, blue, pen)',
+    obj: 'img',
+    method: 'colorize',
+    parameters: [ 50, 40, 80, new gm.Color({red: 0.5, green: 0, blue: 0}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == '032fbaaeedc332917eb7a9dc9180b6ab'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.colorize( opacity, pen )',
+    obj: 'img',
+    method: 'colorize',
+    parameters: [ 60, new gm.Color({red: 0.5, green: 0, blue: 0}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == '3b94bfc8b228494619cadec070203fca'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.contrast( sharpen )',
+    obj: 'img',
+    method: 'contrast',
+    parameters: [ 10 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == '811e207ad4c5a4d33c3dc9c5c7566117'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.crop(geometry)',
+    obj: 'img',
+    method: 'crop',
+    parameters: [ new gm.Geometry({ width: 20, height: 20, xOff: 50, yOff: 50}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == '6617958064f7aeb456e44e9ba4fabfbe'); }
+  },
+  {
+    name: "img = new Image('files/img1.bmp');",
+    fatal: true,
+    action: function(objects, sync, fn) {
+      if (sync) {
+        objects.img = new gm.Image(aTestsDir + '/files/img1.bmp'); fn(null);
+      } else
+        new gm.Image(aTestsDir + '/files/img1.bmp', function(err, img) { objects.img = img; fn(err); });
+    }
+  },
+  {
+    name: 'img.cycleColormap( amount )',
+    obj: 'img',
+    method: 'cycleColormap',
+    parameters: [ 64 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  {
+    name: 'img.write(BMP)',
+    obj: 'img',
+    method: 'write',
+    parameters: [ 'BMP' ],
+    result: function(err, result, fn) { fn(err == null && CreateMD5(gm.BlobToBuffer(result)) == '4c8cb212849035f33d745e984be6acbd'); }
+  },
+
   {
     name: 'img.writeFile()',
     obj: 'img',

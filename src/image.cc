@@ -25,6 +25,13 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "contrast", Contrast);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "crop", Crop);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "cycleColormap", CycleColormap);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "despeckle", Despeckle);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "edge", Edge);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "emboss", Emboss);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "enhance", Enhance);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "equalize", Equalize);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "erase", Erase);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "flip", Flip);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -91,6 +98,13 @@ enum {
   eContrast,
   eCrop,
   eCycleColormap,
+  eDespeckle,
+  eEdge,
+  eEmboss,
+  eEnhance,
+  eEqualize,
+  eErase,
+  eFlip,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -225,6 +239,46 @@ Handle<Value> Image::CycleColormap(const Arguments& args) {
   return generic_check_start<Image>(eCycleColormap, args, kCycleColormap);
 }
 
+static int kDespeckle[] = { -eFunction, eEnd };
+Handle<Value> Image::Despeckle(const Arguments& args) {
+  return generic_check_start<Image>(eDespeckle, args, kDespeckle);
+}
+
+static int kEdge[] = { -eNumber, -eFunction, eEnd };
+Handle<Value> Image::Edge(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetNumber(0);
+  return generic_check_start<Image>(eEdge, args, kEdge, aDefaults);
+}
+
+static int kEmboss[] = { -eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::Emboss(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[2];
+  aDefaults[0].SetNumber(0);
+  aDefaults[1].SetNumber(1);
+  return generic_check_start<Image>(eEmboss, args, kEmboss, aDefaults);
+}
+
+static int kEnhance[] = { -eFunction, eEnd };
+Handle<Value> Image::Enhance(const Arguments& args) {
+  return generic_check_start<Image>(eEnhance, args, kEnhance);
+}
+
+static int kEqualize[] = { -eFunction, eEnd };
+Handle<Value> Image::Equalize(const Arguments& args) {
+  return generic_check_start<Image>(eEqualize, args, kEqualize);
+}
+
+static int kErase[] = { -eFunction, eEnd };
+Handle<Value> Image::Erase(const Arguments& args) {
+  return generic_check_start<Image>(eErase, args, kErase);
+}
+
+static int kFlip[] = { -eFunction, eEnd };
+Handle<Value> Image::Flip(const Arguments& args) {
+  return generic_check_start<Image>(eFlip, args, kFlip);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -272,6 +326,13 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eContrast:          that->getImage().contrast(data->val[0].uint32);                                                                                                                 break;
   case eCrop:              that->getImage().crop(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
   case eCycleColormap:     that->getImage().cycleColormap(data->val[0].uint32);                                                                                                            break;
+  case eDespeckle:         that->getImage().despeckle();                                                                                                                                   break;
+  case eEdge:              that->getImage().edge(data->val[0].dbl);                                                                                                                        break;
+  case eEmboss:            that->getImage().emboss(data->val[0].dbl, data->val[1].dbl);                                                                                                    break;
+  case eEnhance:           that->getImage().enhance();                                                                                                                                     break;
+  case eEqualize:          that->getImage().equalize();                                                                                                                                    break;
+  case eErase:             that->getImage().erase();                                                                                                                                       break;
+  case eFlip:              that->getImage().flip();                                                                                                                                        break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -313,6 +374,21 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eCdl:
   case eChannel:
   case eChannelDepth1:
+  case eCharcoal:
+  case eChop:
+  case eColorize1:
+  case eColorize2:
+  case eComment:
+  case eContrast:
+  case eCrop:
+  case eCycleColormap:
+  case eDespeckle:
+  case eEdge:
+  case eEmboss:
+  case eEnhance:
+  case eEqualize:
+  case eErase:
+  case eFlip:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

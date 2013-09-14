@@ -284,6 +284,13 @@ protected:
   static Handle<Value> Contrast(const Arguments& args);
   static Handle<Value> Crop(const Arguments& args);
   static Handle<Value> CycleColormap(const Arguments& args);
+  static Handle<Value> Despeckle(const Arguments& args);
+  static Handle<Value> Edge(const Arguments& args);
+  static Handle<Value> Emboss(const Arguments& args);
+  static Handle<Value> Enhance(const Arguments& args);
+  static Handle<Value> Equalize(const Arguments& args);
+  static Handle<Value> Erase(const Arguments& args);
+  static Handle<Value> Flip(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

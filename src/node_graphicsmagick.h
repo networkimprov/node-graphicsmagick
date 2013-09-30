@@ -292,6 +292,10 @@ protected:
   static Handle<Value> Erase(const Arguments& args);
   static Handle<Value> Flip(const Arguments& args);
   static Handle<Value> FloodFillColor(const Arguments& args);
+  static Handle<Value> FloodFillOpacity(const Arguments& args);
+  static Handle<Value> Flop(const Arguments& args);
+  static Handle<Value> Gamma(const Arguments& args);
+  static Handle<Value> GaussianBlur(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

@@ -351,6 +351,51 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', '3d80459a9df1117a7abfec5d7f7931a1'),
+  NewImageFromFile('img', 'files/img2.bmp'),
+  {
+    name: 'img.floodFillOpacity( x, y, opacity, method )',
+    obj: 'img',
+    method: 'floodFillOpacity',
+    parameters: [ 1, 1, 1, gm.PaintMethod.PointMethod ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '21fc45da645a0fc76ef3bee4bf5851a4'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.flop( )',
+    obj: 'img',
+    method: 'flop',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '824d8e9384ff479ee73b1b753b7dedca'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.gamma( gamma )',
+    obj: 'img',
+    method: 'gamma',
+    parameters: [ 0.5 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '54b66a13822775f2d4561fc23c764227'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.gamma( gammaRed, gammaGreen, gammaBlue )',
+    obj: 'img',
+    method: 'gamma',
+    parameters: [ 0.5, 0.1, 0.7 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '1ee2549b7d6291705dd4b10c935a1c18'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.gaussianBlur( width, sigma )',
+    obj: 'img',
+    method: 'gaussianBlur',
+    parameters: [ 3.5, 2.1 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'd9eb1e5d68825a3fe364a198301a2d28'),
 
   {
     name: 'img.writeFile()',

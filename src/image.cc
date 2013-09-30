@@ -33,6 +33,10 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "erase", Erase);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "flip", Flip);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "floodFillColor", FloodFillColor);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "floodFillOpacity", FloodFillOpacity);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "flop", Flop);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "gamma", Gamma);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "gaussianBlur", GaussianBlur);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -77,6 +81,14 @@ void Image::Init(Handle<Object> target) {
   aNoiseType->Set(String::NewSymbol("RandomNoise"), Integer::New(Magick::RandomNoise), ReadOnly);
   target->Set(String::NewSymbol("NoiseType"), aNoiseType);
 
+  Local<Object> aPaintMethod = Object::New();
+  aPaintMethod->Set(String::NewSymbol("PointMethod"), Integer::New(Magick::PointMethod), ReadOnly);
+  aPaintMethod->Set(String::NewSymbol("ReplaceMethod"), Integer::New(Magick::ReplaceMethod), ReadOnly);
+  aPaintMethod->Set(String::NewSymbol("FloodfillMethod"), Integer::New(Magick::FloodfillMethod), ReadOnly);
+  aPaintMethod->Set(String::NewSymbol("FillToBorderMethod"), Integer::New(Magick::FillToBorderMethod), ReadOnly);
+  aPaintMethod->Set(String::NewSymbol("ResetMethod"), Integer::New(Magick::ResetMethod), ReadOnly);
+  target->Set(String::NewSymbol("PaintMethod"), aPaintMethod);
+
 }
 
 //Actions for Image::Generic_process. Each method will set the action and it will be processed accordingly.
@@ -107,6 +119,10 @@ enum {
   eErase,
   eFlip,
   eFloodFillColor1, eFloodFillColor2, eFloodFillColor3, eFloodFillColor4,
+  eFloodFillOpacity,
+  eFlop,
+  eGamma1, eGamma2,
+  eGaussianBlur,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -290,6 +306,30 @@ Handle<Value> Image::FloodFillColor(const Arguments& args) {
   return generic_check_start<Image>(args, kFloodFillColorSetType);
 }
 
+static int kFloodFillOpacity[] = { eUint32, eUint32, eUint32, eInt32, -eFunction, eEnd };
+Handle<Value> Image::FloodFillOpacity(const Arguments& args) {
+  return generic_check_start<Image>(eFloodFillOpacity, args, kFloodFillOpacity);
+}
+
+static int kFlop[] = { -eFunction, eEnd };
+Handle<Value> Image::Flop(const Arguments& args) {
+  return generic_check_start<Image>(eFlop, args, kFlop);
+}
+
+static int kGamma1[] = { eNumber, -eFunction, eEnd };
+static int kGamma2[] = { eNumber, eNumber, eNumber, -eFunction, eEnd };
+static SetType kGammaSetType[] = { { kGamma1, eGamma1 }, { kGamma2, eGamma2 }, { NULL, 0 } };
+Handle<Value> Image::Gamma(const Arguments& args) {
+  return generic_check_start<Image>(args, kGammaSetType);
+}
+
+static int kGaussianBlur[] = { eNumber, eNumber, -eFunction, eEnd };
+Handle<Value> Image::GaussianBlur(const Arguments& args) {
+  return generic_check_start<Image>(eGaussianBlur, args, kGaussianBlur);
+}
+
+
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -348,6 +388,11 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eFloodFillColor2:   that->getImage().floodFillColor(((Geometry*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get());                                             break;
   case eFloodFillColor3:   that->getImage().floodFillColor(data->val[0].uint32, data->val[1].uint32, ((Color*) data->val[2].pointer)->get(), ((Color*) data->val[3].pointer)->get());      break;
   case eFloodFillColor4:   that->getImage().floodFillColor(((Geometry*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get(), ((Color*) data->val[2].pointer)->get());     break;
+  case eFloodFillOpacity:  that->getImage().floodFillOpacity(data->val[0].uint32, data->val[1].uint32, data->val[2].uint32, (Magick::PaintMethod) data->val[3].int32);                     break;
+  case eFlop:              that->getImage().flop();                                                                                                                                        break;
+  case eGamma1:            that->getImage().gamma(data->val[0].dbl);                                                                                                                       break;
+  case eGamma2:            that->getImage().gamma(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                   break;
+  case eGaussianBlur:      that->getImage().gaussianBlur(data->val[0].dbl, data->val[1].dbl);                                                                                              break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -408,6 +453,11 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eFloodFillColor2:
   case eFloodFillColor3:
   case eFloodFillColor4:
+  case eFloodFillOpacity:
+  case eFlop:
+  case eGamma1:
+  case eGamma2:
+  case eGaussianBlur:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

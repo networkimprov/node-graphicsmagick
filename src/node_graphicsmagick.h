@@ -300,6 +300,10 @@ protected:
   static Handle<Value> Implode(const Arguments& args);
   static Handle<Value> Level(const Arguments& args);
   static Handle<Value> LevelChannel(const Arguments& args);
+  static Handle<Value> Magnify(const Arguments& args);
+  static Handle<Value> MatteFloodfill(const Arguments& args);
+  static Handle<Value> MedianFilter(const Arguments& args);
+  static Handle<Value> Minify(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

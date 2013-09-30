@@ -432,6 +432,42 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', '33e97492fb03344cb6d5cdcdd8302793'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.magnify( )',
+    obj: 'img',
+    method: 'magnify',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'f8e7f2ef0d7d3ed2560b543e9e1c4ebd'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.matteFloodfill( target, opacity, x, y, method )',
+    obj: 'img',
+    method: 'matteFloodfill',
+    parameters: [ new gm.Color({red: 0.5, green: 0, blue: 0}), 80, 10, 10, gm.PaintMethod.PointMethod ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '018a59c1b6e02789afdb9635fdfbbae2'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.medianFilter( radius )',
+    obj: 'img',
+    method: 'medianFilter',
+    parameters: [ 15 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '52e8dea3479b1be278691903f94516c1'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.minify( )',
+    obj: 'img',
+    method: 'minify',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'caa78e4ba531f8cf448816ff9845ecc8'),
   {
     name: 'img.writeFile()',
     obj: 'img',

@@ -41,6 +41,10 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "implode", Implode);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "level", Level);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "levelChannel", LevelChannel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "magnify", Magnify);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "matteFloodfill", MatteFloodfill);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "medianFilter", MedianFilter);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "minify", Minify);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -131,6 +135,10 @@ enum {
   eImplode,
   eLevel,
   eLevelChannel,
+  eMagnify,
+  eMatteFloodfill,
+  eMedianFilter,
+  eMinify,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -360,6 +368,28 @@ Handle<Value> Image::LevelChannel(const Arguments& args) {
   return generic_check_start<Image>(eLevelChannel, args, kLevelChannel, aDefaults);
 }
 
+static int kMagnify[] = { -eFunction, eEnd };
+Handle<Value> Image::Magnify(const Arguments& args) {
+  return generic_check_start<Image>(eMagnify, args, kMagnify);
+}
+
+static int kMatteFloodfill[] = { eObjectColor, eUint32, eInt32, eInt32, eInt32, -eFunction, eEnd };
+Handle<Value> Image::MatteFloodfill(const Arguments& args) {
+  return generic_check_start<Image>(eMatteFloodfill, args, kMatteFloodfill);
+}
+
+static int kMedianFilter[] = { -eNumber, -eFunction, eEnd };
+Handle<Value> Image::MedianFilter(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetNumber(0);
+  return generic_check_start<Image>(eMedianFilter, args, kMedianFilter, aDefaults);
+}
+
+static int kMinify[] = { -eFunction, eEnd };
+Handle<Value> Image::Minify(const Arguments& args) {
+  return generic_check_start<Image>(eMinify, args, kMinify);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -426,7 +456,11 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eGaussianBlurChannel: that->getImage().gaussianBlurChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl);                                           break;
   case eImplode:           that->getImage().implode(data->val[0].dbl);                                                                                                                     break;
   case eLevel:             that->getImage().level(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                   break;
-  case eLevelChannel:      that->getImage().levelChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl, data->val[3].dbl);                                         break;
+  case eLevelChannel:      that->getImage().levelChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl, data->val[3].dbl);                                  break;
+  case eMagnify:           that->getImage().magnify();                                                                                                                                     break;
+  case eMatteFloodfill:    that->getImage().matteFloodfill(((Color*) data->val[0].pointer)->get(), data->val[1].uint32, data->val[2].int32, data->val[3].int32, (Magick::PaintMethod) data->val[4].int32); break;
+  case eMedianFilter:      that->getImage().medianFilter(data->val[0].dbl);                                                                                                                break;
+  case eMinify:            that->getImage().minify();                                                                                                                                      break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -496,6 +530,10 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eImplode:
   case eLevel:
   case eLevelChannel:
+  case eMagnify:
+  case eMatteFloodfill:
+  case eMedianFilter:
+  case eMinify:    
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

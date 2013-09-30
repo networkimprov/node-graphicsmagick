@@ -45,6 +45,10 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "matteFloodfill", MatteFloodfill);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "medianFilter", MedianFilter);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "minify", Minify);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "modulate", Modulate);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "motionBlur", MotionBlur);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "negate", Negate);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "normalize", Normalize);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -139,6 +143,10 @@ enum {
   eMatteFloodfill,
   eMedianFilter,
   eMinify,
+  eModulate,
+  eMotionBlur,
+  eNegate,
+  eNormalize,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -390,6 +398,28 @@ Handle<Value> Image::Minify(const Arguments& args) {
   return generic_check_start<Image>(eMinify, args, kMinify);
 }
 
+static int kModulate[] = { eNumber, eNumber, eNumber, -eFunction, eEnd };
+Handle<Value> Image::Modulate(const Arguments& args) {
+  return generic_check_start<Image>(eModulate, args, kModulate);
+}
+
+static int kMotionBlur[] = { eNumber, eNumber, eNumber, -eFunction, eEnd };
+Handle<Value> Image::MotionBlur(const Arguments& args) {
+  return generic_check_start<Image>(eMotionBlur, args, kMotionBlur);
+}
+
+static int kNegate[] = { -eBoolean, -eFunction, eEnd };
+Handle<Value> Image::Negate(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetBool(false);
+  return generic_check_start<Image>(eNegate, args, kNegate, aDefaults);
+}
+
+static int kNormalize[] = { -eFunction, eEnd };
+Handle<Value> Image::Normalize(const Arguments& args) {
+  return generic_check_start<Image>(eNormalize, args, kNormalize);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -461,6 +491,10 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eMatteFloodfill:    that->getImage().matteFloodfill(((Color*) data->val[0].pointer)->get(), data->val[1].uint32, data->val[2].int32, data->val[3].int32, (Magick::PaintMethod) data->val[4].int32); break;
   case eMedianFilter:      that->getImage().medianFilter(data->val[0].dbl);                                                                                                                break;
   case eMinify:            that->getImage().minify();                                                                                                                                      break;
+  case eModulate:          that->getImage().modulate(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                break;
+  case eMotionBlur:        that->getImage().motionBlur(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                              break;
+  case eNegate:            that->getImage().negate(data->val[0].boolean);                                                                                                                  break;
+  case eNormalize:         that->getImage().normalize();                                                                                                                                   break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -533,7 +567,11 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eMagnify:
   case eMatteFloodfill:
   case eMedianFilter:
-  case eMinify:    
+  case eMinify:
+  case eModulate:
+  case eMotionBlur:
+  case eNegate:
+  case eNormalize:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

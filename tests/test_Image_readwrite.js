@@ -468,6 +468,42 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', 'caa78e4ba531f8cf448816ff9845ecc8'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.modulate( brightness, saturation, hue )',
+    obj: 'img',
+    method: 'modulate',
+    parameters: [ 55, 75, 90],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '45fbddf06212cade89c53372c65f0db7'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.motionBlur( radius, sigma, angle )',
+    obj: 'img',
+    method: 'motionBlur',
+    parameters: [ 3, 6, 50],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '8aad78c94360f66f19634df4173d9e1b'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.negate( )',
+    obj: 'img',
+    method: 'negate',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'c0717046d28ff0238c9022da245ffdca'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.normalize( )',
+    obj: 'img',
+    method: 'normalize',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '605c398dc2c36e1783f0d914932d1b3b'),
   {
     name: 'img.writeFile()',
     obj: 'img',

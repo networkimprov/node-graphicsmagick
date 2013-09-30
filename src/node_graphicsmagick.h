@@ -98,6 +98,10 @@ struct GenericFunctionCall {
       dbl = v;
       type = eNumber;
     }
+   void SetBool(bool v) {
+      boolean = v;
+      type = eBoolean;
+    }
     union {
       double dbl;
       uint32_t uint32;
@@ -304,6 +308,10 @@ protected:
   static Handle<Value> MatteFloodfill(const Arguments& args);
   static Handle<Value> MedianFilter(const Arguments& args);
   static Handle<Value> Minify(const Arguments& args);
+  static Handle<Value> Modulate(const Arguments& args);
+  static Handle<Value> MotionBlur(const Arguments& args);
+  static Handle<Value> Negate(const Arguments& args);
+  static Handle<Value> Normalize(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

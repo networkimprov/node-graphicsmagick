@@ -37,6 +37,10 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "flop", Flop);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gamma", Gamma);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gaussianBlur", GaussianBlur);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "gaussianBlurChannel", GaussianBlurChannel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "implode", Implode);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "level", Level);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "levelChannel", LevelChannel);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -123,6 +127,10 @@ enum {
   eFlop,
   eGamma1, eGamma2,
   eGaussianBlur,
+  eGaussianBlurChannel,
+  eImplode,
+  eLevel,
+  eLevelChannel,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -328,7 +336,29 @@ Handle<Value> Image::GaussianBlur(const Arguments& args) {
   return generic_check_start<Image>(eGaussianBlur, args, kGaussianBlur);
 }
 
+static int kGaussianBlurChannel[] = { eInt32, eNumber, eNumber, -eFunction, eEnd };
+Handle<Value> Image::GaussianBlurChannel(const Arguments& args) {
+  return generic_check_start<Image>(eGaussianBlurChannel, args, kGaussianBlurChannel);
+}
 
+static int kImplode[] = { eNumber, -eFunction, eEnd };
+Handle<Value> Image::Implode(const Arguments& args) {
+  return generic_check_start<Image>(eImplode, args, kImplode);
+}
+
+static int kLevel[] = { eNumber, eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::Level(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetNumber(1);
+  return generic_check_start<Image>(eLevel, args, kLevel, aDefaults);
+}
+
+static int kLevelChannel[] = { eInt32, eNumber, eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::LevelChannel(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetNumber(1);
+  return generic_check_start<Image>(eLevelChannel, args, kLevelChannel, aDefaults);
+}
 
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
@@ -393,6 +423,10 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eGamma1:            that->getImage().gamma(data->val[0].dbl);                                                                                                                       break;
   case eGamma2:            that->getImage().gamma(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                   break;
   case eGaussianBlur:      that->getImage().gaussianBlur(data->val[0].dbl, data->val[1].dbl);                                                                                              break;
+  case eGaussianBlurChannel: that->getImage().gaussianBlurChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl);                                           break;
+  case eImplode:           that->getImage().implode(data->val[0].dbl);                                                                                                                     break;
+  case eLevel:             that->getImage().level(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                   break;
+  case eLevelChannel:      that->getImage().levelChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl, data->val[3].dbl);                                         break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -458,6 +492,10 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eGamma1:
   case eGamma2:
   case eGaussianBlur:
+  case eGaussianBlurChannel:
+  case eImplode:
+  case eLevel:
+  case eLevelChannel:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

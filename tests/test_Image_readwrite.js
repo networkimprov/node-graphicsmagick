@@ -396,7 +396,42 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', 'd9eb1e5d68825a3fe364a198301a2d28'),
-
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.gaussianBlurChannel( channel, width, sigma )',
+    obj: 'img',
+    method: 'gaussianBlurChannel',
+    parameters: [ gm.ChannelType.RedChannel, 3.5, 2.1 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '67c7eb1e9577b7301e928afe69bab75e'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.implode( factor )',
+    obj: 'img',
+    method: 'implode',
+    parameters: [ 3 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '3ac295c2f8252b72fd8e5cc7804ff9bd'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.level( black_point, white_point )',
+    obj: 'img',
+    method: 'level',
+    parameters: [ 0.5, 0.8 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '622790ea64185e7b57a336856fd611ca'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.levelChannel( channel, black_point, white_point )',
+    obj: 'img',
+    method: 'levelChannel',
+    parameters: [ gm.ChannelType.RedChannel, 0.5, 0.8 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '33e97492fb03344cb6d5cdcdd8302793'),
   {
     name: 'img.writeFile()',
     obj: 'img',

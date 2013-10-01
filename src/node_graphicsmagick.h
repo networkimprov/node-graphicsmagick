@@ -69,6 +69,7 @@ struct GenericFunctionCall {
   struct GenericValue {
     GenericValue() : type(eEnd) {}
     ~GenericValue() {
+      if (pointer == NULL) return;
       switch (type) {
       case eString:         delete string;                              break;
       case eObjectBlob:     ((Blob*) pointer)->Unreference();           break;
@@ -79,9 +80,6 @@ struct GenericFunctionCall {
     GenericValue& operator=(const GenericValue& val) {
       switch (type) {
       case eString:  //todo allow string deep copy
-      case eObjectBlob:
-      case eObjectColor:
-      case eObjectGeometry:
         assert(0);
         break;
       default:
@@ -98,9 +96,13 @@ struct GenericFunctionCall {
       dbl = v;
       type = eNumber;
     }
-   void SetBool(bool v) {
+    void SetBool(bool v) {
       boolean = v;
       type = eBoolean;
+    }
+    void SetPointer(void* v, int t) {
+      pointer = v;
+      type = t;
     }
     union {
       double dbl;
@@ -315,6 +317,9 @@ protected:
   static Handle<Value> OilPaint(const Arguments& args);
   static Handle<Value> Opacity(const Arguments& args);
   static Handle<Value> Opaque(const Arguments& args);
+  static Handle<Value> Quantize(const Arguments& args);
+  static Handle<Value> Raise(const Arguments& args);
+  static Handle<Value> RandomThreshold(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

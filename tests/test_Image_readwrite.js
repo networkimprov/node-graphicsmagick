@@ -531,6 +531,33 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false), //TODO: fix test
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.quantize( )',
+    obj: 'img',
+    method: 'quantize',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '183085f7701f1cb456705a6a5a5c0e7d'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.raise( )',
+    obj: 'img',
+    method: 'raise',
+    parameters: [ true ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'b6612d195caa071ecc33681aa5be0b1a'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.randomThreshold( thresholds )',
+    obj: 'img',
+    method: 'randomThreshold',
+    parameters: [ new gm.Geometry({width: 2, height: 2}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'b0753b8ba98b94da6a36f4b00a2663e2'),
   {
     name: 'img.writeFile()',
     obj: 'img',

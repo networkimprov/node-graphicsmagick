@@ -52,6 +52,9 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "oilPaint", OilPaint);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "opacity", Opacity);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "opaque", Opaque);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "quantize", Quantize);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "raise", Raise);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "randomThreshold", RandomThreshold);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -156,6 +159,9 @@ enum {
   eOilPaint,
   eOpacity,
   eOpaque,
+  eQuantize,
+  eRaise,
+  eRandomThreshold,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -446,6 +452,26 @@ Handle<Value> Image::Opaque(const Arguments& args) {
   return generic_check_start<Image>(eOpaque, args, kOpaque);
 }
 
+static int kQuantize[] = { -eBoolean, -eFunction, eEnd };
+Handle<Value> Image::Quantize(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetBool(false);
+  return generic_check_start<Image>(eQuantize, args, kQuantize, aDefaults);
+}
+
+static int kRaise[] = { -eObjectGeometry, -eBoolean, -eFunction, eEnd };
+Handle<Value> Image::Raise(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[2];
+  aDefaults[0].SetPointer(NULL, eObjectGeometry);
+  aDefaults[1].SetBool(false);
+  return generic_check_start<Image>(eRaise, args, kRaise, aDefaults);
+}
+
+static int kRandomThreshold[] = { eObjectGeometry, -eFunction, eEnd };
+Handle<Value> Image::RandomThreshold(const Arguments& args) {
+  return generic_check_start<Image>(eRandomThreshold, args, kRandomThreshold);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -524,6 +550,9 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eOilPaint:          that->getImage().oilPaint(data->val[0].dbl);                                                                                                                    break;
   case eOpacity:           that->getImage().opacity(data->val[0].uint32);                                                                                                                  break;
   case eOpaque:            that->getImage().opaque(((Color*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get());                                                        break;
+  case eQuantize:          that->getImage().quantize(data->val[0].boolean);                                                                                                                break;
+  case eRaise:             that->getImage().raise(data->val[0].pointer ? ((Geometry*) data->val[0].pointer)->get() : Magick::raiseGeometryDefault, data->val[1].boolean);                  break;
+  case eRandomThreshold:   that->getImage().randomThreshold(((Geometry*) data->val[0].pointer)->get());                                                                                    break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -604,6 +633,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eOilPaint:
   case eOpacity:
   case eOpaque:
+  case eQuantize:
+  case eRaise:
+  case eRandomThreshold:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

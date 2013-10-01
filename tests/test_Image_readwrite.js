@@ -504,6 +504,33 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', '605c398dc2c36e1783f0d914932d1b3b'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.oilPaint( )',
+    obj: 'img',
+    method: 'oilPaint',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '8b26949ffb8c6708c706a943ff882555'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.opacity( opacity )',
+    obj: 'img',
+    method: 'opacity',
+    parameters: [ Math.round((gm.TransparentOpacity + gm.OpaqueOpacity) / 2) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'bff76eedfe61f59be57c56bf9f9af284'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.opaque( opopaqueColor, penColor )',
+    obj: 'img',
+    method: 'opaque',
+    parameters: [ new gm.Color({red: 0.5, green: 0, blue: 0}), new gm.Color({red: 0, green: 0, blue: 1}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false), //TODO: fix test
   {
     name: 'img.writeFile()',
     obj: 'img',

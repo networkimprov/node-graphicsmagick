@@ -49,6 +49,9 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "motionBlur", MotionBlur);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "negate", Negate);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "normalize", Normalize);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "oilPaint", OilPaint);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "opacity", Opacity);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "opaque", Opaque);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -101,6 +104,9 @@ void Image::Init(Handle<Object> target) {
   aPaintMethod->Set(String::NewSymbol("ResetMethod"), Integer::New(Magick::ResetMethod), ReadOnly);
   target->Set(String::NewSymbol("PaintMethod"), aPaintMethod);
 
+  target->Set(String::NewSymbol("OpaqueOpacity"), Integer::New(OpaqueOpacity), ReadOnly);
+  target->Set(String::NewSymbol("TransparentOpacity"), Integer::New(TransparentOpacity), ReadOnly);
+
 }
 
 //Actions for Image::Generic_process. Each method will set the action and it will be processed accordingly.
@@ -147,6 +153,9 @@ enum {
   eMotionBlur,
   eNegate,
   eNormalize,
+  eOilPaint,
+  eOpacity,
+  eOpaque,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -420,6 +429,23 @@ Handle<Value> Image::Normalize(const Arguments& args) {
   return generic_check_start<Image>(eNormalize, args, kNormalize);
 }
 
+static int kOilPaint[] = { -eNumber, -eFunction, eEnd };
+Handle<Value> Image::OilPaint(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetNumber(3);
+  return generic_check_start<Image>(eOilPaint, args, kOilPaint, aDefaults);
+}
+
+static int kOpacity[] = { eUint32, -eFunction, eEnd };
+Handle<Value> Image::Opacity(const Arguments& args) {
+  return generic_check_start<Image>(eOpacity, args, kOpacity);
+}
+
+static int kOpaque[] = { eObjectColor, eObjectColor, -eFunction, eEnd };
+Handle<Value> Image::Opaque(const Arguments& args) {
+  return generic_check_start<Image>(eOpaque, args, kOpaque);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -495,6 +521,9 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eMotionBlur:        that->getImage().motionBlur(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                              break;
   case eNegate:            that->getImage().negate(data->val[0].boolean);                                                                                                                  break;
   case eNormalize:         that->getImage().normalize();                                                                                                                                   break;
+  case eOilPaint:          that->getImage().oilPaint(data->val[0].dbl);                                                                                                                    break;
+  case eOpacity:           that->getImage().opacity(data->val[0].uint32);                                                                                                                  break;
+  case eOpaque:            that->getImage().opaque(((Color*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get());                                                        break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -572,6 +601,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eMotionBlur:
   case eNegate:
   case eNormalize:
+  case eOilPaint:
+  case eOpacity:
+  case eOpaque:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

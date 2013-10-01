@@ -312,6 +312,9 @@ protected:
   static Handle<Value> MotionBlur(const Arguments& args);
   static Handle<Value> Negate(const Arguments& args);
   static Handle<Value> Normalize(const Arguments& args);
+  static Handle<Value> OilPaint(const Arguments& args);
+  static Handle<Value> Opacity(const Arguments& args);
+  static Handle<Value> Opaque(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

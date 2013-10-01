@@ -232,7 +232,7 @@ Normalize image (increase contrast by normalizing the pixel values to span the f
 Oilpaint image (image looks like oil painting).  
 
 **opacity ( Uint32 opacity, Function callback)**  
-Set or attenuate the opacity channel in the image. If the image pixels are opaque then they are set to the specified opacity value, otherwise they are blended with the supplied opacity value.  The value of opacity_ ranges from 0 (completely opaque) to MaxRGB. The defines OpaqueOpacity and TransparentOpacity are available to specify completely opaque or completely transparent, respectively.  
+Set or attenuate the opacity channel in the image. If the image pixels are opaque then they are set to the specified opacity value, otherwise they are blended with the supplied opacity value.  The value of opacity_ ranges from 0 (completely opaque) to MaxRGB. The constants OpaqueOpacity and TransparentOpacity are available to specify completely opaque or completely transparent, respectively.  
 
 **opaque ( Color opaqueColor, Color penColor, Function callback)**  
 Change color of opaque pixel to specified pen color.  

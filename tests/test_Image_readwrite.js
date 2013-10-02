@@ -621,6 +621,42 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', '91aac0fcf3226fea07f2097c358f3906'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.segment( )',
+    obj: 'img',
+    method: 'segment',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '44146106fb54225259d46a091bf728ee'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.shade( )',
+    obj: 'img',
+    method: 'shade',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '93d1f5fd71614d030e49512427c1606b'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.sharpen( )',
+    obj: 'img',
+    method: 'sharpen',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'a7c901252ac7628bb8d3062f6abfbfde'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.sharpenChannel( channel )',
+    obj: 'img',
+    method: 'sharpenChannel',
+    parameters: [ gm.ChannelType.RedChannel ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '95f9d70a0747df09d821cd842888b362'),
   {
     name: 'img.writeFile()',
     obj: 'img',

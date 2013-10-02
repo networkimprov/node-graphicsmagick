@@ -61,6 +61,10 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "rotate", Rotate);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "sample", Sample);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "scale", Scale);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "segment", Segment);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "shade", Shade);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "sharpen", Sharpen);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "sharpenChannel", SharpenChannel);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -174,6 +178,10 @@ enum {
   eRotate,
   eSample,
   eScale,
+  eSegment,
+  eShade,
+  eSharpen,
+  eSharpenChannel,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -518,6 +526,39 @@ Handle<Value> Image::Scale(const Arguments& args) {
   return generic_check_start<Image>(eScale, args, kScale);
 }
 
+static int kSegment[] = { -eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::Segment(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[2];
+  aDefaults[0].SetNumber(1);
+  aDefaults[1].SetNumber(1.5);
+  return generic_check_start<Image>(eSegment, args, kSegment, aDefaults);
+}
+
+static int kShade[] = { -eNumber, -eNumber, -eBoolean, -eFunction, eEnd };
+Handle<Value> Image::Shade(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[3];
+  aDefaults[0].SetNumber(30);
+  aDefaults[1].SetNumber(30);
+  aDefaults[2].SetBool(false);
+  return generic_check_start<Image>(eShade, args, kShade, aDefaults);
+}
+
+static int kSharpen[] = { -eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::Sharpen(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[2];
+  aDefaults[0].SetNumber(0);
+  aDefaults[1].SetNumber(1);
+  return generic_check_start<Image>(eSharpen, args, kSharpen, aDefaults);
+}
+
+static int kSharpenChannel[] = { eInt32, -eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::SharpenChannel(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[2];
+  aDefaults[0].SetNumber(0);
+  aDefaults[1].SetNumber(1);
+  return generic_check_start<Image>(eSharpenChannel, args, kSharpenChannel, aDefaults);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -607,6 +648,10 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eRotate:            that->getImage().rotate(data->val[0].dbl);                                                                                                                      break;
   case eSample:            that->getImage().sample(((Geometry*) data->val[0].pointer)->get());                                                                                             break;
   case eScale:             that->getImage().scale(((Geometry*) data->val[0].pointer)->get());                                                                                              break;
+  case eSegment:           that->getImage().segment(data->val[0].dbl, data->val[1].dbl);                                                                                                   break;
+  case eShade:             that->getImage().shade(data->val[0].dbl, data->val[1].dbl, data->val[2].boolean);                                                                               break;
+  case eSharpen:           that->getImage().sharpen(data->val[0].dbl, data->val[1].dbl);                                                                                                   break;
+  case eSharpenChannel:    that->getImage().sharpenChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl);                                                  break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -698,6 +743,10 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eRotate:
   case eSample:
   case eScale:
+  case eSegment:
+  case eShade:
+  case eSharpen:
+  case eSharpenChannel:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

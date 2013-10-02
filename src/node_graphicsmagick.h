@@ -326,6 +326,10 @@ protected:
   static Handle<Value> Rotate(const Arguments& args);
   static Handle<Value> Sample(const Arguments& args);
   static Handle<Value> Scale(const Arguments& args);
+  static Handle<Value> Segment(const Arguments& args);
+  static Handle<Value> Shade(const Arguments& args);
+  static Handle<Value> Sharpen(const Arguments& args);
+  static Handle<Value> SharpenChannel(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

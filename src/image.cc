@@ -58,6 +58,9 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "randomThresholdChannel", RandomThresholdChannel);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "reduceNoise", ReduceNoise);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "roll", Roll);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "rotate", Rotate);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "sample", Sample);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "scale", Scale);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -168,6 +171,9 @@ enum {
   eRandomThresholdChannel,
   eReduceNoise1, eReduceNoise2,
   eRoll1, eRoll2,
+  eRotate,
+  eSample,
+  eScale,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -490,12 +496,26 @@ Handle<Value> Image::ReduceNoise(const Arguments& args) {
   return generic_check_start<Image>(args, kReduceNoiseSetType);
 }
 
-
 static int kRoll1[] = { eObjectGeometry, -eFunction, eEnd };
 static int kRoll2[] = { eUint32, eUint32, -eFunction, eEnd };
 static SetType kRollSetType[] = { { kRoll1, eRoll1 }, { kRoll2, eRoll2 }, { NULL, 0 } };
 Handle<Value> Image::Roll(const Arguments& args) {
   return generic_check_start<Image>(args, kRollSetType);
+}
+
+static int kRotate[] = { eNumber, -eFunction, eEnd };
+Handle<Value> Image::Rotate(const Arguments& args) {
+  return generic_check_start<Image>(eRotate, args, kRotate);
+}
+
+static int kSample[] = { eObjectGeometry, -eFunction, eEnd };
+Handle<Value> Image::Sample(const Arguments& args) {
+  return generic_check_start<Image>(eSample, args, kSample);
+}
+
+static int kScale[] = { eObjectGeometry, -eFunction, eEnd };
+Handle<Value> Image::Scale(const Arguments& args) {
+  return generic_check_start<Image>(eScale, args, kScale);
 }
 
 static int kWriteFile[] = { eString, -eFunction, eEnd };
@@ -584,6 +604,9 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eReduceNoise2:      that->getImage().reduceNoise(data->val[0].dbl);                                                                                                                 break;
   case eRoll1:             that->getImage().roll(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
   case eRoll2:             that->getImage().roll(data->val[0].uint32, data->val[1].uint32);                                                                                                break;
+  case eRotate:            that->getImage().rotate(data->val[0].dbl);                                                                                                                      break;
+  case eSample:            that->getImage().sample(((Geometry*) data->val[0].pointer)->get());                                                                                             break;
+  case eScale:             that->getImage().scale(((Geometry*) data->val[0].pointer)->get());                                                                                              break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -672,6 +695,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eReduceNoise2:
   case eRoll1:
   case eRoll2:
+  case eRotate:
+  case eSample:
+  case eScale:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

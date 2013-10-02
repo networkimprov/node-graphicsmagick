@@ -323,6 +323,9 @@ protected:
   static Handle<Value> RandomThresholdChannel(const Arguments& args);
   static Handle<Value> ReduceNoise(const Arguments& args);
   static Handle<Value> Roll(const Arguments& args);
+  static Handle<Value> Rotate(const Arguments& args);
+  static Handle<Value> Sample(const Arguments& args);
+  static Handle<Value> Scale(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

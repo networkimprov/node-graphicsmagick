@@ -594,6 +594,33 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', '507a2a830e58930d4912e1758baca023'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.rotate( degrees )',
+    obj: 'img',
+    method: 'rotate',
+    parameters: [ 53.2 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'b34b44f24f6af0c012eff328f5eac202'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.sample( geometry )',
+    obj: 'img',
+    method: 'sample',
+    parameters: [ new gm.Geometry({width: 80}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '2e5e4081f44f6c074bc7334833779a71'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.scale( geometry )',
+    obj: 'img',
+    method: 'scale',
+    parameters: [ new gm.Geometry({width: 80}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '91aac0fcf3226fea07f2097c358f3906'),
   {
     name: 'img.writeFile()',
     obj: 'img',

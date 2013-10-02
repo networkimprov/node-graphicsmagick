@@ -558,6 +558,42 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', 'b0753b8ba98b94da6a36f4b00a2663e2'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.randomThresholdChannel( thresholds, channel )',
+    obj: 'img',
+    method: 'randomThresholdChannel',
+    parameters: [ new gm.Geometry({width: 2, height: 2}), gm.ChannelType.RedChannel ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'ee12adb03278679d86b498d28148152a'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.reduceNoise( order )',
+    obj: 'img',
+    method: 'reduceNoise',
+    parameters: [ 5 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '112aa525a6d44f3646833094314cc277'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.roll( roll )',
+    obj: 'img',
+    method: 'roll',
+    parameters: [ new gm.Geometry({xOff: 50, yOff: 80}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '507a2a830e58930d4912e1758baca023'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.roll( columns, rows )',
+    obj: 'img',
+    method: 'roll',
+    parameters: [ 50, 80 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '507a2a830e58930d4912e1758baca023'),
   {
     name: 'img.writeFile()',
     obj: 'img',

@@ -55,6 +55,9 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "quantize", Quantize);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "raise", Raise);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "randomThreshold", RandomThreshold);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "randomThresholdChannel", RandomThresholdChannel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "reduceNoise", ReduceNoise);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "roll", Roll);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -162,6 +165,9 @@ enum {
   eQuantize,
   eRaise,
   eRandomThreshold,
+  eRandomThresholdChannel,
+  eReduceNoise1, eReduceNoise2,
+  eRoll1, eRoll2,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -472,6 +478,26 @@ Handle<Value> Image::RandomThreshold(const Arguments& args) {
   return generic_check_start<Image>(eRandomThreshold, args, kRandomThreshold);
 }
 
+static int kRandomThresholdChannel[] = { eObjectGeometry, eInt32, -eFunction, eEnd };
+Handle<Value> Image::RandomThresholdChannel(const Arguments& args) {
+  return generic_check_start<Image>(eRandomThresholdChannel, args, kRandomThresholdChannel);
+}
+
+static int kReduceNoise1[] = { -eFunction, eEnd };
+static int kReduceNoise2[] = { eNumber, -eFunction, eEnd };
+static SetType kReduceNoiseSetType[] = { { kReduceNoise1, eReduceNoise1 },  { kReduceNoise2, eReduceNoise2 }, { NULL, 0 } };
+Handle<Value> Image::ReduceNoise(const Arguments& args) {
+  return generic_check_start<Image>(args, kReduceNoiseSetType);
+}
+
+
+static int kRoll1[] = { eObjectGeometry, -eFunction, eEnd };
+static int kRoll2[] = { eUint32, eUint32, -eFunction, eEnd };
+static SetType kRollSetType[] = { { kRoll1, eRoll1 }, { kRoll2, eRoll2 }, { NULL, 0 } };
+Handle<Value> Image::Roll(const Arguments& args) {
+  return generic_check_start<Image>(args, kRollSetType);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -553,6 +579,11 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eQuantize:          that->getImage().quantize(data->val[0].boolean);                                                                                                                break;
   case eRaise:             that->getImage().raise(data->val[0].pointer ? ((Geometry*) data->val[0].pointer)->get() : Magick::raiseGeometryDefault, data->val[1].boolean);                  break;
   case eRandomThreshold:   that->getImage().randomThreshold(((Geometry*) data->val[0].pointer)->get());                                                                                    break;
+  case eRandomThresholdChannel: that->getImage().randomThresholdChannel(((Geometry*) data->val[0].pointer)->get(), (Magick::ChannelType) data->val[1].int32);                              break;
+  case eReduceNoise1:      that->getImage().reduceNoise();                                                                                                                                 break;
+  case eReduceNoise2:      that->getImage().reduceNoise(data->val[0].dbl);                                                                                                                 break;
+  case eRoll1:             that->getImage().roll(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
+  case eRoll2:             that->getImage().roll(data->val[0].uint32, data->val[1].uint32);                                                                                                break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -636,6 +667,11 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eQuantize:
   case eRaise:
   case eRandomThreshold:
+  case eRandomThresholdChannel:
+  case eReduceNoise1:
+  case eReduceNoise2:
+  case eRoll1:
+  case eRoll2:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

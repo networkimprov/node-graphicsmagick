@@ -111,9 +111,9 @@ Handle<Value> Geometry::New(const Arguments& args) {
   if (args[0]->IsObject()) {
     Local<Object> aObj = args[0]->ToObject();
     Local<String> aKey;
-    if (!aObj->Has(aKey = String::New("width")) || !aObj->Get(aKey)->IsUint32())
+    if (aObj->Has(aKey = String::New("width")) && !aObj->Get(aKey)->IsUint32())
       return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.witdh is uint32")));
-    if (!aObj->Has(aKey = String::New("height")) || !aObj->Get(aKey)->IsUint32())
+    if (aObj->Has(aKey = String::New("height")) && !aObj->Get(aKey)->IsUint32())
       return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.height is uint32")));
     if (aObj->Has(aKey = String::New("xOff")) && !aObj->Get(aKey)->IsUint32())
       return ThrowException(v8::Exception::TypeError(String::New("GeometryObject.xOff is uint32")));

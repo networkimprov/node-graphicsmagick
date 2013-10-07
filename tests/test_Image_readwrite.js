@@ -692,7 +692,34 @@ exports.tests = [
     parameters: [ ],
     result: function(err, result, fn) { fn(err == null); }
   },
-  CompareImageWithMD5('img', 'c2e9d5dc08a4b66c1a6da9e5a3cc0b8e'),
+  CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.strip( )',
+    obj: 'img',
+    method: 'strip',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false), //TODO: fix test
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.swirl( degrees )',
+    obj: 'img',
+    method: 'swirl',
+    parameters: [ 45 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.threshold( degrees )',
+    obj: 'img',
+    method: 'threshold',
+    parameters: [ 128 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'caf97821adbd3eb860fbfdcb5f6aeec9', false),
   {
     name: 'img.writeFile()',
     obj: 'img',

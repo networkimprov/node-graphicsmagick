@@ -69,6 +69,9 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "shear", Shear);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "solarize", Solarize);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "spread", Spread);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "strip", Strip);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "swirl", Swirl);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "threshold", Threshold);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -190,6 +193,9 @@ enum {
   eShear,
   eSolarize,
   eSpread,
+  eStrip,
+  eSwirl,
+  eThreshold,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -591,6 +597,21 @@ Handle<Value> Image::Spread(const Arguments& args) {
   return generic_check_start<Image>(eSpread, args, kSpread, aDefaults);
 }
 
+static int kStrip[] = { -eFunction, eEnd };
+Handle<Value> Image::Strip(const Arguments& args) {
+  return generic_check_start<Image>(eStrip, args, kStrip);
+}
+
+static int kSwirl[] = { eNumber, -eFunction, eEnd };
+Handle<Value> Image::Swirl(const Arguments& args) {
+  return generic_check_start<Image>(eSwirl, args, kSwirl);
+}
+
+static int kThreshold[] = { eNumber, -eFunction, eEnd };
+Handle<Value> Image::Threshold(const Arguments& args) {
+  return generic_check_start<Image>(eThreshold, args, kThreshold);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -687,7 +708,10 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eShave:             that->getImage().shave(((Geometry*) data->val[0].pointer)->get());                                                                                              break;
   case eShear:             that->getImage().shear(data->val[0].dbl, data->val[1].dbl);                                                                                                     break;
   case eSolarize:          that->getImage().solarize(data->val[0].dbl);                                                                                                                    break;
-  case eSpread:            that->getImage().spread(data->val[0].uint32);                                                                                                                      break;
+  case eSpread:            that->getImage().spread(data->val[0].uint32);                                                                                                                   break;
+  case eStrip:             that->getImage().strip();                                                                                                                                       break;
+  case eSwirl:             that->getImage().swirl(data->val[0].dbl);                                                                                                                       break;
+  case eThreshold:         that->getImage().threshold(data->val[0].dbl);                                                                                                                   break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -787,6 +811,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eShear:
   case eSolarize:
   case eSpread:
+  case eStrip:
+  case eSwirl:
+  case eThreshold:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

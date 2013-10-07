@@ -334,6 +334,9 @@ protected:
   static Handle<Value> Shear(const Arguments& args);
   static Handle<Value> Solarize(const Arguments& args);
   static Handle<Value> Spread(const Arguments& args);
+  static Handle<Value> Strip(const Arguments& args);
+  static Handle<Value> Swirl(const Arguments& args);
+  static Handle<Value> Threshold(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

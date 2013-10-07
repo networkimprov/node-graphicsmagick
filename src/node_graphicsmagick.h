@@ -330,6 +330,10 @@ protected:
   static Handle<Value> Shade(const Arguments& args);
   static Handle<Value> Sharpen(const Arguments& args);
   static Handle<Value> SharpenChannel(const Arguments& args);
+  static Handle<Value> Shave(const Arguments& args);
+  static Handle<Value> Shear(const Arguments& args);
+  static Handle<Value> Solarize(const Arguments& args);
+  static Handle<Value> Spread(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

@@ -65,6 +65,10 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "shade", Shade);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "sharpen", Sharpen);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "sharpenChannel", SharpenChannel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "shave", Shave);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "shear", Shear);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "solarize", Solarize);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "spread", Spread);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -182,6 +186,10 @@ enum {
   eShade,
   eSharpen,
   eSharpenChannel,
+  eShave,
+  eShear,
+  eSolarize,
+  eSpread,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -559,6 +567,30 @@ Handle<Value> Image::SharpenChannel(const Arguments& args) {
   return generic_check_start<Image>(eSharpenChannel, args, kSharpenChannel, aDefaults);
 }
 
+static int kShave[] = { eObjectGeometry, -eFunction, eEnd };
+Handle<Value> Image::Shave(const Arguments& args) {
+  return generic_check_start<Image>(eShave, args, kShave);
+}
+
+static int kShear[] = { eNumber, eNumber, -eFunction, eEnd };
+Handle<Value> Image::Shear(const Arguments& args) {
+  return generic_check_start<Image>(eShear, args, kShear);
+}
+
+static int kSolarize[] = { -eNumber, -eFunction, eEnd };
+Handle<Value> Image::Solarize(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetNumber(50);
+  return generic_check_start<Image>(eSolarize, args, kSolarize, aDefaults);
+}
+
+static int kSpread[] = { -eUint32, -eFunction, eEnd };
+Handle<Value> Image::Spread(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetUint32(3);
+  return generic_check_start<Image>(eSpread, args, kSpread, aDefaults);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -652,6 +684,10 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eShade:             that->getImage().shade(data->val[0].dbl, data->val[1].dbl, data->val[2].boolean);                                                                               break;
   case eSharpen:           that->getImage().sharpen(data->val[0].dbl, data->val[1].dbl);                                                                                                   break;
   case eSharpenChannel:    that->getImage().sharpenChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl);                                                  break;
+  case eShave:             that->getImage().shave(((Geometry*) data->val[0].pointer)->get());                                                                                              break;
+  case eShear:             that->getImage().shear(data->val[0].dbl, data->val[1].dbl);                                                                                                     break;
+  case eSolarize:          that->getImage().solarize(data->val[0].dbl);                                                                                                                    break;
+  case eSpread:            that->getImage().spread(data->val[0].uint32);                                                                                                                      break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -747,6 +783,10 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eShade:
   case eSharpen:
   case eSharpenChannel:
+  case eShave:
+  case eShear:
+  case eSolarize:
+  case eSpread:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

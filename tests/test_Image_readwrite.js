@@ -657,6 +657,42 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', '95f9d70a0747df09d821cd842888b362'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.shave( geometry )',
+    obj: 'img',
+    method: 'shave',
+    parameters: [ new gm.Geometry({width: 80, height: 50}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'cf34dfd45f5e33c0e0705866a17cb7ab'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.shear( xShearAngle, yShearAngle )',
+    obj: 'img',
+    method: 'shear',
+    parameters: [ 45, 90 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '9864b827808ee4d7f92fa48e77fbb831'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.solarize( )',
+    obj: 'img',
+    method: 'solarize',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'f05ef17673bce27b33a59cfcd983fe54'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.spread( )',
+    obj: 'img',
+    method: 'spread',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'c2e9d5dc08a4b66c1a6da9e5a3cc0b8e'),
   {
     name: 'img.writeFile()',
     obj: 'img',

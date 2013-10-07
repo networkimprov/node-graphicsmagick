@@ -719,7 +719,34 @@ exports.tests = [
     parameters: [ 128 ],
     result: function(err, result, fn) { fn(err == null); }
   },
-  CompareImageWithMD5('img', 'caf97821adbd3eb860fbfdcb5f6aeec9', false),
+  CompareImageWithMD5('img', 'caf97821adbd3eb860fbfdcb5f6aeec9'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.transform( imageGeometry )',
+    obj: 'img',
+    method: 'transform',
+    parameters: [ new gm.Geometry({width: 80, height: 50}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'e2021c4609297ee2218e3064f171a316'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.transparent( color )',
+    obj: 'img',
+    method: 'transparent',
+    parameters: [ new gm.Color({red: 1, green: 0, blue: 0}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '4d915e9064483e273b44793ca43d8ae4'), //TODO: check test
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.trim( )',
+    obj: 'img',
+    method: 'trim',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false), //TODO: fix test
   {
     name: 'img.writeFile()',
     obj: 'img',

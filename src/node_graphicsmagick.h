@@ -337,6 +337,9 @@ protected:
   static Handle<Value> Strip(const Arguments& args);
   static Handle<Value> Swirl(const Arguments& args);
   static Handle<Value> Threshold(const Arguments& args);
+  static Handle<Value> Transform(const Arguments& args);
+  static Handle<Value> Transparent(const Arguments& args);
+  static Handle<Value> Trim(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
 

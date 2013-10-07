@@ -72,6 +72,9 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "strip", Strip);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "swirl", Swirl);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "threshold", Threshold);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "transform", Transform);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "transparent", Transparent);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "trim", Trim);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
@@ -196,6 +199,9 @@ enum {
   eStrip,
   eSwirl,
   eThreshold,
+  eTransform,
+  eTransparent,
+  eTrim,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
 };
@@ -612,6 +618,23 @@ Handle<Value> Image::Threshold(const Arguments& args) {
   return generic_check_start<Image>(eThreshold, args, kThreshold);
 }
 
+static int kTransform[] = { eObjectGeometry, -eObjectGeometry, -eFunction, eEnd };
+Handle<Value> Image::Transform(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetPointer(NULL, eObjectGeometry);
+  return generic_check_start<Image>(eTransform, args, kTransform, aDefaults);
+}
+
+static int kTransparent[] = { eObjectColor, -eFunction, eEnd };
+Handle<Value> Image::Transparent(const Arguments& args) {
+  return generic_check_start<Image>(eTransparent, args, kTransparent);
+}
+
+static int kTrim[] = { -eFunction, eEnd };
+Handle<Value> Image::Trim(const Arguments& args) {
+  return generic_check_start<Image>(eTrim, args, kTrim);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -712,6 +735,12 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eStrip:             that->getImage().strip();                                                                                                                                       break;
   case eSwirl:             that->getImage().swirl(data->val[0].dbl);                                                                                                                       break;
   case eThreshold:         that->getImage().threshold(data->val[0].dbl);                                                                                                                   break;
+  case eTransform:         
+    if (data->val[1].pointer) that->getImage().transform(((Geometry*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get());
+    else that->getImage().transform(((Geometry*) data->val[0].pointer)->get());
+    break;
+  case eTransparent:       that->getImage().transparent(((Color*) data->val[0].pointer)->get());                                                                                           break;
+  case eTrim:              that->getImage().trim();                                                                                                                                        break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -814,6 +843,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eStrip:
   case eSwirl:
   case eThreshold:
+  case eTransform:
+  case eTransparent:
+  case eTrim:
   case eWriteFile:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;

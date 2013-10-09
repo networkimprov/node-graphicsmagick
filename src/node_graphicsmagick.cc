@@ -174,11 +174,11 @@ bool checkArguments(int signature[], const Arguments& args, int optionals[]) {
     case eString:         aIsType = args[aArgN]->IsString();                                                                         break;
     case eArray:          aIsType = args[aArgN]->IsArray();                                                                          break;
     case eBuffer:
-    case eObjectImage:
     case eObject:         aIsType = args[aArgN]->IsObject() && !args[aArgN]->IsFunction();                                           break;
     case eObjectBlob:     aIsType = args[aArgN]->IsObject() && Blob::constructor_template->HasInstance(args[aArgN]->ToObject());     break;
     case eObjectColor:    aIsType = args[aArgN]->IsObject() && Color::constructor_template->HasInstance(args[aArgN]->ToObject());    break;
     case eObjectGeometry: aIsType = args[aArgN]->IsObject() && Geometry::constructor_template->HasInstance(args[aArgN]->ToObject()); break;
+    case eObjectImage:    aIsType = args[aArgN]->IsObject() && Image::constructor_template->HasInstance(args[aArgN]->ToObject());    break;
     case eNull:           aIsType = args[aArgN]->IsNull();                                                                           break;
     case eFunction:       aIsType = args[aArgN]->IsFunction();                                                                       break;
     default: {

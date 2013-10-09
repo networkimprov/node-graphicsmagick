@@ -62,6 +62,104 @@ Handle<Value> BlobToBuffer(const Arguments& args);
 DECLARE_GENERIC_CLASS(Color)
 DECLARE_GENERIC_CLASS(Geometry)
 
+//The Image class - /doc/Image.md
+class Image : public AsyncWrap<Image> {
+public:
+  static void Init(Handle<Object> target);
+
+  static Persistent<FunctionTemplate> constructor_template;
+
+  Magick::Image& getImage() { return *mImage; }
+  void setImage(Magick::Image* pImg) { mImage = pImg; } //takes ownership of the image object
+
+  static void Generic_process(void* data, void* that);
+  static Handle<Value> Generic_convert(void* data);
+
+  void Reference() { this->Ref(); }
+  void Unreference() { this->Unref(); }
+
+protected:
+  Image() : mImage(NULL) { }
+  ~Image() { if (mImage) delete mImage; }
+
+  Magick::Image* mImage;
+
+  static Handle<Value> New(const Arguments& args);
+  static Handle<Value> AdaptiveThreshold(const Arguments& args);
+  static Handle<Value> AddNoiseChannel(const Arguments& args);
+  static Handle<Value> AddNoise(const Arguments& args);
+  static Handle<Value> Annotate(const Arguments& args);
+  static Handle<Value> Blur(const Arguments& args);
+  static Handle<Value> BlurChannel(const Arguments& args);
+  static Handle<Value> Border(const Arguments& args);
+  static Handle<Value> Cdl(const Arguments& args);
+  static Handle<Value> Channel(const Arguments& args);
+  static Handle<Value> ChannelDepth(const Arguments& args);
+  static Handle<Value> Charcoal(const Arguments& args);
+  static Handle<Value> Chop(const Arguments& args);
+  static Handle<Value> Colorize(const Arguments& args);
+  static Handle<Value> Comment(const Arguments& args);
+  static Handle<Value> Contrast(const Arguments& args);
+  static Handle<Value> Crop(const Arguments& args);
+  static Handle<Value> CycleColormap(const Arguments& args);
+  static Handle<Value> Despeckle(const Arguments& args);
+  static Handle<Value> Edge(const Arguments& args);
+  static Handle<Value> Emboss(const Arguments& args);
+  static Handle<Value> Enhance(const Arguments& args);
+  static Handle<Value> Equalize(const Arguments& args);
+  static Handle<Value> Erase(const Arguments& args);
+  static Handle<Value> Flip(const Arguments& args);
+  static Handle<Value> FloodFillColor(const Arguments& args);
+  static Handle<Value> FloodFillOpacity(const Arguments& args);
+  static Handle<Value> Flop(const Arguments& args);
+  static Handle<Value> Gamma(const Arguments& args);
+  static Handle<Value> GaussianBlur(const Arguments& args);
+  static Handle<Value> GaussianBlurChannel(const Arguments& args);
+  static Handle<Value> Implode(const Arguments& args);
+  static Handle<Value> Level(const Arguments& args);
+  static Handle<Value> LevelChannel(const Arguments& args);
+  static Handle<Value> Magnify(const Arguments& args);
+  static Handle<Value> MatteFloodfill(const Arguments& args);
+  static Handle<Value> MedianFilter(const Arguments& args);
+  static Handle<Value> Minify(const Arguments& args);
+  static Handle<Value> Modulate(const Arguments& args);
+  static Handle<Value> MotionBlur(const Arguments& args);
+  static Handle<Value> Negate(const Arguments& args);
+  static Handle<Value> Normalize(const Arguments& args);
+  static Handle<Value> OilPaint(const Arguments& args);
+  static Handle<Value> Opacity(const Arguments& args);
+  static Handle<Value> Opaque(const Arguments& args);
+  static Handle<Value> Quantize(const Arguments& args);
+  static Handle<Value> Raise(const Arguments& args);
+  static Handle<Value> RandomThreshold(const Arguments& args);
+  static Handle<Value> RandomThresholdChannel(const Arguments& args);
+  static Handle<Value> ReduceNoise(const Arguments& args);
+  static Handle<Value> Roll(const Arguments& args);
+  static Handle<Value> Rotate(const Arguments& args);
+  static Handle<Value> Sample(const Arguments& args);
+  static Handle<Value> Scale(const Arguments& args);
+  static Handle<Value> Segment(const Arguments& args);
+  static Handle<Value> Shade(const Arguments& args);
+  static Handle<Value> Sharpen(const Arguments& args);
+  static Handle<Value> SharpenChannel(const Arguments& args);
+  static Handle<Value> Shave(const Arguments& args);
+  static Handle<Value> Shear(const Arguments& args);
+  static Handle<Value> Solarize(const Arguments& args);
+  static Handle<Value> Spread(const Arguments& args);
+  static Handle<Value> Strip(const Arguments& args);
+  static Handle<Value> Swirl(const Arguments& args);
+  static Handle<Value> Threshold(const Arguments& args);
+  static Handle<Value> Transform(const Arguments& args);
+  static Handle<Value> Transparent(const Arguments& args);
+  static Handle<Value> Trim(const Arguments& args);
+  static Handle<Value> Unsharpmask(const Arguments& args);
+  static Handle<Value> UnsharpmaskChannel(const Arguments& args);
+  static Handle<Value> Wave(const Arguments& args);
+  static Handle<Value> Write(const Arguments& args);
+  static Handle<Value> WriteFile(const Arguments& args);
+  static Handle<Value> Zoom(const Arguments& args);
+};
+
 
 //Generic structure used to store signature arguments values, the action and return value.
 struct GenericFunctionCall {
@@ -75,6 +173,7 @@ struct GenericFunctionCall {
       case eObjectBlob:     ((Blob*) pointer)->Unreference();           break;
       case eObjectColor:    ((Color*) pointer)->Unreference();          break;
       case eObjectGeometry: ((Geometry*) pointer)->Unreference();       break;
+      case eObjectImage:    ((Image*) pointer)->Unreference();          break;
       }
     }
     GenericValue& operator=(const GenericValue& val) {
@@ -141,6 +240,7 @@ struct GenericFunctionCall {
       case eObjectBlob:     val[aSigN].pointer = (void*) GetInstance<Blob>(args[aArgInd]); ((Blob*) val[aSigN].pointer)->Reference();         break;
       case eObjectColor:    val[aSigN].pointer = (void*) GetInstance<Color>(args[aArgInd]); ((Color*) val[aSigN].pointer)->Reference();       break;
       case eObjectGeometry: val[aSigN].pointer = (void*) GetInstance<Geometry>(args[aArgInd]); ((Geometry*) val[aSigN].pointer)->Reference(); break;
+      case eObjectImage:    val[aSigN].pointer = (void*) GetInstance<Image>(args[aArgInd]); ((Image*) val[aSigN].pointer)->Reference();       break;
       case eFunction:                                                                                                                         break;
       default: assert(0);
       }
@@ -252,101 +352,5 @@ template<class T>
 Handle<Value> generic_check_start(const Arguments& args, SetType sets[], GenericFunctionCall::GenericValue* defaults[] = NULL, int skip = 0) {
   return generic_check_start<T, T>(args, sets, defaults, skip);
 }
-
-//The Image class - /doc/Image.md
-class Image : public AsyncWrap<Image> {
-public:
-  static void Init(Handle<Object> target);
-
-  static Persistent<FunctionTemplate> constructor_template;
-
-  Magick::Image& getImage() { return *mImage; }
-  void setImage(Magick::Image* pImg) { mImage = pImg; } //takes ownership of the image object
-
-  static void Generic_process(void* data, void* that);
-  static Handle<Value> Generic_convert(void* data);
-
-protected:
-  Image() : mImage(NULL) { }
-  ~Image() { if (mImage) delete mImage; }
-
-  Magick::Image* mImage;
-
-  static Handle<Value> New(const Arguments& args);
-  static Handle<Value> AdaptiveThreshold(const Arguments& args);
-  static Handle<Value> AddNoiseChannel(const Arguments& args);
-  static Handle<Value> AddNoise(const Arguments& args);
-  static Handle<Value> Annotate(const Arguments& args);
-  static Handle<Value> Blur(const Arguments& args);
-  static Handle<Value> BlurChannel(const Arguments& args);
-  static Handle<Value> Border(const Arguments& args);
-  static Handle<Value> Cdl(const Arguments& args);
-  static Handle<Value> Channel(const Arguments& args);
-  static Handle<Value> ChannelDepth(const Arguments& args);
-  static Handle<Value> Charcoal(const Arguments& args);
-  static Handle<Value> Chop(const Arguments& args);
-  static Handle<Value> Colorize(const Arguments& args);
-  static Handle<Value> Comment(const Arguments& args);
-  static Handle<Value> Contrast(const Arguments& args);
-  static Handle<Value> Crop(const Arguments& args);
-  static Handle<Value> CycleColormap(const Arguments& args);
-  static Handle<Value> Despeckle(const Arguments& args);
-  static Handle<Value> Edge(const Arguments& args);
-  static Handle<Value> Emboss(const Arguments& args);
-  static Handle<Value> Enhance(const Arguments& args);
-  static Handle<Value> Equalize(const Arguments& args);
-  static Handle<Value> Erase(const Arguments& args);
-  static Handle<Value> Flip(const Arguments& args);
-  static Handle<Value> FloodFillColor(const Arguments& args);
-  static Handle<Value> FloodFillOpacity(const Arguments& args);
-  static Handle<Value> Flop(const Arguments& args);
-  static Handle<Value> Gamma(const Arguments& args);
-  static Handle<Value> GaussianBlur(const Arguments& args);
-  static Handle<Value> GaussianBlurChannel(const Arguments& args);
-  static Handle<Value> Implode(const Arguments& args);
-  static Handle<Value> Level(const Arguments& args);
-  static Handle<Value> LevelChannel(const Arguments& args);
-  static Handle<Value> Magnify(const Arguments& args);
-  static Handle<Value> MatteFloodfill(const Arguments& args);
-  static Handle<Value> MedianFilter(const Arguments& args);
-  static Handle<Value> Minify(const Arguments& args);
-  static Handle<Value> Modulate(const Arguments& args);
-  static Handle<Value> MotionBlur(const Arguments& args);
-  static Handle<Value> Negate(const Arguments& args);
-  static Handle<Value> Normalize(const Arguments& args);
-  static Handle<Value> OilPaint(const Arguments& args);
-  static Handle<Value> Opacity(const Arguments& args);
-  static Handle<Value> Opaque(const Arguments& args);
-  static Handle<Value> Quantize(const Arguments& args);
-  static Handle<Value> Raise(const Arguments& args);
-  static Handle<Value> RandomThreshold(const Arguments& args);
-  static Handle<Value> RandomThresholdChannel(const Arguments& args);
-  static Handle<Value> ReduceNoise(const Arguments& args);
-  static Handle<Value> Roll(const Arguments& args);
-  static Handle<Value> Rotate(const Arguments& args);
-  static Handle<Value> Sample(const Arguments& args);
-  static Handle<Value> Scale(const Arguments& args);
-  static Handle<Value> Segment(const Arguments& args);
-  static Handle<Value> Shade(const Arguments& args);
-  static Handle<Value> Sharpen(const Arguments& args);
-  static Handle<Value> SharpenChannel(const Arguments& args);
-  static Handle<Value> Shave(const Arguments& args);
-  static Handle<Value> Shear(const Arguments& args);
-  static Handle<Value> Solarize(const Arguments& args);
-  static Handle<Value> Spread(const Arguments& args);
-  static Handle<Value> Strip(const Arguments& args);
-  static Handle<Value> Swirl(const Arguments& args);
-  static Handle<Value> Threshold(const Arguments& args);
-  static Handle<Value> Transform(const Arguments& args);
-  static Handle<Value> Transparent(const Arguments& args);
-  static Handle<Value> Trim(const Arguments& args);
-  static Handle<Value> Unsharpmask(const Arguments& args);
-  static Handle<Value> UnsharpmaskChannel(const Arguments& args);
-  static Handle<Value> Wave(const Arguments& args);
-  static Handle<Value> Write(const Arguments& args);
-  static Handle<Value> WriteFile(const Arguments& args);
-  static Handle<Value> Zoom(const Arguments& args);
-
-};
 
 #endif

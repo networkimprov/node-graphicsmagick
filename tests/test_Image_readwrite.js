@@ -747,6 +747,42 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false), //TODO: fix test
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.unsharpmask( radius, sigma, amount, threshold )',
+    obj: 'img',
+    method: 'unsharpmask',
+    parameters: [ 2, 3, 30, 0.1 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '7d3d1df789a1e49527a6f0f7619b7440'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.unsharpmaskChannel( channel, radius, sigma, amount, threshold )',
+    obj: 'img',
+    method: 'unsharpmaskChannel',
+    parameters: [ gm.ChannelType.RedChannel, 2, 3, 30, 0.1 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '32bd36f6abf19bf01d47c51dd205ec70'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.wave( )',
+    obj: 'img',
+    method: 'wave',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '8eda00c3a4bdf89e1afb5cdf4d29c408'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.zoom( imageGeometry )',
+    obj: 'img',
+    method: 'zoom',
+    parameters: [ new gm.Geometry({width: 80, height: 50}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'e2021c4609297ee2218e3064f171a316'),
   {
     name: 'img.writeFile()',
     obj: 'img',

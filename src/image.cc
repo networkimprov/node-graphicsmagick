@@ -75,8 +75,12 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "transform", Transform);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "transparent", Transparent);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "trim", Trim);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "unsharpmask", Unsharpmask);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "unsharpmaskChannel", UnsharpmaskChannel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "wave", Wave);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "zoom", Zoom);
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
 
   //todo: move to separate file, create doc
@@ -202,8 +206,12 @@ enum {
   eTransform,
   eTransparent,
   eTrim,
+  eUnsharpmask,
+  eUnsharpmaskChannel,
+  eWave,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
+  eZoom
 };
 
 static int kNew1[] = { eEnd };
@@ -635,6 +643,24 @@ Handle<Value> Image::Trim(const Arguments& args) {
   return generic_check_start<Image>(eTrim, args, kTrim);
 }
 
+static int kUnsharpmask[] = { eNumber, eNumber, eNumber, eNumber, -eFunction, eEnd };
+Handle<Value> Image::Unsharpmask(const Arguments& args) {
+  return generic_check_start<Image>(eUnsharpmask, args, kUnsharpmask);
+}
+
+static int kUnsharpmaskChannel[] = { eInt32, eNumber, eNumber, eNumber, eNumber, -eFunction, eEnd };
+Handle<Value> Image::UnsharpmaskChannel(const Arguments& args) {
+  return generic_check_start<Image>(eUnsharpmaskChannel, args, kUnsharpmaskChannel);
+}
+
+static int kWave[] = { -eNumber, -eNumber, -eFunction, eEnd };
+Handle<Value> Image::Wave(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[2];
+  aDefaults[0].SetNumber(25);
+  aDefaults[1].SetNumber(150);
+  return generic_check_start<Image>(eWave, args, kWave, aDefaults);
+}
+
 static int kWriteFile[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::WriteFile(const Arguments& args) {
   return generic_check_start<Image>(eWriteFile, args, kWriteFile);
@@ -646,6 +672,11 @@ static int kWrite3[] = { eString, eUint32, -eFunction, eEnd };
 static SetType kWriteSetType[] = { { kWrite1, eWrite1}, { kWrite2, eWrite2}, { kWrite3, eWrite3}, { NULL, 0 } };
 Handle<Value> Image::Write(const Arguments& args) {
   return generic_check_start<Image>(args, kWriteSetType);
+}
+
+static int kZoom[] = { eObjectGeometry, -eFunction, eEnd };
+Handle<Value> Image::Zoom(const Arguments& args) {
+  return generic_check_start<Image>(eZoom, args, kZoom);
 }
 
 void Image::Generic_process(void* pData, void* pThat) {
@@ -741,6 +772,9 @@ void Image::Generic_process(void* pData, void* pThat) {
     break;
   case eTransparent:       that->getImage().transparent(((Color*) data->val[0].pointer)->get());                                                                                           break;
   case eTrim:              that->getImage().trim();                                                                                                                                        break;
+  case eUnsharpmask:       that->getImage().unsharpmask(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl, data->val[3].dbl);                                                           break;
+  case eUnsharpmaskChannel: that->getImage().unsharpmaskChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl, data->val[3].dbl, data->val[4].dbl);         break;
+  case eWave:              that->getImage().wave(data->val[0].dbl, data->val[1].dbl);                                                                                                      break;
   case eWriteFile:         that->getImage().write(*data->val[0].string);                                                                                                                   break;
   case eWrite1:
   case eWrite2:
@@ -754,6 +788,7 @@ void Image::Generic_process(void* pData, void* pThat) {
     //TODO delete aBlob on exception
     data->retVal.pointer = aBlob;
   } break;
+  case eZoom:              that->getImage().zoom(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
   default:
     assert(0);
   }
@@ -846,7 +881,11 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eTransform:
   case eTransparent:
   case eTrim:
+  case eUnsharpmask:
+  case eUnsharpmaskChannel:
+  case eWave:
   case eWriteFile:
+  case eZoom:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;
   case eWrite1:

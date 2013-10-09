@@ -340,8 +340,12 @@ protected:
   static Handle<Value> Transform(const Arguments& args);
   static Handle<Value> Transparent(const Arguments& args);
   static Handle<Value> Trim(const Arguments& args);
+  static Handle<Value> Unsharpmask(const Arguments& args);
+  static Handle<Value> UnsharpmaskChannel(const Arguments& args);
+  static Handle<Value> Wave(const Arguments& args);
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
+  static Handle<Value> Zoom(const Arguments& args);
 
 };
 

@@ -99,6 +99,7 @@ protected:
   static Handle<Value> Chop(const Arguments& args);
   static Handle<Value> Colorize(const Arguments& args);
   static Handle<Value> Comment(const Arguments& args);
+  static Handle<Value> Compare(const Arguments& args);
   static Handle<Value> Contrast(const Arguments& args);
   static Handle<Value> Crop(const Arguments& args);
   static Handle<Value> CycleColormap(const Arguments& args);

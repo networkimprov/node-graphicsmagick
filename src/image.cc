@@ -21,6 +21,7 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "charcoal", Charcoal);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "chop", Chop);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "colorize", Colorize);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "compare", Compare);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "comment", Comment);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "contrast", Contrast);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "crop", Crop);
@@ -153,6 +154,7 @@ enum {
   eChop,
   eColorize1, eColorize2,
   eComment,
+  eCompare,
   eContrast,
   eCrop,
   eCycleColormap,
@@ -327,6 +329,11 @@ Handle<Value> Image::Colorize(const Arguments& args) {
 static int kComment[] = { eString, -eFunction, eEnd };
 Handle<Value> Image::Comment(const Arguments& args) {
   return generic_check_start<Image>(eComment, args, kComment);
+}
+
+static int kCompare[] = { eObjectImage, -eFunction, eEnd };
+Handle<Value> Image::Compare(const Arguments& args) {
+  return generic_check_start<Image>(eCompare, args, kCompare);
 }
 
 static int kContrast[] = { eUint32, -eFunction, eEnd };
@@ -710,6 +717,7 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eColorize1:         that->getImage().colorize(data->val[0].uint32, data->val[1].uint32, data->val[2].uint32, ((Color*) data->val[3].pointer)->get());                               break;
   case eColorize2:         that->getImage().colorize(data->val[0].uint32, ((Color*) data->val[1].pointer)->get());                                                                         break;
   case eComment:           that->getImage().comment(*data->val[0].string);                                                                                                                 break;
+  case eCompare:           data->retVal.SetBool(that->getImage().compare(((Image*) data->val[0].pointer)->getImage()));                                                                    break;
   case eContrast:          that->getImage().contrast(data->val[0].uint32);                                                                                                                 break;
   case eCrop:              that->getImage().crop(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
   case eCycleColormap:     that->getImage().cycleColormap(data->val[0].uint32);                                                                                                            break;
@@ -897,6 +905,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   } break;
   case eChannelDepth2:
     aResult = Uint32::New(data->retVal.uint32);
+    break;
+  case eCompare:
+    aResult = Boolean::New(data->retVal.boolean);
     break;
   }
   delete data;

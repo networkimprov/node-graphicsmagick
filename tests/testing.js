@@ -37,6 +37,7 @@ exports.runTests = function (name, tests, sync, callback) {
         fNext(aTst.fatal ? 'fatal' : 'fail', aTst.name, aTst.fatal ? ex.message : undefined);
       }
     } else {
+      for (var N = 0; N < aTst.parameters.length; N++) if (typeof(aTst.parameters[N]) == 'string' && aTst.parameters[N].substr(0,8) == 'objects.') aTst.parameters[N] = eval(aTst.parameters[N]);
       if (!sync)
         aTst.parameters.push(function(err, result){
           aTst.result(err == null ? null : err.toString(), result, function(result) {

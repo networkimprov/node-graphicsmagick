@@ -226,6 +226,22 @@ exports.tests = [
   },
   CompareImageWithMD5('img', '3b94bfc8b228494619cadec070203fca'),
   NewImageFromFile('img', 'files/img1.bmp'),
+  NewImageFromFile('img2', 'files/tex1.bmp'),
+  {
+    name: 'img.compare( sameimg )',
+    obj: 'img',
+    method: 'compare',
+    parameters: [ 'objects.img' ],
+    result: function(err, result, fn) { fn(err == null && result); }
+  },
+  {
+    name: 'img.compare( otherimg )',
+    obj: 'img',
+    method: 'compare',
+    parameters: [ 'objects.img2' ],
+    result: function(err, result, fn) { fn(err == null && !result); }
+  },
+  NewImageFromFile('img', 'files/img1.bmp'),
   {
     name: 'img.contrast( sharpen )',
     obj: 'img',

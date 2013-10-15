@@ -21,8 +21,11 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "charcoal", Charcoal);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "chop", Chop);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "colorize", Colorize);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "compare", Compare);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "comment", Comment);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "compare", Compare);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "composite", Composite);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "compositeGeometry", CompositeGeometry);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "compositeGravity", CompositeGravity);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "contrast", Contrast);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "crop", Crop);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "cycleColormap", CycleColormap);
@@ -100,6 +103,46 @@ void Image::Init(Handle<Object> target) {
   aChannelType->Set(String::NewSymbol("GrayChannel"), Integer::New(Magick::GrayChannel), ReadOnly);
   target->Set(String::NewSymbol("ChannelType"), aChannelType);
 
+  Local<Object> aCompositeOperator = Object::New();
+  aCompositeOperator->Set(String::NewSymbol("AddCompositeOp"), Integer::New(Magick::AddCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("AtopCompositeOp"), Integer::New(Magick::AtopCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("BumpmapCompositeOp"), Integer::New(Magick::BumpmapCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("ClearCompositeOp"), Integer::New(Magick::ClearCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("ColorizeCompositeOp"), Integer::New(Magick::ColorizeCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("CopyBlueCompositeOp"), Integer::New(Magick::CopyBlueCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("CopyCompositeOp"), Integer::New(Magick::CopyCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("CopyGreenCompositeOp"), Integer::New(Magick::CopyGreenCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("CopyOpacityCompositeOp"), Integer::New(Magick::CopyOpacityCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("CopyRedCompositeOp"), Integer::New(Magick::CopyRedCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("DarkenCompositeOp"), Integer::New(Magick::DarkenCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("DifferenceCompositeOp"), Integer::New(Magick::DifferenceCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("DisplaceCompositeOp"), Integer::New(Magick::DisplaceCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("DissolveCompositeOp"), Integer::New(Magick::DissolveCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("HueCompositeOp"), Integer::New(Magick::HueCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("InCompositeOp"), Integer::New(Magick::InCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("LightenCompositeOp"), Integer::New(Magick::LightenCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("LuminizeCompositeOp"), Integer::New(Magick::LuminizeCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("MinusCompositeOp"), Integer::New(Magick::MinusCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("ModulateCompositeOp"), Integer::New(Magick::ModulateCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("MultiplyCompositeOp"), Integer::New(Magick::MultiplyCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("NoCompositeOp"), Integer::New(Magick::NoCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("OutCompositeOp"), Integer::New(Magick::OutCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("OverCompositeOp"), Integer::New(Magick::OverCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("OverlayCompositeOp"), Integer::New(Magick::OverlayCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("PlusCompositeOp"), Integer::New(Magick::PlusCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("SaturateCompositeOp"), Integer::New(Magick::SaturateCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("ScreenCompositeOp"), Integer::New(Magick::ScreenCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("SubtractCompositeOp"), Integer::New(Magick::SubtractCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("ThresholdCompositeOp"), Integer::New(Magick::ThresholdCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("UndefinedCompositeOp"), Integer::New(Magick::UndefinedCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("XorCompositeOp"), Integer::New(Magick::XorCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("CopyCyanCompositeOp"), Integer::New(Magick::CopyCyanCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("CopyMagentaCompositeOp"), Integer::New(Magick::CopyMagentaCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("CopyYellowCompositeOp"), Integer::New(Magick::CopyYellowCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("CopyBlackCompositeOp"), Integer::New(Magick::CopyBlackCompositeOp), ReadOnly);
+  aCompositeOperator->Set(String::NewSymbol("DivideCompositeOp"), Integer::New(Magick::DivideCompositeOp), ReadOnly);
+  target->Set(String::NewSymbol("CompositeOperator"), aCompositeOperator);
+
   Local<Object> aGravityType = Object::New();
   aGravityType->Set(String::NewSymbol("ForgetGravity"), Integer::New(Magick::ForgetGravity), ReadOnly);
   aGravityType->Set(String::NewSymbol("NorthWestGravity"), Integer::New(Magick::NorthWestGravity), ReadOnly);
@@ -155,6 +198,7 @@ enum {
   eColorize1, eColorize2,
   eComment,
   eCompare,
+  eComposite, eCompositeGeometry, eCompositeGravity,
   eContrast,
   eCrop,
   eCycleColormap,
@@ -334,6 +378,27 @@ Handle<Value> Image::Comment(const Arguments& args) {
 static int kCompare[] = { eObjectImage, -eFunction, eEnd };
 Handle<Value> Image::Compare(const Arguments& args) {
   return generic_check_start<Image>(eCompare, args, kCompare);
+}
+
+static int kComposite[] = { eObjectImage, eUint32, eUint32, -eInt32, -eFunction, eEnd };
+Handle<Value> Image::Composite(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetInt32(Magick::InCompositeOp);
+  return generic_check_start<Image>(eComposite, args, kComposite, aDefaults);
+}
+
+static int kCompositeGeometry[] = { eObjectImage, eObjectGeometry, -eInt32, -eFunction, eEnd };
+Handle<Value> Image::CompositeGeometry(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetInt32(Magick::InCompositeOp);
+  return generic_check_start<Image>(eCompositeGeometry, args, kCompositeGeometry, aDefaults);
+}
+
+static int kCompositeGravity[] = { eObjectImage, eInt32, -eInt32, -eFunction, eEnd };
+Handle<Value> Image::CompositeGravity(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetInt32(Magick::InCompositeOp);
+  return generic_check_start<Image>(eCompositeGravity, args, kCompositeGravity, aDefaults);
 }
 
 static int kContrast[] = { eUint32, -eFunction, eEnd };
@@ -718,6 +783,9 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eColorize2:         that->getImage().colorize(data->val[0].uint32, ((Color*) data->val[1].pointer)->get());                                                                         break;
   case eComment:           that->getImage().comment(*data->val[0].string);                                                                                                                 break;
   case eCompare:           data->retVal.SetBool(that->getImage().compare(((Image*) data->val[0].pointer)->getImage()));                                                                    break;
+  case eComposite:         that->getImage().composite(((Image*) data->val[0].pointer)->getImage(), data->val[1].uint32, data->val[2].uint32, (Magick::CompositeOperator) data->val[3].int32); break;
+  case eCompositeGeometry: that->getImage().composite(((Image*) data->val[0].pointer)->getImage(), ((Geometry*) data->val[1].pointer)->get(), (Magick::CompositeOperator) data->val[2].int32); break;
+  case eCompositeGravity:  that->getImage().composite(((Image*) data->val[0].pointer)->getImage(), (Magick::GravityType) data->val[1].int32, (Magick::CompositeOperator) data->val[2].int32); break;
   case eContrast:          that->getImage().contrast(data->val[0].uint32);                                                                                                                 break;
   case eCrop:              that->getImage().crop(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
   case eCycleColormap:     that->getImage().cycleColormap(data->val[0].uint32);                                                                                                            break;
@@ -830,6 +898,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eColorize1:
   case eColorize2:
   case eComment:
+  case eComposite:
+  case eCompositeGeometry:
+  case eCompositeGravity:
   case eContrast:
   case eCrop:
   case eCycleColormap:

@@ -100,6 +100,9 @@ protected:
   static Handle<Value> Colorize(const Arguments& args);
   static Handle<Value> Comment(const Arguments& args);
   static Handle<Value> Compare(const Arguments& args);
+  static Handle<Value> Composite(const Arguments& args);
+  static Handle<Value> CompositeGeometry(const Arguments& args);
+  static Handle<Value> CompositeGravity(const Arguments& args);
   static Handle<Value> Contrast(const Arguments& args);
   static Handle<Value> Crop(const Arguments& args);
   static Handle<Value> CycleColormap(const Arguments& args);
@@ -187,6 +190,10 @@ struct GenericFunctionCall {
         dbl = val.dbl;
       }
       return *this;
+    }
+    void SetInt32(unsigned v) {
+      int32 = v;
+      type = eInt32;
     }
     void SetUint32(unsigned v) {
       uint32 = v;

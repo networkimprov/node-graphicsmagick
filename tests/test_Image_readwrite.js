@@ -242,6 +242,36 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null && !result); }
   },
   NewImageFromFile('img', 'files/img1.bmp'),
+  NewImageFromFile('img2', 'files/tex1.bmp'),
+  {
+    name: 'img.composite( compositeImage, xOffset, yOffset )',
+    obj: 'img',
+    method: 'composite',
+    parameters: [ 'objects.img2', 50, 30 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'f003605fb0406843e2eb54b7a9efc34a'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  NewImageFromFile('img2', 'files/tex1.bmp'),
+  {
+    name: 'img.compositeGeometry( compositeImage, offset )',
+    obj: 'img',
+    method: 'compositeGeometry',
+    parameters: [ 'objects.img2', new gm.Geometry({height: 10, width: 50, xOff: 10, yOff: 50}) ],
+    result: function(err, result, fn) {console.log(err); fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'f003605fb0406843e2eb54b7a9efc34a'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  NewImageFromFile('img3', 'files/img3.bmp'),
+  {
+    name: 'img.compositeGravity( compositeImage, offset )',
+    obj: 'img',
+    method: 'compositeGravity',
+    parameters: [ 'objects.img3', gm.GravityType.NorthGravity, gm.CompositeOperator.SubtractCompositeOp ],
+    result: function(err, result, fn) {console.log(err); fn(err == null); }
+  },
+  CompareImageWithMD5('img', '99dff45cd6c369a98fd5a5109a87052e'),
+  NewImageFromFile('img', 'files/img1.bmp'),
   {
     name: 'img.contrast( sharpen )',
     obj: 'img',

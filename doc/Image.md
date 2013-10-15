@@ -105,8 +105,8 @@ Compare current image with another image. Sets meanErrorPerPixel, normalizedMaxE
 Returns wether the images are identical.  
 
 **composite ( Image compositeImage, Uint32 xOffset, Uint32 yOffset[, CompositeOperator compose = InCompositeOp], Function callback)**  
-**composite ( Image compositeImage, Geometry offset[, CompositeOperator compose = InCompositeOp], Function callback)**  
-**composite ( Image compositeImage, GravityType gravity[, CompositeOperator compose = InCompositeOp], Function callback)**  
+**compositeGeometry ( Image compositeImage, Geometry offset[, CompositeOperator compose = InCompositeOp], Function callback)**  
+**compositeGravity ( Image compositeImage, GravityType gravity[, CompositeOperator compose = InCompositeOp], Function callback)**  
 Compose an image onto another at specified offset and using specified algorithm.  
 
 **contrast ( Uint32 sharpen, Function callback)**  

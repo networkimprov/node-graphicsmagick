@@ -406,6 +406,46 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', '21fc45da645a0fc76ef3bee4bf5851a4'),
+  NewImageFromFile('img', 'files/img4.bmp'),
+  NewImageFromFile('tex', 'files/tex1.bmp'),
+  {
+    name: 'img.floodFillTexture( x, y, texture )',
+    obj: 'img',
+    method: 'floodFillTexture',
+    parameters: [ 1, 1, 'objects.tex' ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '6d0dc35e674571d4ff2ae5ecaed7a560'),
+  NewImageFromFile('img', 'files/img4.bmp'),
+  NewImageFromFile('tex', 'files/tex1.bmp'),
+  {
+    name: 'img.floodFillTexture( geometry, texture )',
+    obj: 'img',
+    method: 'floodFillTexture',
+    parameters: [ new gm.Geometry({width: 1, height: 1}), 'objects.tex' ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '6d0dc35e674571d4ff2ae5ecaed7a560'),
+  NewImageFromFile('img', 'files/img4.bmp'),
+  NewImageFromFile('tex', 'files/tex1.bmp'),
+  {
+    name: 'img.floodFillTexture( x, y, texture, borderColor )',
+    obj: 'img',
+    method: 'floodFillTexture',
+    parameters: [ 1, 1, 'objects.tex', new gm.Color({red: 0, green: 0, blue: 1}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '579e3b2aaf51c785c2fa98fe9fb8a3d0'),
+  NewImageFromFile('img', 'files/img4.bmp'),
+  NewImageFromFile('tex', 'files/tex1.bmp'),
+  {
+    name: 'img.floodFillTexture( geometry, texture, borderColor )',
+    obj: 'img',
+    method: 'floodFillTexture',
+    parameters: [ new gm.Geometry({width: 1, height: 1}), 'objects.tex', new gm.Color({red: 0, green: 0, blue: 1}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '579e3b2aaf51c785c2fa98fe9fb8a3d0'),
   NewImageFromFile('img', 'files/img1.bmp'),
   {
     name: 'img.flop( )',

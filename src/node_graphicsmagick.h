@@ -115,6 +115,7 @@ protected:
   static Handle<Value> Flip(const Arguments& args);
   static Handle<Value> FloodFillColor(const Arguments& args);
   static Handle<Value> FloodFillOpacity(const Arguments& args);
+  static Handle<Value> FloodFillTexture(const Arguments& args);
   static Handle<Value> Flop(const Arguments& args);
   static Handle<Value> Gamma(const Arguments& args);
   static Handle<Value> GaussianBlur(const Arguments& args);

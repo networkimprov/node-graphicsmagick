@@ -38,6 +38,7 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "flip", Flip);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "floodFillColor", FloodFillColor);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "floodFillOpacity", FloodFillOpacity);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "floodFillTexture", FloodFillTexture);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "flop", Flop);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gamma", Gamma);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gaussianBlur", GaussianBlur);
@@ -211,6 +212,7 @@ enum {
   eFlip,
   eFloodFillColor1, eFloodFillColor2, eFloodFillColor3, eFloodFillColor4,
   eFloodFillOpacity,
+  eFloodFillTexture1, eFloodFillTexture2, eFloodFillTexture3, eFloodFillTexture4,
   eFlop,
   eGamma1, eGamma2,
   eGaussianBlur,
@@ -468,6 +470,15 @@ Handle<Value> Image::FloodFillColor(const Arguments& args) {
 static int kFloodFillOpacity[] = { eUint32, eUint32, eUint32, eInt32, -eFunction, eEnd };
 Handle<Value> Image::FloodFillOpacity(const Arguments& args) {
   return generic_check_start<Image>(eFloodFillOpacity, args, kFloodFillOpacity);
+}
+
+static int kFloodFillTexture1[] = { eUint32, eUint32, eObjectImage, -eFunction, eEnd };
+static int kFloodFillTexture2[] = { eObjectGeometry, eObjectImage, -eFunction, eEnd };
+static int kFloodFillTexture3[] = { eUint32, eUint32, eObjectImage, eObjectColor, -eFunction, eEnd };
+static int kFloodFillTexture4[] = { eObjectGeometry, eObjectImage, eObjectColor, -eFunction, eEnd };
+static SetType kFloodFillTextureSetType[] = { { kFloodFillTexture1, eFloodFillTexture1 }, { kFloodFillTexture2, eFloodFillTexture2 }, { kFloodFillTexture3, eFloodFillTexture3 }, { kFloodFillTexture4, eFloodFillTexture4 }, { NULL, 0 } };
+Handle<Value> Image::FloodFillTexture(const Arguments& args) {
+  return generic_check_start<Image>(args, kFloodFillTextureSetType);
 }
 
 static int kFlop[] = { -eFunction, eEnd };
@@ -801,6 +812,10 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eFloodFillColor3:   that->getImage().floodFillColor(data->val[0].uint32, data->val[1].uint32, ((Color*) data->val[2].pointer)->get(), ((Color*) data->val[3].pointer)->get());      break;
   case eFloodFillColor4:   that->getImage().floodFillColor(((Geometry*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get(), ((Color*) data->val[2].pointer)->get());     break;
   case eFloodFillOpacity:  that->getImage().floodFillOpacity(data->val[0].uint32, data->val[1].uint32, data->val[2].uint32, (Magick::PaintMethod) data->val[3].int32);                     break;
+  case eFloodFillTexture1: that->getImage().floodFillTexture(data->val[0].uint32, data->val[1].uint32, ((Image*) data->val[2].pointer)->getImage());                                       break;
+  case eFloodFillTexture2: that->getImage().floodFillTexture(((Geometry*) data->val[0].pointer)->get(), ((Image*) data->val[1].pointer)->getImage());                                      break;
+  case eFloodFillTexture3: that->getImage().floodFillTexture(data->val[0].uint32, data->val[1].uint32, ((Image*) data->val[2].pointer)->getImage(), ((Color*) data->val[3].pointer)->get()); break;
+  case eFloodFillTexture4: that->getImage().floodFillTexture(((Geometry*) data->val[0].pointer)->get(), ((Image*) data->val[1].pointer)->getImage(), ((Color*) data->val[2].pointer)->get()); break;
   case eFlop:              that->getImage().flop();                                                                                                                                        break;
   case eGamma1:            that->getImage().gamma(data->val[0].dbl);                                                                                                                       break;
   case eGamma2:            that->getImage().gamma(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                   break;
@@ -916,6 +931,10 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eFloodFillColor3:
   case eFloodFillColor4:
   case eFloodFillOpacity:
+  case eFloodFillTexture1:
+  case eFloodFillTexture2:
+  case eFloodFillTexture3:
+  case eFloodFillTexture4:
   case eFlop:
   case eGamma1:
   case eGamma2:

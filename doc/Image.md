@@ -186,11 +186,11 @@ Gamma correct image.
 **gaussianBlurChannel ( ChannelType channel, Number width,Number sigma, Function callback)**  
 Gaussian blur image. The number of neighbor pixels to be included in the convolution mask is specified by 'width'. The standard deviation of the gaussian bell curve is specified by 'sigma'.  
 
-**implode ( Number factor, Function callback)**  
-Implode image (special effect).  
-
 **haldClut ( Image clutImage, Function callback)**  
 Apply a color lookup table (Hald CLUT) to the image.  
+
+**implode ( Number factor, Function callback)**  
+Implode image (special effect).  
 
 **label ( String label, Function callback)**  
 Label image.  

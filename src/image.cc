@@ -43,6 +43,7 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gamma", Gamma);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gaussianBlur", GaussianBlur);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gaussianBlurChannel", GaussianBlurChannel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "haldClut", HaldClut);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "implode", Implode);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "level", Level);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "levelChannel", LevelChannel);
@@ -217,6 +218,7 @@ enum {
   eGamma1, eGamma2,
   eGaussianBlur,
   eGaussianBlurChannel,
+  eHaldClut,
   eImplode,
   eLevel,
   eLevelChannel,
@@ -501,6 +503,11 @@ Handle<Value> Image::GaussianBlur(const Arguments& args) {
 static int kGaussianBlurChannel[] = { eInt32, eNumber, eNumber, -eFunction, eEnd };
 Handle<Value> Image::GaussianBlurChannel(const Arguments& args) {
   return generic_check_start<Image>(eGaussianBlurChannel, args, kGaussianBlurChannel);
+}
+
+static int kHaldClut[] = { eObjectImage, -eFunction, eEnd };
+Handle<Value> Image::HaldClut(const Arguments& args) {
+  return generic_check_start<Image>(eHaldClut, args, kHaldClut);
 }
 
 static int kImplode[] = { eNumber, -eFunction, eEnd };
@@ -821,6 +828,7 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eGamma2:            that->getImage().gamma(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                   break;
   case eGaussianBlur:      that->getImage().gaussianBlur(data->val[0].dbl, data->val[1].dbl);                                                                                              break;
   case eGaussianBlurChannel: that->getImage().gaussianBlurChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl);                                           break;
+  case eHaldClut:          that->getImage().haldClut(((Image*) data->val[0].pointer)->getImage());                                                                                         break;
   case eImplode:           that->getImage().implode(data->val[0].dbl);                                                                                                                     break;
   case eLevel:             that->getImage().level(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                   break;
   case eLevelChannel:      that->getImage().levelChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl, data->val[3].dbl);                                  break;
@@ -940,6 +948,7 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eGamma2:
   case eGaussianBlur:
   case eGaussianBlurChannel:
+  case eHaldClut:
   case eImplode:
   case eLevel:
   case eLevelChannel:

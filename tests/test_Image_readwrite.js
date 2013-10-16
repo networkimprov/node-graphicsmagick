@@ -492,6 +492,16 @@ exports.tests = [
   },
   CompareImageWithMD5('img', '67c7eb1e9577b7301e928afe69bab75e'),
   NewImageFromFile('img', 'files/img1.bmp'),
+  NewImageFromFile('img2', 'files/img4.bmp'),
+  {
+    name: 'img.haldClut( clutImage )',
+    obj: 'img',
+    method: 'haldClut',
+    parameters: [ 'objects.img2' ],
+    result: function(err, result, fn) { fn(err == null); } //todo: fix test
+  },
+  CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false), //
+  NewImageFromFile('img', 'files/img1.bmp'),
   {
     name: 'img.implode( factor )',
     obj: 'img',

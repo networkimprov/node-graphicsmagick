@@ -120,6 +120,7 @@ protected:
   static Handle<Value> Gamma(const Arguments& args);
   static Handle<Value> GaussianBlur(const Arguments& args);
   static Handle<Value> GaussianBlurChannel(const Arguments& args);
+  static Handle<Value> HaldClut(const Arguments& args);
   static Handle<Value> Implode(const Arguments& args);
   static Handle<Value> Level(const Arguments& args);
   static Handle<Value> LevelChannel(const Arguments& args);

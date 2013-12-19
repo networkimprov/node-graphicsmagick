@@ -156,6 +156,7 @@ protected:
   static Handle<Value> Stereo(const Arguments& args);
   static Handle<Value> Strip(const Arguments& args);
   static Handle<Value> Swirl(const Arguments& args);
+  static Handle<Value> Texture(const Arguments& args);
   static Handle<Value> Threshold(const Arguments& args);
   static Handle<Value> Transform(const Arguments& args);
   static Handle<Value> Transparent(const Arguments& args);

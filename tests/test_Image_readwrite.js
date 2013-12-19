@@ -826,7 +826,16 @@ exports.tests = [
     parameters: [ 45 ],
     result: function(err, result, fn) { fn(err == null); }
   },
-  CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false),
+  NewImageFromFile('img', 'files/img4.bmp'),
+  NewImageFromFile('img2', 'files/tex1.bmp'),
+  {
+    name: 'img.texture( texture )',
+    obj: 'img',
+    method: 'texture',
+    parameters: [ 'objects.img2' ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'd6442964ff2a634e7632eddf4b2339c3', false),
   NewImageFromFile('img', 'files/img1.bmp'),
   {
     name: 'img.threshold( degrees )',

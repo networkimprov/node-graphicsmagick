@@ -79,6 +79,7 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "stereo", Stereo);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "strip", Strip);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "swirl", Swirl);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "texture", Texture);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "threshold", Threshold);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "transform", Transform);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "transparent", Transparent);
@@ -256,6 +257,7 @@ enum {
   eStereo,
   eStrip,
   eSwirl,
+  eTexture,
   eThreshold,
   eTransform,
   eTransparent,
@@ -725,6 +727,11 @@ Handle<Value> Image::Swirl(const Arguments& args) {
   return generic_check_start<Image>(eSwirl, args, kSwirl);
 }
 
+static int kTexture[] = { eObjectImage, -eFunction, eEnd };
+Handle<Value> Image::Texture(const Arguments& args) {
+  return generic_check_start<Image>(eTexture, args, kTexture);
+}
+
 static int kThreshold[] = { eNumber, -eFunction, eEnd };
 Handle<Value> Image::Threshold(const Arguments& args) {
   return generic_check_start<Image>(eThreshold, args, kThreshold);
@@ -880,6 +887,7 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eStereo:            that->getImage().stereo(((Image*) data->val[0].pointer)->getImage());                                                                                           break;
   case eStrip:             that->getImage().strip();                                                                                                                                       break;
   case eSwirl:             that->getImage().swirl(data->val[0].dbl);                                                                                                                       break;
+  case eTexture:           that->getImage().texture(((Image*) data->val[0].pointer)->getImage());                                                                                         break;
   case eThreshold:         that->getImage().threshold(data->val[0].dbl);                                                                                                                   break;
   case eTransform:         
     if (data->val[1].pointer) that->getImage().transform(((Geometry*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get());
@@ -998,8 +1006,11 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eShear:
   case eSolarize:
   case eSpread:
+  case eStegano:
+  case eStereo:
   case eStrip:
   case eSwirl:
+  case eTexture:
   case eThreshold:
   case eTransform:
   case eTransparent:

@@ -790,6 +790,26 @@ exports.tests = [
   },
   CompareImageWithMD5('img', 'cae23729a69e667f5bd6b33e34cdf3a5', false),
   NewImageFromFile('img', 'files/img1.bmp'),
+  NewImageFromFile('img2', 'files/img2.bmp'),
+  {
+    name: 'img.stegano( watermark )',
+    obj: 'img',
+    method: 'stegano',
+    parameters: [ 'objects.img2' ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '7ee361bb170f76dfc53a1aa1cc09e669'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  NewImageFromFile('img2', 'files/img3.bmp'),
+  {
+    name: 'img.stereo( rightImage )',
+    obj: 'img',
+    method: 'stereo',
+    parameters: [ 'objects.img2' ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'c2ae8d280b6848a0ecb903a9da6e16c0'),
+  NewImageFromFile('img', 'files/img1.bmp'),
   {
     name: 'img.strip( )',
     obj: 'img',

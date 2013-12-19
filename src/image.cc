@@ -75,6 +75,8 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "shear", Shear);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "solarize", Solarize);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "spread", Spread);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "stegano", Stegano);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "stereo", Stereo);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "strip", Strip);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "swirl", Swirl);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "threshold", Threshold);
@@ -250,6 +252,8 @@ enum {
   eShear,
   eSolarize,
   eSpread,
+  eStegano,
+  eStereo,
   eStrip,
   eSwirl,
   eThreshold,
@@ -701,6 +705,16 @@ Handle<Value> Image::Spread(const Arguments& args) {
   return generic_check_start<Image>(eSpread, args, kSpread, aDefaults);
 }
 
+static int kStegano[] = { eObjectImage, -eFunction, eEnd };
+Handle<Value> Image::Stegano(const Arguments& args) {
+  return generic_check_start<Image>(eStegano, args, kStegano);
+}
+
+static int kStereo[] = { eObjectImage, -eFunction, eEnd };
+Handle<Value> Image::Stereo(const Arguments& args) {
+  return generic_check_start<Image>(eStereo, args, kStereo);
+}
+
 static int kStrip[] = { -eFunction, eEnd };
 Handle<Value> Image::Strip(const Arguments& args) {
   return generic_check_start<Image>(eStrip, args, kStrip);
@@ -862,6 +876,8 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eShear:             that->getImage().shear(data->val[0].dbl, data->val[1].dbl);                                                                                                     break;
   case eSolarize:          that->getImage().solarize(data->val[0].dbl);                                                                                                                    break;
   case eSpread:            that->getImage().spread(data->val[0].uint32);                                                                                                                   break;
+  case eStegano:           that->getImage().stegano(((Image*) data->val[0].pointer)->getImage());                                                                                          break;
+  case eStereo:            that->getImage().stereo(((Image*) data->val[0].pointer)->getImage());                                                                                           break;
   case eStrip:             that->getImage().strip();                                                                                                                                       break;
   case eSwirl:             that->getImage().swirl(data->val[0].dbl);                                                                                                                       break;
   case eThreshold:         that->getImage().threshold(data->val[0].dbl);                                                                                                                   break;

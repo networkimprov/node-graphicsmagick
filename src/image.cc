@@ -49,6 +49,7 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "level", Level);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "levelChannel", LevelChannel);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "magnify", Magnify);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "map", Map);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "matteFloodfill", MatteFloodfill);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "medianFilter", MedianFilter);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "minify", Minify);
@@ -228,6 +229,7 @@ enum {
   eLevel,
   eLevelChannel,
   eMagnify,
+  eMap,
   eMatteFloodfill,
   eMedianFilter,
   eMinify,
@@ -555,6 +557,13 @@ Handle<Value> Image::Magnify(const Arguments& args) {
   return generic_check_start<Image>(eMagnify, args, kMagnify);
 }
 
+static int kMap[] = { eObjectImage, -eBoolean, -eFunction, eEnd };
+Handle<Value> Image::Map(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults[1];
+  aDefaults[0].SetBool(false);
+  return generic_check_start<Image>(eMap, args, kMap, aDefaults);
+}
+
 static int kMatteFloodfill[] = { eObjectColor, eUint32, eInt32, eInt32, eInt32, -eFunction, eEnd };
 Handle<Value> Image::MatteFloodfill(const Arguments& args) {
   return generic_check_start<Image>(eMatteFloodfill, args, kMatteFloodfill);
@@ -871,6 +880,7 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eLevel:             that->getImage().level(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                   break;
   case eLevelChannel:      that->getImage().levelChannel((Magick::ChannelType) data->val[0].int32, data->val[1].dbl, data->val[2].dbl, data->val[3].dbl);                                  break;
   case eMagnify:           that->getImage().magnify();                                                                                                                                     break;
+  case eMap:               that->getImage().map(((Image*) data->val[0].pointer)->getImage(), data->val[1].boolean);                                                                        break;
   case eMatteFloodfill:    that->getImage().matteFloodfill(((Color*) data->val[0].pointer)->get(), data->val[1].uint32, data->val[2].int32, data->val[3].int32, (Magick::PaintMethod) data->val[4].int32); break;
   case eMedianFilter:      that->getImage().medianFilter(data->val[0].dbl);                                                                                                                break;
   case eMinify:            that->getImage().minify();                                                                                                                                      break;
@@ -996,6 +1006,7 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eLevel:
   case eLevelChannel:
   case eMagnify:
+  case eMap:
   case eMatteFloodfill:
   case eMedianFilter:
   case eMinify:

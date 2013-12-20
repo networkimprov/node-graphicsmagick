@@ -556,6 +556,16 @@ exports.tests = [
   },
   CompareImageWithMD5('img', 'f8e7f2ef0d7d3ed2560b543e9e1c4ebd'),
   NewImageFromFile('img', 'files/img1.bmp'),
+  NewImageFromFile('img2', 'files/img2.bmp'),
+  {
+    name: 'img.map( watermark )',
+    obj: 'img',
+    method: 'map',
+    parameters: [ 'objects.img2' ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '7e98e876042932694f45b06e8521900b'),
+  NewImageFromFile('img', 'files/img1.bmp'),
   {
     name: 'img.matteFloodfill( target, opacity, x, y, method )',
     obj: 'img',

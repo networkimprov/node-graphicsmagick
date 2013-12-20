@@ -126,6 +126,7 @@ protected:
   static Handle<Value> Level(const Arguments& args);
   static Handle<Value> LevelChannel(const Arguments& args);
   static Handle<Value> Magnify(const Arguments& args);
+  static Handle<Value> Map(const Arguments& args);
   static Handle<Value> MatteFloodfill(const Arguments& args);
   static Handle<Value> MedianFilter(const Arguments& args);
   static Handle<Value> Minify(const Arguments& args);

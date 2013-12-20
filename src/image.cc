@@ -40,6 +40,7 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "floodFillOpacity", FloodFillOpacity);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "floodFillTexture", FloodFillTexture);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "flop", Flop);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "frame", Frame);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gamma", Gamma);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gaussianBlur", GaussianBlur);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "gaussianBlurChannel", GaussianBlurChannel);
@@ -218,6 +219,7 @@ enum {
   eFloodFillOpacity,
   eFloodFillTexture1, eFloodFillTexture2, eFloodFillTexture3, eFloodFillTexture4,
   eFlop,
+  eFrame1, eFrame2,
   eGamma1, eGamma2,
   eGaussianBlur,
   eGaussianBlurChannel,
@@ -492,6 +494,19 @@ Handle<Value> Image::FloodFillTexture(const Arguments& args) {
 static int kFlop[] = { -eFunction, eEnd };
 Handle<Value> Image::Flop(const Arguments& args) {
   return generic_check_start<Image>(eFlop, args, kFlop);
+}
+
+static int kFrame1[] = { -eObjectGeometry, -eFunction, eEnd };
+static int kFrame2[] = { eUint32, eUint32, -eUint32, -eUint32, -eFunction, eEnd };
+static SetType kFrameSetType[] = { { kFrame1, eFrame1 },  { kFrame2, eFrame2 }, { NULL, 0 } };
+Handle<Value> Image::Frame(const Arguments& args) {
+  GenericFunctionCall::GenericValue aDefaults1[1];
+  GenericFunctionCall::GenericValue aDefaults2[2];
+  GenericFunctionCall::GenericValue* aDefaultsArr[2] = { aDefaults1, aDefaults2 };
+  aDefaults1[0].SetPointer(NULL, eObjectGeometry);
+  aDefaults2[0].SetUint32(6);
+  aDefaults2[1].SetUint32(6);
+  return generic_check_start<Image>(args, kFrameSetType, aDefaultsArr);
 }
 
 static int kGamma1[] = { eNumber, -eFunction, eEnd };
@@ -845,6 +860,8 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eFloodFillTexture3: that->getImage().floodFillTexture(data->val[0].uint32, data->val[1].uint32, ((Image*) data->val[2].pointer)->getImage(), ((Color*) data->val[3].pointer)->get()); break;
   case eFloodFillTexture4: that->getImage().floodFillTexture(((Geometry*) data->val[0].pointer)->get(), ((Image*) data->val[1].pointer)->getImage(), ((Color*) data->val[2].pointer)->get()); break;
   case eFlop:              that->getImage().flop();                                                                                                                                        break;
+  case eFrame1:            that->getImage().frame(data->val[0].pointer ? ((Geometry*) data->val[0].pointer)->get() : Magick::frameGeometryDefault);                                        break;
+  case eFrame2:            that->getImage().frame(data->val[0].uint32, data->val[1].uint32, data->val[2].uint32, data->val[3].uint32);                                                     break;
   case eGamma1:            that->getImage().gamma(data->val[0].dbl);                                                                                                                       break;
   case eGamma2:            that->getImage().gamma(data->val[0].dbl, data->val[1].dbl, data->val[2].dbl);                                                                                   break;
   case eGaussianBlur:      that->getImage().gaussianBlur(data->val[0].dbl, data->val[1].dbl);                                                                                              break;
@@ -968,6 +985,8 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eFloodFillTexture3:
   case eFloodFillTexture4:
   case eFlop:
+  case eFrame1:
+  case eFrame2:
   case eGamma1:
   case eGamma2:
   case eGaussianBlur:

@@ -457,6 +457,24 @@ exports.tests = [
   CompareImageWithMD5('img', '824d8e9384ff479ee73b1b753b7dedca'),
   NewImageFromFile('img', 'files/img1.bmp'),
   {
+    name: 'img.frame( )',
+    obj: 'img',
+    method: 'frame',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '6fcf91540446207775d83f3098f57c5a'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.frame( )',
+    obj: 'img',
+    method: 'frame',
+    parameters: [ 40, 30 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', 'aa511944e727ec933d7f6bb329b871eb'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
     name: 'img.gamma( gamma )',
     obj: 'img',
     method: 'gamma',

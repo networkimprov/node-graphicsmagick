@@ -112,7 +112,7 @@ Compose an image onto another at specified offset and using specified algorithm.
 **contrast ( Uint32 sharpen, Function callback)**  
 Contrast image (enhance intensity differences in image).  
 
-**convolve ( NumberArrayOfArray kernel, Function callback)**  
+**TODO** convolve ( NumberArrayOfArray kernel, Function callback)  
 Convolve image.  Applies a user-specified convolution to the image.  
 For example: convolve( [ [ 1, 1], [ 1, 1] ])  
 

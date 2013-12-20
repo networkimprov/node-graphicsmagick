@@ -117,6 +117,7 @@ protected:
   static Handle<Value> FloodFillOpacity(const Arguments& args);
   static Handle<Value> FloodFillTexture(const Arguments& args);
   static Handle<Value> Flop(const Arguments& args);
+  static Handle<Value> Frame(const Arguments& args);
   static Handle<Value> Gamma(const Arguments& args);
   static Handle<Value> GaussianBlur(const Arguments& args);
   static Handle<Value> GaussianBlurChannel(const Arguments& args);

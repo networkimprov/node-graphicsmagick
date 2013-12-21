@@ -138,6 +138,7 @@ protected:
   static Handle<Value> Opacity(const Arguments& args);
   static Handle<Value> Opaque(const Arguments& args);
   static Handle<Value> Quantize(const Arguments& args);
+  static Handle<Value> QuantumOperator(const Arguments& args);
   static Handle<Value> Raise(const Arguments& args);
   static Handle<Value> RandomThreshold(const Arguments& args);
   static Handle<Value> RandomThresholdChannel(const Arguments& args);

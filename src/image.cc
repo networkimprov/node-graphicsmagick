@@ -61,6 +61,7 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "opacity", Opacity);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "opaque", Opaque);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "quantize", Quantize);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "quantumOperator", QuantumOperator);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "raise", Raise);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "randomThreshold", RandomThreshold);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "randomThresholdChannel", RandomThresholdChannel);
@@ -183,6 +184,35 @@ void Image::Init(Handle<Object> target) {
   aPaintMethod->Set(String::NewSymbol("ResetMethod"), Integer::New(Magick::ResetMethod), ReadOnly);
   target->Set(String::NewSymbol("PaintMethod"), aPaintMethod);
 
+  Local<Object> aQuantumOperator = Object::New();
+  aQuantumOperator->Set(String::NewSymbol("AddQuantumOp"), Integer::New(Magick::AddQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("AndQuantumOp"), Integer::New(Magick::AndQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("AssignQuantumOp"), Integer::New(Magick::AssignQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("DivideQuantumOp"), Integer::New(Magick::DivideQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("LShiftQuantumOp"), Integer::New(Magick::LShiftQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("MultiplyQuantumOp"), Integer::New(Magick::MultiplyQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("OrQuantumOp"), Integer::New(Magick::OrQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("RShiftQuantumOp"), Integer::New(Magick::RShiftQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("SubtractQuantumOp"), Integer::New(Magick::SubtractQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("ThresholdQuantumOp"), Integer::New(Magick::ThresholdQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("ThresholdBlackQuantumOp"), Integer::New(Magick::ThresholdBlackQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("ThresholdWhiteQuantumOp"), Integer::New(Magick::ThresholdWhiteQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("XorQuantumOp"), Integer::New(Magick::XorQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("NoiseGaussianQuantumOp"), Integer::New(Magick::NoiseGaussianQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("NoiseImpulseQuantumOp"), Integer::New(Magick::NoiseImpulseQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("NoiseLaplacianQuantumOp"), Integer::New(Magick::NoiseLaplacianQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("NoiseMultiplicativeQuantumOp"), Integer::New(Magick::NoiseMultiplicativeQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("NoisePoissonQuantumOp"), Integer::New(Magick::NoisePoissonQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("NoiseUniformQuantumOp"), Integer::New(Magick::NoiseUniformQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("NegateQuantumOp"), Integer::New(Magick::NegateQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("GammaQuantumOp"), Integer::New(Magick::GammaQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("DepthQuantumOp"), Integer::New(Magick::DepthQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("LogQuantumOp"), Integer::New(Magick::LogQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("MaxQuantumOp"), Integer::New(Magick::MaxQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("MinQuantumOp"), Integer::New(Magick::MinQuantumOp), ReadOnly);
+  aQuantumOperator->Set(String::NewSymbol("PowQuantumOp"), Integer::New(Magick::PowQuantumOp), ReadOnly);
+  target->Set(String::NewSymbol("QuantumOperator"), aQuantumOperator);
+
   target->Set(String::NewSymbol("OpaqueOpacity"), Integer::New(OpaqueOpacity), ReadOnly);
   target->Set(String::NewSymbol("TransparentOpacity"), Integer::New(TransparentOpacity), ReadOnly);
 
@@ -242,6 +272,7 @@ enum {
   eOpacity,
   eOpaque,
   eQuantize,
+  eQuantumOperator1, eQuantumOperator2,
   eRaise,
   eRandomThreshold,
   eRandomThresholdChannel,
@@ -629,6 +660,13 @@ Handle<Value> Image::Quantize(const Arguments& args) {
   return generic_check_start<Image>(eQuantize, args, kQuantize, aDefaults);
 }
 
+static int kQuantumOperator1[] = { eInt32, eInt32, eNumber, -eFunction, eEnd };
+static int kQuantumOperator2[] = { eInt32, eInt32, eUint32, eUint32, eInt32, eInt32, eNumber, -eFunction, eEnd };
+static SetType kQuantumOperatorSetType[] = { { kQuantumOperator1, eQuantumOperator1 },  { kQuantumOperator2, eQuantumOperator2 }, { NULL, 0 } };
+Handle<Value> Image::QuantumOperator(const Arguments& args) {
+  return generic_check_start<Image>(args, kQuantumOperatorSetType);
+}
+
 static int kRaise[] = { -eObjectGeometry, -eBoolean, -eFunction, eEnd };
 Handle<Value> Image::Raise(const Arguments& args) {
   GenericFunctionCall::GenericValue aDefaults[2];
@@ -906,6 +944,8 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eOpacity:           that->getImage().opacity(data->val[0].uint32);                                                                                                                  break;
   case eOpaque:            that->getImage().opaque(((Color*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get());                                                        break;
   case eQuantize:          that->getImage().quantize(data->val[0].boolean);                                                                                                                break;
+  case eQuantumOperator1:  that->getImage().quantumOperator((Magick::ChannelType) data->val[0].int32, (Magick::QuantumOperator) data->val[1].int32, data->val[2].dbl);                            break;
+  case eQuantumOperator2:  that->getImage().quantumOperator(data->val[0].int32, data->val[1].int32, data->val[2].uint32, data->val[3].uint32, (Magick::ChannelType) data->val[4].int32, (Magick::QuantumOperator) data->val[5].int32, data->val[6].dbl); break;
   case eRaise:             that->getImage().raise(data->val[0].pointer ? ((Geometry*) data->val[0].pointer)->get() : Magick::raiseGeometryDefault, data->val[1].boolean);                  break;
   case eRandomThreshold:   that->getImage().randomThreshold(((Geometry*) data->val[0].pointer)->get());                                                                                    break;
   case eRandomThresholdChannel: that->getImage().randomThresholdChannel(((Geometry*) data->val[0].pointer)->get(), (Magick::ChannelType) data->val[1].int32);                              break;
@@ -1039,6 +1079,8 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eOpacity:
   case eOpaque:
   case eQuantize:
+  case eQuantumOperator1:
+  case eQuantumOperator2:
   case eRaise:
   case eRandomThreshold:
   case eRandomThresholdChannel:

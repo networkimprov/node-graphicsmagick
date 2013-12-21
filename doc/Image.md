@@ -244,7 +244,7 @@ Ping is similar to read except only enough of the image is read to determine the
 **quantize ( [Boolean measureError = false], Function callback)**  
 Quantize image (reduce number of colors).  
 
-**quantumOperator ( ChannelType channel, QuantumOperator operator, double rvalue, Function callback)**  
+**quantumOperator ( ChannelType channel, QuantumOperator operator, Number rvalue, Function callback)**  
 **quantumOperator ( Int32 x, Int32 y, Uint32 columns, Uint32 rows, ChannelType channel, QuantumOperator operator, Number rvalue, Function callback)**  
 Apply an arithmetic or bitwise operator to the image pixel quantums.  
 

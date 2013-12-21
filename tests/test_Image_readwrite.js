@@ -666,6 +666,25 @@ exports.tests = [
   CompareImageWithMD5('img', '183085f7701f1cb456705a6a5a5c0e7d'),
   NewImageFromFile('img', 'files/img1.bmp'),
   {
+    name: 'img.quantumOperator( channel, operator, rvalue )',
+    obj: 'img',
+    method: 'quantumOperator',
+    parameters: [ gm.ChannelType.RedChannel, gm.QuantumOperator.AddQuantumOp, 50 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '7c3de5c07a6d6b21acadaa41eeb5203b'),
+
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
+    name: 'img.quantumOperator( x, y, collumns, rows, channel, operator, rvalue )',
+    obj: 'img',
+    method: 'quantumOperator',
+    parameters: [ 30, 30, 30, 30, gm.ChannelType.RedChannel, gm.QuantumOperator.AddQuantumOp, 100 ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '0e9a3087cec15bcd172105f31c497f7c'),
+  NewImageFromFile('img', 'files/img1.bmp'),
+  {
     name: 'img.raise( )',
     obj: 'img',
     method: 'raise',

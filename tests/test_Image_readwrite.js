@@ -691,6 +691,32 @@ exports.tests = [
     result: function(err, result, fn) { fn(err == null); }
   },
   CompareImageWithMD5('img', 'ee12adb03278679d86b498d28148152a'),
+  {
+    name: 'img = new Image();',
+    fatal: false,
+    action: function(objects, sync, fn) { objects.img = new gm.Image(); fn(null) }
+  },
+  {
+    name: 'img.read( "files/img2.bmp" )',
+    obj: 'img',
+    method: 'read',
+    parameters: [ aTestsDir + '/' + 'files/img2.bmp' ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '14530a84f7a3181d227e591b9f6a2a36'),
+  {
+    name: 'img = new Image();',
+    fatal: false,
+    action: function(objects, sync, fn) { objects.img = new gm.Image(); fn(null) }
+  },
+  {
+    name: 'img.read( blob )',
+    obj: 'img',
+    method: 'read',
+    parameters: [ new gm.Blob(new Buffer('Qk1OAAAAAAAAAD4AAAAoAAAAAwAAAAQAAAABAAEAAAAAABAAAABtCwAAbQsAAAIAAAACAAAAAAB/AAAAAAAAAAAAAAAAAAAAAAAAAAAA', 'base64')) ],
+    result: function(err, result, fn) { fn(err == null); }
+  },
+  CompareImageWithMD5('img', '1bf27622058e31d13a99f4d5821cec65'),
   NewImageFromFile('img', 'files/img1.bmp'),
   {
     name: 'img.reduceNoise( order )',

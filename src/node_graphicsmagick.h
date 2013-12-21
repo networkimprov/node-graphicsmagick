@@ -141,6 +141,7 @@ protected:
   static Handle<Value> Raise(const Arguments& args);
   static Handle<Value> RandomThreshold(const Arguments& args);
   static Handle<Value> RandomThresholdChannel(const Arguments& args);
+  static Handle<Value> Read(const Arguments& args);
   static Handle<Value> ReduceNoise(const Arguments& args);
   static Handle<Value> Roll(const Arguments& args);
   static Handle<Value> Rotate(const Arguments& args);

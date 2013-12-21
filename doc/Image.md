@@ -267,16 +267,16 @@ Read single image frame of specified size into current object.
 **read ( Blob blob, Function callback )**  
 Read single image frame from in-memory Buffer.  
 
-**read ( Blob blob, Geometry &size, Function callback )**  
+**read ( Blob blob, Geometry size, Function callback )**  
 Read single image frame of specified size from in-memory Buffer.  
 
-**read ( Blob blob, Geometry  &size, Uint32 depth, Function callback )**  
+**read ( Blob blob, Geometry size, Uint32 depth, Function callback )**  
 Read single image frame of specified size and depth from in-memory Buffer.  
 
-**read ( Blob blob, Geometry  &size, Uint32 depth, String magick, Function callback )**  
+**read ( Blob blob, Geometry size, Uint32 depth, String magick, Function callback )**  
 Read single image frame of specified size, depth, and format from in-memory Buffer.  
 
-**read ( Blob blob, Geometry  &size, String magick, Function callback )**  
+**read ( Blob blob, Geometry size, String magick, Function callback )**  
 Read single image frame of specified size, and format from in-memory Buffer.  
 
 **TODO** read ( Uint32 width, Uint32 height, String map, const StorageType  type, const void *pixels )  

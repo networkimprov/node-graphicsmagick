@@ -64,6 +64,7 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "raise", Raise);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "randomThreshold", RandomThreshold);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "randomThresholdChannel", RandomThresholdChannel);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "read", Read);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "reduceNoise", ReduceNoise);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "roll", Roll);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "rotate", Rotate);
@@ -244,6 +245,7 @@ enum {
   eRaise,
   eRandomThreshold,
   eRandomThresholdChannel,
+  eRead1, eRead2, eRead3, eRead4, eRead5, eRead6, eRead7,
   eReduceNoise1, eReduceNoise2,
   eRoll1, eRoll2,
   eRotate,
@@ -645,6 +647,18 @@ Handle<Value> Image::RandomThresholdChannel(const Arguments& args) {
   return generic_check_start<Image>(eRandomThresholdChannel, args, kRandomThresholdChannel);
 }
 
+static int kRead1[] = { eString, -eFunction, eEnd };
+static int kRead2[] = { eObjectGeometry, eObjectColor, -eFunction, eEnd };
+static int kRead3[] = { eObjectBlob, -eFunction, eEnd };
+static int kRead4[] = { eObjectBlob, eObjectGeometry, -eFunction, eEnd };
+static int kRead5[] = { eObjectBlob, eObjectGeometry, eUint32, -eFunction, eEnd };
+static int kRead6[] = { eObjectBlob, eObjectGeometry, eUint32, eString, -eFunction, eEnd };
+static int kRead7[] = { eObjectBlob, eObjectGeometry, eString, -eFunction, eEnd };
+static SetType kReadSetType[] = { { kRead1, eRead1}, { kRead2, eRead2}, { kRead3, eRead3}, { kRead4, eRead4}, { kRead5, eRead5}, { kRead6, eRead6}, { kRead7, eRead7}, { NULL, 0 } };
+Handle<Value> Image::Read(const Arguments& args) {
+  return generic_check_start<Image>(args, kReadSetType);
+}
+
 static int kReduceNoise1[] = { -eFunction, eEnd };
 static int kReduceNoise2[] = { eNumber, -eFunction, eEnd };
 static SetType kReduceNoiseSetType[] = { { kReduceNoise1, eReduceNoise1 },  { kReduceNoise2, eReduceNoise2 }, { NULL, 0 } };
@@ -895,6 +909,13 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eRaise:             that->getImage().raise(data->val[0].pointer ? ((Geometry*) data->val[0].pointer)->get() : Magick::raiseGeometryDefault, data->val[1].boolean);                  break;
   case eRandomThreshold:   that->getImage().randomThreshold(((Geometry*) data->val[0].pointer)->get());                                                                                    break;
   case eRandomThresholdChannel: that->getImage().randomThresholdChannel(((Geometry*) data->val[0].pointer)->get(), (Magick::ChannelType) data->val[1].int32);                              break;
+  case eRead1:              that->getImage().read(*data->val[0].string);                                                                                                                   break;
+  case eRead2:              that->getImage().read(((Geometry*) data->val[0].pointer)->get(), ((Color*) data->val[1].pointer)->get());                                                      break;
+  case eRead3:              that->getImage().read(((Blob*) data->val[0].pointer)->get());                                                                                                  break;
+  case eRead4:              that->getImage().read(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get());                                                       break;
+  case eRead5:              that->getImage().read(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), data->val[2].uint32);                                  break;
+  case eRead6:              that->getImage().read(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), data->val[2].uint32, *data->val[3].string);            break;
+  case eRead7:              that->getImage().read(((Blob*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get(), *data->val[2].string);                                 break;
   case eReduceNoise1:      that->getImage().reduceNoise();                                                                                                                                 break;
   case eReduceNoise2:      that->getImage().reduceNoise(data->val[0].dbl);                                                                                                                 break;
   case eRoll1:             that->getImage().roll(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
@@ -1021,6 +1042,13 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eRaise:
   case eRandomThreshold:
   case eRandomThresholdChannel:
+  case eRead1:
+  case eRead2:
+  case eRead3:
+  case eRead4:
+  case eRead5:
+  case eRead6:
+  case eRead7:
   case eReduceNoise1:
   case eReduceNoise2:
   case eRoll1:

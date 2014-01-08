@@ -85,6 +85,8 @@ protected:
   Magick::Image* mImage;
 
   static Handle<Value> New(const Arguments& args);
+
+  // Operations
   static Handle<Value> AdaptiveThreshold(const Arguments& args);
   static Handle<Value> AddNoiseChannel(const Arguments& args);
   static Handle<Value> AddNoise(const Arguments& args);
@@ -171,6 +173,9 @@ protected:
   static Handle<Value> Write(const Arguments& args);
   static Handle<Value> WriteFile(const Arguments& args);
   static Handle<Value> Zoom(const Arguments& args);
+
+  // Attributes and Options
+  static Handle<Value> Adjoin(const Arguments& args);
 };
 
 

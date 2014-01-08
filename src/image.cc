@@ -8,6 +8,7 @@ void Image::Init(Handle<Object> target) {
   constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
   constructor_template->SetClassName(String::NewSymbol("Image"));
 
+  // Operations
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "adaptiveThreshold", AdaptiveThreshold);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "addNoiseChannel", AddNoiseChannel);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "addNoise", AddNoise);
@@ -94,6 +95,10 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "write", Write);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "writeFile", WriteFile);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "zoom", Zoom);
+
+  // Attributes and Options
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "adjoin", Adjoin);
+
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
 
   //todo: move to separate file, create doc
@@ -221,6 +226,7 @@ void Image::Init(Handle<Object> target) {
 //Actions for Image::Generic_process. Each method will set the action and it will be processed accordingly.
 enum {
   eNew1, eNew2, eNew3, eNew4, eNew5, eNew6, eNew7, eNew8,
+
   eAdaptiveThreshold,
   eAddNoiseChannel,
   eAddNoise,
@@ -304,7 +310,9 @@ enum {
   eWave,
   eWrite1, eWrite2, eWrite3,
   eWriteFile,
-  eZoom
+  eZoom,
+
+  eAdjoin1, eAdjoin2
 };
 
 static int kNew1[] = { eEnd };
@@ -866,6 +874,13 @@ Handle<Value> Image::Zoom(const Arguments& args) {
   return generic_check_start<Image>(eZoom, args, kZoom);
 }
 
+static int kAdjoin1[] = { eBoolean, -eFunction, eEnd };
+static int kAdjoin2[] = { -eFunction, eEnd };
+static SetType kAdjoinSetType[] = { { kAdjoin1, eAdjoin1}, { kAdjoin2, eAdjoin2}, { NULL, 0 } };
+Handle<Value> Image::Adjoin(const Arguments& args) {
+  return generic_check_start<Image>(args, kAdjoinSetType);
+}
+
 void Image::Generic_process(void* pData, void* pThat) {
   GenericFunctionCall* data = (GenericFunctionCall*) pData;
   Image* that = (Image *) pThat;
@@ -1000,6 +1015,8 @@ void Image::Generic_process(void* pData, void* pThat) {
     data->retVal.pointer = aBlob;
   } break;
   case eZoom:              that->getImage().zoom(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
+  case eAdjoin1:           that->getImage().adjoin(data->val[0].boolean);                                                                                                                  break;
+  case eAdjoin2:           data->retVal.SetBool(that->getImage().adjoin());                                                                                                                break;
   default:
     assert(0);
   }
@@ -1120,6 +1137,7 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eWave:
   case eWriteFile:
   case eZoom:
+  case eAdjoin1:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;
   case eWrite1:
@@ -1133,6 +1151,7 @@ Handle<Value> Image::Generic_convert(void* pData) {
     aResult = Uint32::New(data->retVal.uint32);
     break;
   case eCompare:
+  case eAdjoin2:
     aResult = Boolean::New(data->retVal.boolean);
     break;
   }

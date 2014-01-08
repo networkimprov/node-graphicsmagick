@@ -176,6 +176,9 @@ protected:
 
   // Attributes and Options
   static Handle<Value> Adjoin(const Arguments& args);
+  static Handle<Value> AntiAlias(const Arguments& args);
+  static Handle<Value> AnimationDelay(const Arguments& args);
+  static Handle<Value> AnimationIterations(const Arguments& args);
 };
 
 

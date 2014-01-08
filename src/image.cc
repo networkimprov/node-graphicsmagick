@@ -98,6 +98,9 @@ void Image::Init(Handle<Object> target) {
 
   // Attributes and Options
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "adjoin", Adjoin);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "antiAlias", AntiAlias);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "animationDelay", AnimationDelay);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "animationIterations", AnimationIterations);
 
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
 
@@ -312,7 +315,10 @@ enum {
   eWriteFile,
   eZoom,
 
-  eAdjoin1, eAdjoin2
+  eAdjoin1, eAdjoin2,
+  eAntiAlias1, eAntiAlias2,
+  eAnimationDelay1, eAnimationDelay2,
+  eAnimationIterations1, eAnimationIterations2
 };
 
 static int kNew1[] = { eEnd };
@@ -881,6 +887,27 @@ Handle<Value> Image::Adjoin(const Arguments& args) {
   return generic_check_start<Image>(args, kAdjoinSetType);
 }
 
+static int kAntiAlias1[] = { eBoolean, -eFunction, eEnd };
+static int kAntiAlias2[] = { -eFunction, eEnd };
+static SetType kAntiAliasSetType[] = { { kAntiAlias1, eAntiAlias1}, { kAntiAlias2, eAntiAlias2}, { NULL, 0 } };
+Handle<Value> Image::AntiAlias(const Arguments& args) {
+  return generic_check_start<Image>(args, kAntiAliasSetType);
+}
+
+static int kAnimationDelay1[] = { eUint32, -eFunction, eEnd };
+static int kAnimationDelay2[] = { -eFunction, eEnd };
+static SetType kAnimationDelaySetType[] = { { kAnimationDelay1, eAnimationDelay1}, { kAnimationDelay2, eAnimationDelay2}, { NULL, 0 } };
+Handle<Value> Image::AnimationDelay(const Arguments& args) {
+  return generic_check_start<Image>(args, kAnimationDelaySetType);
+}
+
+static int kAnimationIterations1[] = { eUint32, -eFunction, eEnd };
+static int kAnimationIterations2[] = { -eFunction, eEnd };
+static SetType kAnimationIterationsSetType[] = { { kAnimationIterations1, eAnimationIterations1}, { kAnimationIterations2, eAnimationIterations2}, { NULL, 0 } };
+Handle<Value> Image::AnimationIterations(const Arguments& args) {
+  return generic_check_start<Image>(args, kAnimationIterationsSetType);
+}
+
 void Image::Generic_process(void* pData, void* pThat) {
   GenericFunctionCall* data = (GenericFunctionCall*) pData;
   Image* that = (Image *) pThat;
@@ -1017,6 +1044,12 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eZoom:              that->getImage().zoom(((Geometry*) data->val[0].pointer)->get());                                                                                               break;
   case eAdjoin1:           that->getImage().adjoin(data->val[0].boolean);                                                                                                                  break;
   case eAdjoin2:           data->retVal.SetBool(that->getImage().adjoin());                                                                                                                break;
+  case eAntiAlias1:        that->getImage().antiAlias(data->val[0].boolean);                                                                                                               break;
+  case eAntiAlias2:        data->retVal.SetBool(that->getImage().antiAlias());                                                                                                             break;
+  case eAnimationDelay1:   that->getImage().animationDelay(data->val[0].uint32);                                                                                                           break;
+  case eAnimationDelay2:   data->retVal.SetUint32(that->getImage().animationDelay());                                                                                                      break;
+  case eAnimationIterations1: that->getImage().animationIterations(data->val[0].uint32);                                                                                                   break;
+  case eAnimationIterations2: data->retVal.SetUint32(that->getImage().animationIterations());                                                                                              break;
   default:
     assert(0);
   }
@@ -1138,6 +1171,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eWriteFile:
   case eZoom:
   case eAdjoin1:
+  case eAntiAlias1:
+  case eAnimationDelay1:
+  case eAnimationIterations1:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;
   case eWrite1:
@@ -1148,10 +1184,13 @@ Handle<Value> Image::Generic_convert(void* pData) {
     GetInstance<Blob>(aResult)->set(aBlob);
   } break;
   case eChannelDepth2:
+  case eAnimationDelay2:
+  case eAnimationIterations2:
     aResult = Uint32::New(data->retVal.uint32);
     break;
   case eCompare:
   case eAdjoin2:
+  case eAntiAlias2:
     aResult = Boolean::New(data->retVal.boolean);
     break;
   }

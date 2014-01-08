@@ -64,4 +64,55 @@ exports.tests = [
     parameters: [ ],
     result: function(err, result, fn) { fn(err == null && result); }
   },
+  {
+    name: 'img.antiAlias(flag)',
+    obj: 'img',
+    method: 'antiAlias',
+    parameters: [ false ],
+    result: function(err, result, fn) { fn(err == null); }
+  }, {
+    name: 'img.antiAlias()',
+    obj: 'img',
+    method: 'antiAlias',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null && !result); }
+  }, {
+    name: 'img.antiAlias(flag)',
+    obj: 'img',
+    method: 'antiAlias',
+    parameters: [ true ],
+    result: function(err, result, fn) { fn(err == null); }
+  }, {
+    name: 'img.antiAlias()',
+    obj: 'img',
+    method: 'antiAlias',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null && result); }
+  },
+  {
+    name: 'img.animationDelay(delay)',
+    obj: 'img',
+    method: 'animationDelay',
+    parameters: [ 100 ],
+    result: function(err, result, fn) { fn(err == null); }
+  }, {
+    name: 'img.animationDelay()',
+    obj: 'img',
+    method: 'animationDelay',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null && result == 100); }
+  },
+{
+    name: 'img.animationIterations(iterations)',
+    obj: 'img',
+    method: 'animationIterations',
+    parameters: [ 100 ],
+    result: function(err, result, fn) { fn(err == null); }
+  }, {
+    name: 'img.animationIterations()',
+    obj: 'img',
+    method: 'animationIterations',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null && result == 100); }
+  }
 ]

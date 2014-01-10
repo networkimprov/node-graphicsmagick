@@ -114,5 +114,52 @@ exports.tests = [
     method: 'animationIterations',
     parameters: [ ],
     result: function(err, result, fn) { fn(err == null && result == 100); }
+  }, {
+    name: 'img.attribute(name, value)',
+    obj: 'img',
+    method: 'attribute',
+    parameters: [ 'attr', 'val' ],
+    result: function(err, result, fn) { fn(err == null); }
+  }, {
+    name: 'img.attribute(name)',
+    obj: 'img',
+    method: 'attribute',
+    parameters: [ 'attr' ],
+    result: function(err, result, fn) { fn(err == null && result == 'val'); }
   }
+  //TODO BackgroundColor
+  , {
+    name: 'img.backgroundTexture(texture)',
+    obj: 'img',
+    method: 'backgroundTexture',
+    parameters: [ 'texture' ],
+    result: function(err, result, fn) { fn(err == null); }
+  }, {
+    name: 'img.backgroundTexture()',
+    obj: 'img',
+    method: 'backgroundTexture',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null && result == 'texture'); }
+  }, {
+    name: 'img.baseColumns()',
+    obj: 'img',
+    method: 'baseColumns',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null && result == 389); }
+  }, {
+    name: 'img.baseFilename()',
+    obj: 'img',
+    method: 'baseFilename',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null && result.substr(-8) == "img1.bmp"); }
+  },
+ {
+    name: 'img.baseRows()',
+    obj: 'img',
+    method: 'baseRows',
+    parameters: [ ],
+    result: function(err, result, fn) { fn(err == null && result == 293); console.log(result); }
+  },
+
+
 ]

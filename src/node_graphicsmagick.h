@@ -179,6 +179,12 @@ protected:
   static Handle<Value> AntiAlias(const Arguments& args);
   static Handle<Value> AnimationDelay(const Arguments& args);
   static Handle<Value> AnimationIterations(const Arguments& args);
+  static Handle<Value> Attribute(const Arguments& args);
+  static Handle<Value> BackgroundColor(const Arguments& args);
+  static Handle<Value> BackgroundTexture(const Arguments& args);
+  static Handle<Value> BaseColumns(const Arguments& args);
+  static Handle<Value> BaseFilename(const Arguments& args);
+  static Handle<Value> BaseRows(const Arguments& args);
 };
 
 
@@ -187,7 +193,7 @@ struct GenericFunctionCall {
   //Generic data store for a single argument.
   struct GenericValue {
     GenericValue() : type(eEnd) {}
-    ~GenericValue() {
+    void Release() {
       if (pointer == NULL) return;
       switch (type) {
       case eString:         delete string;                              break;
@@ -197,10 +203,16 @@ struct GenericFunctionCall {
       case eObjectImage:    ((Image*) pointer)->Unreference();          break;
       }
     }
+    ~GenericValue() { Release(); }
+    GenericValue(const GenericValue&);
     GenericValue& operator=(const GenericValue& val) {
       switch (type) {
-      case eString:  //todo allow string deep copy
-        assert(0);
+      case eString:
+      case eObjectBlob:
+      case eObjectColor:
+      case eObjectGeometry:
+      case eObjectImage:
+        assert(0); //todo: allow deep copy if needed
         break;
       default:
         type = val.type;
@@ -223,6 +235,10 @@ struct GenericFunctionCall {
     void SetBool(bool v) {
       boolean = v;
       type = eBoolean;
+    }
+    void SetString(string str) {
+      string = new std::string(str);
+      type = eString;
     }
     void SetPointer(void* v, int t) {
       pointer = v;

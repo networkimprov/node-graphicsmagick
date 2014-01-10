@@ -101,6 +101,12 @@ void Image::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "antiAlias", AntiAlias);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "animationDelay", AnimationDelay);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "animationIterations", AnimationIterations);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "attribute", Attribute);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "backgroundColor", BackgroundColor);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "backgroundTexture", BackgroundTexture);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "baseColumns", BaseColumns);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "baseFilename", BaseFilename);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "baseRows", BaseRows);
 
   target->Set(String::NewSymbol("Image"), constructor_template->GetFunction());
 
@@ -318,7 +324,13 @@ enum {
   eAdjoin1, eAdjoin2,
   eAntiAlias1, eAntiAlias2,
   eAnimationDelay1, eAnimationDelay2,
-  eAnimationIterations1, eAnimationIterations2
+  eAnimationIterations1, eAnimationIterations2,
+  eAttribute1, eAttribute2,
+  eBackgroundColor1, eBackgroundColor2,
+  eBackgroundTexture1, eBackgroundTexture2,
+  eBaseColumns,
+  eBaseFilename,
+  eBaseRows
 };
 
 static int kNew1[] = { eEnd };
@@ -908,6 +920,42 @@ Handle<Value> Image::AnimationIterations(const Arguments& args) {
   return generic_check_start<Image>(args, kAnimationIterationsSetType);
 }
 
+static int kAttribute1[] = { eString, eString, -eFunction, eEnd };
+static int kAttribute2[] = { eString, -eFunction, eEnd };
+static SetType kAttributeSetType[] = { { kAttribute1, eAttribute1}, { kAttribute2, eAttribute2}, { NULL, 0 } };
+Handle<Value> Image::Attribute(const Arguments& args) {
+  return generic_check_start<Image>(args, kAttributeSetType);
+}
+
+static int kBackgroundColor1[] = { eObjectColor, -eFunction, eEnd };
+static int kBackgroundColor2[] = { -eFunction, eEnd };
+static SetType kBackgroundColorSetType[] = { { kBackgroundColor1, eBackgroundColor1}, { kBackgroundColor2, eBackgroundColor2}, { NULL, 0 } };
+Handle<Value> Image::BackgroundColor(const Arguments& args) {
+  return generic_check_start<Image>(args, kBackgroundColorSetType);
+}
+
+static int kBackgroundTexture1[] = { eString, -eFunction, eEnd };
+static int kBackgroundTexture2[] = { -eFunction, eEnd };
+static SetType kBackgroundTextureSetType[] = { { kBackgroundTexture1, eBackgroundTexture1}, { kBackgroundTexture2, eBackgroundTexture2}, { NULL, 0 } };
+Handle<Value> Image::BackgroundTexture(const Arguments& args) {
+  return generic_check_start<Image>(args, kBackgroundTextureSetType);
+}
+
+static int kBaseColumns[] = { -eFunction, eEnd };
+Handle<Value> Image::BaseColumns(const Arguments& args) {
+  return generic_check_start<Image>(eBaseColumns, args, kBaseColumns);
+}
+
+static int kBaseFilename[] = { -eFunction, eEnd };
+Handle<Value> Image::BaseFilename(const Arguments& args) {
+  return generic_check_start<Image>(eBaseFilename, args, kBaseFilename);
+}
+
+static int kBaseRows[] = { -eFunction, eEnd };
+Handle<Value> Image::BaseRows(const Arguments& args) {
+  return generic_check_start<Image>(eBaseRows, args, kBaseRows);
+}
+
 void Image::Generic_process(void* pData, void* pThat) {
   GenericFunctionCall* data = (GenericFunctionCall*) pData;
   Image* that = (Image *) pThat;
@@ -1017,7 +1065,7 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eStereo:            that->getImage().stereo(((Image*) data->val[0].pointer)->getImage());                                                                                           break;
   case eStrip:             that->getImage().strip();                                                                                                                                       break;
   case eSwirl:             that->getImage().swirl(data->val[0].dbl);                                                                                                                       break;
-  case eTexture:           that->getImage().texture(((Image*) data->val[0].pointer)->getImage());                                                                                         break;
+  case eTexture:           that->getImage().texture(((Image*) data->val[0].pointer)->getImage());                                                                                          break;
   case eThreshold:         that->getImage().threshold(data->val[0].dbl);                                                                                                                   break;
   case eTransform:         
     if (data->val[1].pointer) that->getImage().transform(((Geometry*) data->val[0].pointer)->get(), ((Geometry*) data->val[1].pointer)->get());
@@ -1050,6 +1098,16 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eAnimationDelay2:   data->retVal.SetUint32(that->getImage().animationDelay());                                                                                                      break;
   case eAnimationIterations1: that->getImage().animationIterations(data->val[0].uint32);                                                                                                   break;
   case eAnimationIterations2: data->retVal.SetUint32(that->getImage().animationIterations());                                                                                              break;
+  case eAttribute1:        that->getImage().attribute(*data->val[0].string, *data->val[1].string);                                                                                         break;
+  case eAttribute2:        data->retVal.SetString(that->getImage().attribute(*data->val[0].string));                                                                                       break;
+  case eBackgroundColor1:  that->getImage().backgroundColor(((Color*) data->val[0].pointer)->get());                                                                                       break;
+  case eBackgroundColor2:  //TODO
+    break;
+  case eBackgroundTexture1: that->getImage().backgroundTexture(*data->val[0].string);                                                                                                      break;
+  case eBackgroundTexture2: data->retVal.SetString(that->getImage().backgroundTexture());                                                                                                  break;
+  case eBaseColumns:       data->retVal.SetUint32(that->getImage().baseColumns());                                                                                                         break;
+  case eBaseFilename:      data->retVal.SetString(that->getImage().baseFilename());                                                                                                        break;
+  case eBaseRows:          data->retVal.SetUint32(that->getImage().baseRows());                                                                                                            break;
   default:
     assert(0);
   }
@@ -1174,6 +1232,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eAntiAlias1:
   case eAnimationDelay1:
   case eAnimationIterations1:
+  case eAttribute1:
+  case eBackgroundColor1:
+  case eBackgroundTexture1:
     aResult = ((Image*) data->retVal.pointer)->handle_;
     break;
   case eWrite1:
@@ -1186,12 +1247,22 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eChannelDepth2:
   case eAnimationDelay2:
   case eAnimationIterations2:
+  case eBaseColumns:
+  case eBaseRows:
     aResult = Uint32::New(data->retVal.uint32);
     break;
   case eCompare:
   case eAdjoin2:
   case eAntiAlias2:
     aResult = Boolean::New(data->retVal.boolean);
+    break;
+  case eAttribute2:
+  case eBackgroundTexture2:
+  case eBaseFilename:
+    aResult = String::New(data->retVal.string->c_str());
+    break;
+  case eBackgroundColor2:
+    //TODO: return Color
     break;
   }
   delete data;

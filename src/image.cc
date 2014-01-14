@@ -1101,8 +1101,14 @@ void Image::Generic_process(void* pData, void* pThat) {
   case eAttribute1:        that->getImage().attribute(*data->val[0].string, *data->val[1].string);                                                                                         break;
   case eAttribute2:        data->retVal.SetString(that->getImage().attribute(*data->val[0].string));                                                                                       break;
   case eBackgroundColor1:  that->getImage().backgroundColor(((Color*) data->val[0].pointer)->get());                                                                                       break;
-  case eBackgroundColor2:  //TODO
-    break;
+  case eBackgroundColor2:  data->retVal.SetPointer(new Magick::Color(that->getImage().backgroundColor()), ePointer);                                                                       break;
+//    Magick::Color *aBgColor = that->getImage().backgroundColor();
+
+//    Local<Value> aColorExt[] = { External::New(aBgColor) };
+/*    Handle<Value> aColor = Color::constructor_template->GetFunction()->NewInstance(1, aColorExt);
+    data->retVal.SetPointer((void*) GetInstance<Color>(aColor), eObjectColor);
+    ((Color*) data->retVal.pointer)->Reference();
+*/
   case eBackgroundTexture1: that->getImage().backgroundTexture(*data->val[0].string);                                                                                                      break;
   case eBackgroundTexture2: data->retVal.SetString(that->getImage().backgroundTexture());                                                                                                  break;
   case eBaseColumns:       data->retVal.SetUint32(that->getImage().baseColumns());                                                                                                         break;
@@ -1235,7 +1241,7 @@ Handle<Value> Image::Generic_convert(void* pData) {
   case eAttribute1:
   case eBackgroundColor1:
   case eBackgroundTexture1:
-    aResult = ((Image*) data->retVal.pointer)->handle_;
+    aResult = ((Color*) data->retVal.pointer)->handle_;
     break;
   case eWrite1:
   case eWrite2:
@@ -1262,7 +1268,9 @@ Handle<Value> Image::Generic_convert(void* pData) {
     aResult = String::New(data->retVal.string->c_str());
     break;
   case eBackgroundColor2:
-    //TODO: return Color
+    Magick::Color* aBgColor = (Magick::Color*) data->retVal.pointer;
+    Local<Value> aColorExt[] = { External::New(aBgColor) };
+    aResult = Color::constructor_template->GetFunction()->NewInstance(1, aColorExt);
     break;
   }
   delete data;

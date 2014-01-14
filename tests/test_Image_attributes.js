@@ -126,9 +126,21 @@ exports.tests = [
     method: 'attribute',
     parameters: [ 'attr' ],
     result: function(err, result, fn) { fn(err == null && result == 'val'); }
-  }
-  //TODO BackgroundColor
-  , {
+  }, {
+    name: 'img.backgroundColor(color)',
+    obj: 'img',
+    method: 'backgroundColor',
+    parameters: [ new gm.Color({red: 0.5, green: 0, blue: 0}) ],
+    result: function(err, result, fn) { fn(err == null); }
+  }, {
+    name: 'img.backgroundColor()',
+    obj: 'img',
+    method: 'backgroundColor',
+    parameters: [ ],
+    result: function(err, result, fn) {
+console.log(result); 
+fn(err == null);}
+  }, {
     name: 'img.backgroundTexture(texture)',
     obj: 'img',
     method: 'backgroundTexture',
@@ -158,7 +170,7 @@ exports.tests = [
     obj: 'img',
     method: 'baseRows',
     parameters: [ ],
-    result: function(err, result, fn) { fn(err == null && result == 293); console.log(result); }
+    result: function(err, result, fn) { fn(err == null && result == 293); }
   },
 
 

@@ -14,7 +14,8 @@ enum ArgumentType {
   eEnd,
   eInt32, eUint32, eNumber, eBoolean, eString, eObject, eArray, eFunction, eNull,
   eBuffer,
-  eObjectBlob, eObjectColor, eObjectGeometry, eObjectImage
+  eObjectBlob, eObjectColor, eObjectGeometry, eObjectImage,
+  ePointer
 };
 
 //Used for methods with multiple signatures and actions.
@@ -49,7 +50,7 @@ public:                                                                         
   void set(Magick::cname* pElem) { if (mElem) delete mElem; mElem = pElem; }              \
   void Reference() { this->Ref(); }                                                       \
   void Unreference() { this->Unref(); }                                                   \
-private:                                                                                  \
+protected:                                                                                \
   cname() : mElem(NULL) {}                                                                \
   ~cname() { if (mElem) delete mElem; }                                                   \
   Magick::cname* mElem;                                                                   \

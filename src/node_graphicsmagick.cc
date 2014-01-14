@@ -51,10 +51,20 @@ Handle<Value> BlobToBuffer(const Arguments& args) {
 Persistent<FunctionTemplate> Color::constructor_template;
 Handle<Value> Color::New(const Arguments& args) {
   HandleScope scope;
-  Color* that = new Color();
-  that->Wrap(args.This());
+
+  if (args.Length() == 1 && args[0]->IsExternal()) {
+    Color* that = new Color();
+    that->Wrap(args.This());
+    that->set((Magick::Color*) External::Unwrap(args[0]));
+    return args.This();
+  }
+
   if (args.Length() != 1 || !args[0]->IsObject() || args[0]->IsFunction())
     return ThrowException(v8::Exception::TypeError(String::New("Invalid ColorObject")));
+
+  Color* that = new Color();
+  that->Wrap(args.This());
+
   Local<Object> aObj = args[0]->ToObject();
   Local<String> aKey1, aKey2, aKey3, aKey4;
   Magick::Color* aColor = NULL;

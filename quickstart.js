@@ -2,7 +2,7 @@ var lGM = require('./graphicsmagick.js');
 
 lGM.on('connect', function() {
   console.log('gm library ready');
-  lGM.Image(function(err, img1) {
+  lGM.Image(new lGM.Geometry({width: 3, height: 4}), new lGM.Color({red: 0.5, green: 0, blue: 0}), function(err, img1) {
     console.log('Image create err: ' + err);
     lGM.quit();
   });

@@ -3,8 +3,15 @@ var lGM = require('./graphicsmagick.js');
 lGM.on('connect', function() {
   console.log('gm library ready');
   lGM.Image(new lGM.Geometry({width: 3, height: 4}), new lGM.Color({red: 0.5, green: 0, blue: 0}), function(err, img1) {
-    console.log('Image create err: ' + err);
-    lGM.quit();
+    if (err) {
+      console.log('Image create err: ' + err);
+      lGM.quit();
+      return;
+    }
+    img1.writeFile('imgquickstart.bmp', function (err) {
+      if (err != null) console.log('Image write err: ' + err);
+      lGM.quit();
+    });
   });
 });
 

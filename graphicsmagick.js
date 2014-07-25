@@ -74,10 +74,13 @@ function parseArguments(initialMsg, signatures, args) {
     if ('key' in aSignature[argN]) {
       if (typeof aSignature[argN].key != 'string') throw new Error('invalid key');
       aParsedArgs[aSignature[argN].key] = args[argN];
-    } else if ('msg' in aSignature[argN]) {
+    }
+    if ('msg' in aSignature[argN]) {
       if (!('msg' in aParsedArgs)) aParsedArgs.msg = {};
       if (aSignature[argN].type == 'string')
         aParsedArgs.msg[aSignature[argN].msg] = args[argN];
+      else if (aSignature[argN].type == 'function')
+        aParsedArgs.msg[aSignature[argN].msg] = 'function';
       else if (aSignature[argN].type == 'object')
         aParsedArgs.msg[aSignature[argN].msg] = JSON.stringify(args[argN]);
       else if ('ref' in args[argN]) 
@@ -128,11 +131,12 @@ function getPersistantMethod(opCreate, opFree) {
 module.exports.Image = function() {
   var aParsedArgs = parseArguments({op: 'Image'},
     [
-      [{type: 'function', key: 'callback'}],
-      [{type: 'Geometry', msg: 'geometry1'}, {type: 'Color', msg: 'color1'}, {type: 'function', key: 'callback'}]
+      [{type: 'function', key: 'callback', msg: 'callback'}],
+      [{type: 'Geometry', msg: 'geometry1'}, {type: 'Color', msg: 'color1'}, {type: 'function', key: 'callback', msg: 'callback'}]
     ],
     arguments
   );
+console.log(aParsedArgs.msg);
   lode.call(sLib, aParsedArgs.msg, function(err, data) {
     if (err) { aParsedArgs.callback(err); return; }
     if ('error' in data) { aParsedArgs.callback(data.error); return; }
@@ -146,6 +150,20 @@ function ImageClass(ref) {
   aLodeRefCnt++;
   this.lodeRef = lLR.LodeRef(function(){
     lode.call(sLib, {op:'ImageFree', ref:ref}, function(err, data){ aLodeRefCnt--; checkQuit(); });
+  });
+}
+
+ImageClass.prototype.writeFile = function() {
+  var aParsedArgs = parseArguments({op: 'ImageWriteFile', ref: this.ref},
+    [
+      [{type: 'string', msg: 'str1'}, {type: 'function', key: 'callback', msg: 'callback'}]
+    ],
+    arguments
+  );
+  lode.call(sLib, aParsedArgs.msg, function(err, data) {
+    if (err) { aParsedArgs.callback(err); return; }
+    if ('error' in data) { aParsedArgs.callback(data.error); return; }
+    aParsedArgs.callback(null);
   });
 }
 
